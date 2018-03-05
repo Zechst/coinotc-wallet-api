@@ -3,6 +3,9 @@ var router = require('express').Router();
 var WalletApi = mongoose.model('WalletApi');
 //var auth = require('../auth');
 
+/**
+ * this is auth wallet api.
+ */
 router.get('/', function(req, res, next) {
     res.status(200).json({});
 });

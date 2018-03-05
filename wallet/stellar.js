@@ -10,7 +10,7 @@ const ws = new WebSocket('ws://localhost:8081');
 // wallet class to be extended with prototype method.
 class StellarWallet extends Wallet{
     constructor(){
-        super("127.0.0.1", 8080);
+        super("127.0.0.1", 8081);
     }
 }
 

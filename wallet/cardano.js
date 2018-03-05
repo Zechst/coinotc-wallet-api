@@ -2,12 +2,14 @@
 
 const config = require('../config');
 const WebSocket = require('ws');
-
-const ws = new WebSocket('ws://' + config.cardanoWSAddress  + ':' + config.cardanoWSPort);
+var Wallet = require('./wallet');
+console.log(">>>>> " + config.cardanoWSAddress);
+const ws = new WebSocket('ws://9ff12ae5.ngrok.io');
+console.log(ws);
 // wallet class to be extended with prototype method.
 class CardanoWallet extends Wallet{
-    constructor(){
-        super(config.cardanoWSAddress , config.cardanoWSPort);
+    constructor(address, port){
+        super(null , null);
     }
 }
 
@@ -82,3 +84,5 @@ ws.on('message', function incoming(data){
 function sendTxn(obj){
     ws.send(JSON.stringify(pbj));
 }
+
+module.exports = CardanoWallet;

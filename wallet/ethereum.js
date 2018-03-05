@@ -6,7 +6,8 @@ var bip39 = require('bip39');
 var Wallet = require('./wallet');
 var config = require('../config');
 var network = providers.networks.rinkeby;
-var provider = new providers.JsonRpcProvider(config.ether_geth_rpc, network);
+console.log(">>>>>>" + config.ether_geth_rpc);
+var provider = new providers.JsonRpcProvider('http://localhost:8545', network);
 
 class EthereumWallet extends Wallet{
     

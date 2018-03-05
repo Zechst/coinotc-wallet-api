@@ -11,7 +11,7 @@ module.exports = {
     riple_api_address: process.env.RIPPLE_API | 'wss://s1.ripple.com:443',
     mongodb_url: process.env.MONGODB_URI | 'mongodb://localhost/walletapi',
     mongodb_debug: Boolean(process.env.MONGODB_DEBUG) | true,
-    cardanoWSAddress: process.env.CARDANO_WS_ADDRESS | '192.168.3.30',
+    cardanoWSAddress: process.env.CARDANO_WS_ADDRESS | '192.168.1.88',
     cardanoWSPort: process.env.CARDANO_WS_PORT | '8080',
     cardanoHexRand: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/",
     cardanoCertificateKey: 'certificates/client.key',
