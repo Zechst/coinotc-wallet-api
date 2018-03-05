@@ -1,5 +1,5 @@
 module.exports = {
-    secret: process.env.NODE_ENV === 'production' ? process.env.SECRET : 'zaq12wsx_77',
+    secret: process.env.NODE_ENV === 'production' ? process.env.SECRET : 'password@123456',
     cardano_hostname: process.env.CARDANO_HOSTNAME,
     cardano_port: process.env.CARDANO_PORT,
     monero_hostname: process.env.MONERO_HOSTNAME,
