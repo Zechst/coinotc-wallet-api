@@ -19,6 +19,9 @@
   "license": "ISC",
   "dependencies": {
     "bip39": "^2.5.0",
+    "bitcoin-address": "^0.3.0",
+    "bitcore-explorers": "^1.0.1",
+    "bitcore-lib": "^0.15.0",
     "body-parser": "1.15.0",
     "chalk": "^2.3.0",
     "cors": "2.7.1",
@@ -42,7 +45,7 @@
     "morgan": "1.7.0",
     "passport": "0.3.2",
     "passport-local": "1.0.0",
-    "request": "2.69.0",
+    "request": "^2.69.0",
     "ripple-lib": "^0.18.1",
     "slug": "0.9.1",
     "stellar-sdk": "^0.8.0",
