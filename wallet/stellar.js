@@ -11,7 +11,7 @@ const ws = new WebSocket('ws://localhost:8081');
 ws.on('open', function open() {
     console.log("connected ...");
     ws.on('message', function incoming(data) {
-        // store to mongodb
+        console.log("--- Stellar ------");
         console.log(data);
     });
 });
@@ -22,8 +22,6 @@ class StellarWallet extends Wallet{
         super("127.0.0.1", 8081);
     }
 }
-
-
 
 StellarWallet.prototype.balance = function(walletAddress){
     console.log(walletAddress);
@@ -37,7 +35,8 @@ StellarWallet.prototype.balance = function(walletAddress){
 
 StellarWallet.prototype.generate = function(emailAddress){
     let messageIn = {
-        type: 'generateAddress'
+        type: 'generateAddress',
+        email: emailAddress
     }
     ws.send(JSON.stringify(messageIn));
 }

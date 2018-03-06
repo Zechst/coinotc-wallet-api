@@ -39,7 +39,8 @@ wss.on('connection', function connection(ws) {
         //console.log(account);
         let generateAddressJson = {
           type: 'generateAddress',
-          account: account
+          account: account,
+          email: incomingObj.email
         }
         ws.send(JSON.stringify(generateAddressJson));
         api.disconnect();

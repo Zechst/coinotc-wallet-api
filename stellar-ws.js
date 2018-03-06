@@ -32,8 +32,10 @@ wss.on('connection', function connection(ws) {
       console.log(chalk.red('  Print this wallet and make sure to store it somewhere safe!'), '\n')
       console.log('  Note: You need to put at least 20XLM on this key for it to be an active account', '\n')
       let stellarGeneratedWallet = {
+          type: 'generateAddress',
           public_address: account.publicKey(), 
-          wallet_secret: account.secret()
+          wallet_secret: account.secret(),
+          email: incomingObj.email
       }
       ws.send(JSON.stringify(stellarGeneratedWallet));
     }

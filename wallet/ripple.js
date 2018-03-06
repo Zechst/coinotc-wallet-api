@@ -3,7 +3,8 @@ const chalk = require('chalk')
 const RippleAPI = require('ripple-lib').RippleAPI
 var config = require('../config');
 var Wallet = require('./wallet');
-
+var mongoose = require('mongoose');
+var WalletDB = mongoose.model('Wallet');
 
 const api = new RippleAPI({
     server: 'wss://s1.ripple.com'
@@ -20,32 +21,47 @@ const WebSocket = require('ws');
 
 const ws = new WebSocket('ws://localhost:8080');
 
-ws.on('message', function incoming(data) {
-    // store to mongodb
-    console.log(data);
+ws.on('open', function open() {
+    ws.on('message', function incoming(data) {
+        var incData = JSON.parse(data);
+        console.log(data);
+        console.log("--- Ripple ------" + incData.email);
+        console.log(incData);
+        if(incData.type === 'generateAddress'){
+            WalletDB.findOne({ 'email': incData.email },function (err, wallet) {
+                console.log("found ! " + wallet);
+                wallet.ripple = incData;
+    
+                wallet.save(function (err, updatedWallet) {
+                    if (err) return handleError(err);
+                    console.log(updatedWallet);
+                });
+            });
+        }
+        
+    });    
 });
 
-RippleWallet.prototype.balance = function(walletAddress){
+RippleWallet.prototype.balance = function(walletAddress, emailAddress){
     let messageIn = {
         type: 'balance',
-        walletAddress: walletAddress
+        walletAddress: walletAddress,
+        email: emailAddress
     }
-    ws.on('open', function open() {
-        ws.send(JSON.stringify(messageIn));
-    });
+    ws.send(JSON.stringify(messageIn));
+    
 }
 
 RippleWallet.prototype.generate = function(emailAddress){
     let messageIn = {
-        type: 'generateAddress'
+        type: 'generateAddress',
+        email: emailAddress
     }
-    ws.on('open', function open() {
-        ws.send(JSON.stringify(messageIn));
-    });   
+    ws.send(JSON.stringify(messageIn));
 }
 
 RippleWallet.prototype.transfer= function(sourceAddress, 
-    destinationAddress, amount, sourceSecret, destinationTag){
+    destinationAddress, amount, sourceSecret, destinationTag, emailAddress){
     let messageIn = {
         type: 'transfer',
         transfer: {
@@ -54,11 +70,10 @@ RippleWallet.prototype.transfer= function(sourceAddress,
             amount:  amount,
             destinationTag: destinationTag,
             sourceSecret: sourceSecret
-        }
+        },
+        email: emailAddress
     }
-    ws.on('open', function open() {
-        ws.send(JSON.stringify(messageIn));
-    });    
+    ws.send(JSON.stringify(messageIn));
 }
 
 const fail = (message) => {
