@@ -114,7 +114,7 @@ wss.on('connection', function connection(ws, req) {
         options.json = true;
         options.body = JSON.stringify(postData);
 
-        submitRequest(options, postData);
+        submitRequest(options, postData, ws, txnMessage.email);
 
     } else if( txnMessage.type === 'transfer') {
         console.log('transfer --- ');
@@ -136,7 +136,8 @@ wss.on('connection', function connection(ws, req) {
           };
           options.json = true;
           options.body = JSON.stringify(postData);
-          submitRequest(options, postData);
+          submitRequest(options, postData, ws, txnMessage.email);
+
      } else if (txnMessage.type === 'fee'){
         console.log('fee --- ');
         var postData = {"groupingPolicy": "OptimizeForSecurity"};
@@ -156,7 +157,7 @@ wss.on('connection', function connection(ws, req) {
         };
         options.json = true;
         options.body = JSON.stringify(postData);
-        submitRequest(options, postData);
+         submitRequest(options, postData, ws, txnMessage.email);
     }
 
   });
@@ -167,11 +168,16 @@ server.listen(8080, function listening() {
   console.log('Cardano Engine Listening on %d', server.address().port);
 });
 
-function submitRequest(options, postData){
+function submitRequest(options, postData, _ws, emailAddress){
     var newAccReq = https.request(options, function (res) {
         res.on('data', function(data) {
-            console.log('! !');
             process.stdout.write("???>>>" + data);
+            console.log("sending back to the client ...");
+            var _result = JSON.parse(data);
+            postData.result = _result;
+            postData.email = emailAddress;
+            console.log(JSON.stringify(postData));
+            _ws.send(JSON.stringify(postData));
         });
     });
 
@@ -181,4 +187,5 @@ function submitRequest(options, postData){
 
     newAccReq.write(JSON.stringify(postData), encoding = 'utf8');
     newAccReq.end();
+
 }
