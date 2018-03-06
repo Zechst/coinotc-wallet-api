@@ -10,7 +10,7 @@ class MoneroWallet extends Wallet{
     }
 }
 
-MoneroWallet.prototype.createWallet = function(walletFilename, walletPassword, walletLang){
+MoneroWallet.prototype.createWallet = function(walletFilename, walletPassword, walletLang, emailAddress){
     let method = 'create_wallet';
     let params = {
         filename: walletFilename,

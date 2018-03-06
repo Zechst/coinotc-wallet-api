@@ -8,6 +8,7 @@ const WebSocket = require('ws');
 const util = require('util');
 const bs58 = require('bs58');
 const config = require('./config');
+const Util = require('./util');
 
 const app = express();
 var b64c = config.cardanoHexRand;
@@ -101,7 +102,7 @@ wss.on('connection', function connection(ws, req) {
         }
         options.method = 'POST';
 
-        var encodedPassphrase = toHexBase16(txnMessage.passphrase);
+        var encodedPassphrase = Util.toHexBase16(txnMessage.passphrase);
 
         options.path = '/api/wallets/new?passphrase=' + encodedPassphrase;
         console.log(options.path);
@@ -124,7 +125,7 @@ wss.on('connection', function connection(ws, req) {
           var fromAddress = txnMessage.fromAddress;
           var toAddress = txnMessage.toAddress;
           var amount = txnMessage.amount;
-          var encodedPassphrase = toHexBase16(txnMessage.passphrase);
+          var encodedPassphrase = Util.toHexBase16(txnMessage.passphrase);
           options.path = '/api/txs/payments/'+ fromAddress +'/' + toAddress + '/' + amount
               + '?passphrase=' + encodedPassphrase;
           console.log(options.path);
@@ -165,16 +166,6 @@ wss.on('connection', function connection(ws, req) {
 server.listen(8080, function listening() {
   console.log('Cardano Engine Listening on %d', server.address().port);
 });
-
-function toHexBase16(s) {
-    // utf8 to latin1
-    var s = unescape(encodeURIComponent(s))
-    var h = ''
-    for (var i = 0; i < s.length; i++) {
-        h += s.charCodeAt(i).toString(16)
-    }
-    return h
-}
 
 function submitRequest(options, postData){
     var newAccReq = https.request(options, function (res) {

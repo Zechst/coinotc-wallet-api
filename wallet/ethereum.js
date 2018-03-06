@@ -24,7 +24,7 @@ function callback(percent) {
     console.log("Encrypting: " + parseInt(percent * 100) + "% complete");
 }
 
-EthereumWallet.prototype.createWallet = (passphrase)=> {
+EthereumWallet.prototype.createWallet = (passphrase, emailAddress)=> {
     console.log("....");
     var mnemonic = bip39.generateMnemonic();
     var wallet = ethers.Wallet.fromMnemonic(mnemonic);

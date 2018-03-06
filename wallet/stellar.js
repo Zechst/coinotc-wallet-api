@@ -31,7 +31,7 @@ StellarWallet.prototype.balance = function(walletAddress){
 }
 
 
-StellarWallet.prototype.generate = function(){
+StellarWallet.prototype.generate = function(emailAddress){
     let messageIn = {
         type: 'generateAddress'
     }

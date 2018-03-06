@@ -6,7 +6,7 @@ var WalletApi = mongoose.model('WalletApi');
 /**
  * this is auth wallet api.
  */
-router.get('/', function(req, res, next) {
+router.get('/:apiToken', function(req, res, next) {
     res.status(200).json({});
 });
 

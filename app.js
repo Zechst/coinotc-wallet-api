@@ -33,10 +33,10 @@ if (!isProduction) {
   app.use(errorhandler());
 }
 
-mongoose.connect(config.mongodb_url);
-mongoose.set('debug', config.mongodb_debug);
+console.log("mongodb url > "+ config.mongodb_url);
+mongoose.connect("mongodb://localhost/walletapi");
+mongoose.set('debug', true);
 
-require('./models/transactions');
 require('./models/wallet-api');
 require('./models/transactions');
 require('./models/wallet');

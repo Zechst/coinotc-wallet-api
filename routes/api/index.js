@@ -1,7 +1,7 @@
 var router = require('express').Router();
 
 router.use('/', require('./wallet-api'));
-router.use('/wallet', require('./wallets'));
+router.use('/wallets', require('./wallets'));
 router.use('/transactions', require('./transactions'));
 
 router.use(function(err, req, res, next){

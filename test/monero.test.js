@@ -1,23 +1,15 @@
 var MoneroWallet = require('../wallet/monero');
 var Wallet = new MoneroWallet('localhost', 7878);
+const Util = require('./util');
+
 /*
     ./monero-wallet-rpc --log-level 0 --testnet --disable-rpc-login --wallet-dir ./chaindata/ --rpc-bind-ip 127.0.0.1 --rpc-bind-port 7878 --daemon-address 127.0.0.1:28081 --trusted-daemon
 */
 var firstWallet = "";
 var secondWallet = "";
 
-function makeid() {
-    var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  
-    for (var i = 0; i < 5; i++)
-      text += possible.charAt(Math.floor(Math.random() * possible.length));
-  
-    return text;
-  }
-
 test('create wallet', () => {
-    firstWallet = makeid();
+    firstWallet = Util.makeid();
     Wallet.createWallet(firstWallet, 'mytestpassword', 'English').then(function(result){
         console.log(result);
     });

@@ -35,7 +35,7 @@ RippleWallet.prototype.balance = function(walletAddress){
     });
 }
 
-RippleWallet.prototype.generate = function(){
+RippleWallet.prototype.generate = function(emailAddress){
     let messageIn = {
         type: 'generateAddress'
     }
