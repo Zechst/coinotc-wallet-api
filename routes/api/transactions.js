@@ -3,12 +3,12 @@ var router = require('express').Router();
 var Transactions = mongoose.model('Transactions');
 //var auth = require('../auth');
 
-router.get('/:trxId', function(req, res, next) {
+router.get('/:type/:trxId/:email', function(req, res, next) {
 
 });
 
 
-router.get('/fees/:type', function(req, res, next) {
+router.post('/fees/:type', function(req, res, next) {
 
 });
 
