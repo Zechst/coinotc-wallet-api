@@ -7,6 +7,15 @@ var Wallet = require('./wallet');
 const WebSocket = require('ws');
 
 const ws = new WebSocket('ws://localhost:8081');
+
+ws.on('open', function open() {
+    console.log("connected ...");
+    ws.on('message', function incoming(data) {
+        // store to mongodb
+        console.log(data);
+    });
+});
+
 // wallet class to be extended with prototype method.
 class StellarWallet extends Wallet{
     constructor(){
@@ -14,10 +23,7 @@ class StellarWallet extends Wallet{
     }
 }
 
-ws.on('message', function incoming(data) {
-    // store to mongodb
-    console.log(data);
-});
+
 
 StellarWallet.prototype.balance = function(walletAddress){
     console.log(walletAddress);
@@ -25,9 +31,7 @@ StellarWallet.prototype.balance = function(walletAddress){
         type: 'balance',
         walletAddress: walletAddress
     }
-    ws.on('open', function open() {
-        ws.send(JSON.stringify(messageIn));
-    });
+    ws.send(JSON.stringify(messageIn));
 }
 
 
@@ -35,9 +39,7 @@ StellarWallet.prototype.generate = function(emailAddress){
     let messageIn = {
         type: 'generateAddress'
     }
-    ws.on('open', function open() {
-        ws.send(JSON.stringify(messageIn));
-    });   
+    ws.send(JSON.stringify(messageIn));
 }
 
 StellarWallet.prototype.transfer = function(sourceAddress, sourceSecret,
@@ -55,9 +57,7 @@ StellarWallet.prototype.transfer = function(sourceAddress, sourceSecret,
             sourceSecret: sourceSecret
         }
     }
-    ws.on('open', function open() {
-        ws.send(JSON.stringify(messageIn));
-    });
+    ws.send(JSON.stringify(messageIn));
 }
 
 

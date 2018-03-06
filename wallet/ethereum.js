@@ -21,7 +21,9 @@ class EthereumWallet extends Wallet{
 }
 
 function callback(percent) {
-    console.log("Encrypting: " + parseInt(percent * 100) + "% complete");
+    if(percent == 0.1 || percent == 0.5 || percent == 1 ){
+        console.log("Encrypting: " + parseInt(percent * 100) + "% complete");
+    }
 }
 
 EthereumWallet.prototype.createWallet = (passphrase, emailAddress)=> {

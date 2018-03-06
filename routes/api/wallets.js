@@ -49,17 +49,28 @@ router.get('/generate/:email/:password', function(req, res, next) {
                 // saved!
                 if(createdWallet != null){
                     adaWallet.createWallet(walletGlobalPassword, emailAddy);
-                    /*
+                    
                     ethWallet.createWallet(walletGlobalPassword, emailAddy).then(result => {
                         console.log("result" + result);
+                        Wallet.findOne({ 'email': emailAddy },function (err, wallet) {
+                            console.log(wallet);
+                            wallet.eth = result;
+                            wallet.save(function (err, updatedWallet) {
+                                if (err) return handleError(err);
+                                console.log(updatedWallet);
+                            });
+                        });
                     });
+                    /*
+                    
                     firstWallet = Util.makeid();
                     // potential we need to pass in chinese or english for the wallet language.
                     moneroWallet.createWallet(firstWallet, walletGlobalPassword, 'English', emailAddy).then(function(result){
                         console.log(result);
-                    });
+                    });*/
+                    
                     rippleWallet.generate(emailAddy);
-                    stellarWallet.generate(emailAddy);*/
+                    stellarWallet.generate(emailAddy);
                 }
                 
                 return res.json(createdWallet);
