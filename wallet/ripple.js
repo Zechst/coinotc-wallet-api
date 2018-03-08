@@ -37,8 +37,7 @@ ws.on('open', function open() {
                     console.log(updatedWallet);
                 });
             });
-        }
-        
+        } 
     });    
 });
 

@@ -3,6 +3,8 @@
 var http = require('http');
 const chalk = require('chalk');
 var Wallet = require('./wallet');
+var mongoose = require('mongoose');
+var WalletDB = mongoose.model('Wallet');
 
 const WebSocket = require('ws');
 
@@ -13,6 +15,19 @@ ws.on('open', function open() {
     ws.on('message', function incoming(data) {
         console.log("--- Stellar ------");
         console.log(data);
+        var incData = JSON.parse(data);
+        console.log(incData);
+        if(incData.type === 'generateAddress'){
+            WalletDB.findOne({ 'email': incData.email },function (err, wallet) {
+                console.log("found ! " + wallet);
+                wallet.stellar = incData;
+    
+                wallet.save(function (err, updatedWallet) {
+                    if (err) return handleError(err);
+                    console.log(updatedWallet);
+                });
+            });
+        }
     });
 });
 

@@ -9,7 +9,8 @@ var WalletSchema = new mongoose.Schema({
   monero: mongoose.Schema.Types.Mixed,
   cardano: mongoose.Schema.Types.Mixed,
   ripple: mongoose.Schema.Types.Mixed,
-  stellar: mongoose.Schema.Types.Mixed
+  stellar: mongoose.Schema.Types.Mixed,
+  btc:mongoose.Schema.Types.Mixed
 }, {timestamps: true});
 
 WalletSchema.plugin(uniqueValidator, {message: 'is already taken.'});

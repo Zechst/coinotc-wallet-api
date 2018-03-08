@@ -5,7 +5,7 @@ const WebSocket = require('ws');
 var Wallet = require('./wallet');
 var WalletDB = mongoose.model('Wallet');
 console.log(">>>>> " + config.cardanoWSAddress);
-var cardanoAddress = "ws://a524c91b.ngrok.io";
+var cardanoAddress = "ws://aeeded7e.ngrok.io";
 var ws = new WebSocket(cardanoAddress);
 ws.on('open', function open(){
     console.log("connection established...");
