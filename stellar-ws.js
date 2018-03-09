@@ -1,15 +1,21 @@
+const dotenv = require('dotenv');
+const dotenvParseVariables = require('dotenv-parse-variables');
+
+let env = dotenv.config({})
+if (env.error) throw env.error;
+env = dotenvParseVariables(env.parsed);
+
 const WebSocket = require('ws');
 const chalk = require('chalk');
-const wss = new WebSocket.Server({ port: 8081 });
+const wss = new WebSocket.Server({ port: process.env.STELLAR_WS_PORT });
 var StellarSdk = require('stellar-sdk');
-const StellarSDK_Server = process.env.STELLAR_SERVER || 'https://horizon-testnet.stellar.org';
+const StellarSDK_Server = process.env.STELLAR_SERVER;
 const server = new StellarSdk.Server(StellarSDK_Server);
 StellarSdk.Config.setDefault();
 StellarSdk.Network.useTestNetwork();
 const currencyType = StellarSdk.Asset.native()
 
 const fail = (message) => {
-    console.log("<><><>" + message);
     console.log(typeof message.name);
     console.log(message.name);
     if(message.name != 'Error'){

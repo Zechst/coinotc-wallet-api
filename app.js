@@ -1,4 +1,11 @@
-require('dotenv').config();
+const dotenv = require('dotenv');
+const dotenvParseVariables = require('dotenv-parse-variables');
+
+let env = dotenv.config({})
+if (env.error) throw env.error;
+env = dotenvParseVariables(env.parsed);
+
+console.log(env);
 
 var http = require('http'),
     path = require('path'),
@@ -9,8 +16,7 @@ var http = require('http'),
     cors = require('cors'),
     passport = require('passport'),
     errorhandler = require('errorhandler'),
-    mongoose = require('mongoose'),
-    config = require('./config');
+    mongoose = require('mongoose')
 
 var isProduction = process.env.NODE_ENV === 'production';
 
@@ -27,15 +33,15 @@ app.use(bodyParser.json());
 app.use(require('method-override')());
 app.use(express.static(__dirname + '/public'));
 
-app.use(session({ secret: config.secret, cookie: { maxAge: 60000 }, resave: false, saveUninitialized: false  }));
+app.use(session({ secret: process.env.SECRET, cookie: { maxAge: 60000 }, resave: false, saveUninitialized: false  }));
 
 if (!isProduction) {
   app.use(errorhandler());
 }
 
-console.log("mongodb url > "+ config.mongodb_url);
+console.log("mongodb url > "+ process.env.MONGODB_URI);
 mongoose.connect("mongodb://localhost/walletapi");
-mongoose.set('debug', true);
+mongoose.set('debug', process.env.MONGODB_DEBUG);
 
 require('./models/wallet-api');
 require('./models/transactions');
@@ -78,6 +84,6 @@ app.use(function(err, req, res, next) {
 });
 
 // finally, let's start our server...
-var server = app.listen( config.api_port, function(){
+var server = app.listen( process.env.PORT, function(){
   console.log(' Listening on port ' + server.address().port);
 });

@@ -1,6 +1,6 @@
-module.exports = class Util {
+module.exports = function (){
 
-    makeid() {
+    this.makeid = function() {
         var text = "";
         var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         
@@ -10,7 +10,7 @@ module.exports = class Util {
         return text;
     }
 
-    toHexBase16(s) {
+    this.toHexBase16 = function(s) {
         // utf8 to latin1
         var s = unescape(encodeURIComponent(s))
         var h = ''

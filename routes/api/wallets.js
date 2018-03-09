@@ -17,12 +17,21 @@ var moneroWallet = new MoneroWallet('localhost', 7878);
 var rippleWallet = new RippleWallet();
 var stellarWallet = new StellarWallet();
 
+const utils = new Util();
+
 router.get('/:email', function(req, res, next) {
-    var email  = req.params.email;
-    console.log(email);
+    var emailAddy  = req.params.email;
+    console.log(emailAddy);
+    // Wallet.findOne({ 'email': emailAddy },function (err, wallet) {
+    //     wallet.cardano.
+    //     var cryptoWallet = {
+
+    //     }
+    // });
+    adaWallet.allwallets();
 });
 
-router.get('/balance/:walletid', function(req, res, next) {
+router.get('/balance/:walletid/:type', function(req, res, next) {
     var walletId  = req.params.walletid;
     console.log(walletId);
 });
@@ -61,13 +70,12 @@ router.get('/generate/:email/:password', function(req, res, next) {
                             });
                         });
                     });
-                    /*
-                    
-                    firstWallet = Util.makeid();
+                    console.log(Util);
+                    var firstWallet = utils.makeid();
                     // potential we need to pass in chinese or english for the wallet language.
                     moneroWallet.createWallet(firstWallet, walletGlobalPassword, 'English', emailAddy).then(function(result){
                         console.log(result);
-                    });*/
+                    });
                     
                     rippleWallet.generate(emailAddy);
                     stellarWallet.generate(emailAddy);
@@ -78,7 +86,7 @@ router.get('/generate/:email/:password', function(req, res, next) {
         }else{
             return res.json(wallet);
         }
-    })
+    });
 });
 
 

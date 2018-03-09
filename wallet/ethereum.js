@@ -4,16 +4,15 @@ var ethers = require('ethers');
 var providers = require('ethers').providers;
 var bip39 = require('bip39');
 var Wallet = require('./wallet');
-var config = require('../config');
+
 var network = providers.networks.rinkeby;
-console.log(">>>>>>" + config.ether_geth_rpc);
-var provider = new providers.JsonRpcProvider('http://localhost:8545', network);
+var provider = new providers.JsonRpcProvider(process.env.ETH_RPC, network);
 
 class EthereumWallet extends Wallet{
     
     constructor(gethAddress){
-        var ethAddress = config.ether_geth_hostname;
-        var ethAddressPort = config.ether_geth_port;
+        var ethAddress = process.env.GETH_ADDRESS;
+        var ethAddressPort = process.env.GETH_PORT;
         console.log(ethAddress);
         console.log(ethAddressPort);
         super(ethAddress, parseInt(ethAddressPort));

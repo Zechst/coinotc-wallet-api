@@ -3,7 +3,11 @@ var Wallet = new MoneroWallet('localhost', 7878);
 const Util = require('./util');
 
 /*
+    chaindata directory is where the entire blockchain ledgers are.
+    
     ./monero-wallet-rpc --log-level 0 --testnet --disable-rpc-login --wallet-dir ./chaindata/ --rpc-bind-ip 127.0.0.1 --rpc-bind-port 7878 --daemon-address 127.0.0.1:28081 --trusted-daemon
+
+    ./monerod --tesnet --data-dir ./chaindata/
 */
 var firstWallet = "";
 var secondWallet = "";

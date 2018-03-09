@@ -12,7 +12,7 @@ const Util = require('./util');
 
 const app = express();
 var b64c = config.cardanoHexRand;
-
+var utils = new Util();
 var options = {
     hostname: config.cardanoWSAddress,
     port: config.cardanoWSPort,
@@ -102,7 +102,7 @@ wss.on('connection', function connection(ws, req) {
         }
         options.method = 'POST';
 
-        var encodedPassphrase = Util.toHexBase16(txnMessage.passphrase);
+        var encodedPassphrase = utils.toHexBase16(txnMessage.passphrase);
 
         options.path = '/api/wallets/new?passphrase=' + encodedPassphrase;
         console.log(options.path);
@@ -125,7 +125,7 @@ wss.on('connection', function connection(ws, req) {
           var fromAddress = txnMessage.fromAddress;
           var toAddress = txnMessage.toAddress;
           var amount = txnMessage.amount;
-          var encodedPassphrase = Util.toHexBase16(txnMessage.passphrase);
+          var encodedPassphrase = utils.toHexBase16(txnMessage.passphrase);
           options.path = '/api/txs/payments/'+ fromAddress +'/' + toAddress + '/' + amount
               + '?passphrase=' + encodedPassphrase;
           console.log(options.path);

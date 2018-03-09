@@ -1,11 +1,10 @@
 'use strict'
 var mongoose = require('mongoose');
-const config = require('../config');
 const WebSocket = require('ws');
 var Wallet = require('./wallet');
 var WalletDB = mongoose.model('Wallet');
-console.log(">>>>> " + config.cardanoWSAddress);
-var cardanoAddress = "ws://aeeded7e.ngrok.io";
+
+var cardanoAddress = String(process.env.CARDANO_WS_ADDRESS);
 var ws = new WebSocket(cardanoAddress);
 ws.on('open', function open(){
     console.log("connection established...");
@@ -109,15 +108,17 @@ function handleIncomingData(data){
     console.log("<<<<< Back from engines >>>>> " + data);
     var returnData = JSON.parse(data);
     console.log("<<<<< Back from engines >>>>> " + returnData.email);
-    WalletDB.findOne({ 'email': returnData.email },function (err, wallet) {
-        console.log(wallet);
-        wallet.cardano = returnData;
-
-        wallet.save(function (err, updatedWallet) {
-            if (err) return handleError(err);
-            console.log(updatedWallet);
+    if(returnData.txnMessage.type === 'new'){
+        WalletDB.findOne({ 'email': returnData.txnMessage.email },function (err, wallet) {
+            console.log(wallet);
+            wallet.cardano = returnData;
+    
+            wallet.save(function (err, updatedWallet) {
+                if (err) return handleError(err);
+                console.log(updatedWallet);
+            });
         });
-    });
+    }
 }
 
 module.exports = CardanoWallet;

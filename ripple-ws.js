@@ -1,6 +1,13 @@
+const dotenv = require('dotenv');
+const dotenvParseVariables = require('dotenv-parse-variables');
+
+let env = dotenv.config({})
+if (env.error) throw env.error;
+env = dotenvParseVariables(env.parsed);
+
 const RippleAPI = require('ripple-lib').RippleAPI;
 const WebSocket = require('ws');
-const wss = new WebSocket.Server({ port: 8080 });
+const wss = new WebSocket.Server({ port: process.env.RIPPLE_WS_SVR_PORT });
 
 const _get = require('lodash.get')
 const currency = 'XRP'
@@ -15,7 +22,7 @@ wss.on('connection', function connection(ws) {
     let incomingObj = JSON.parse(message);
     //console.log(api);
     const api = new RippleAPI({
-      server: 'wss://s.altnet.rippletest.net:51233' // Public rippled server hosted by Ripple, Inc.
+      server: process.env.RIPPLE_API // Public rippled server hosted by Ripple, Inc.
     });
 
     api.on('error', (errorCode, errorMessage) => {
@@ -42,6 +49,7 @@ wss.on('connection', function connection(ws) {
           account: account,
           email: incomingObj.email
         }
+        console.log(JSON.stringify(generateAddressJson));
         ws.send(JSON.stringify(generateAddressJson));
         api.disconnect();
       }

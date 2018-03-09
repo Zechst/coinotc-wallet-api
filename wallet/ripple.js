@@ -1,13 +1,12 @@
 'use strict'
 const chalk = require('chalk')
 const RippleAPI = require('ripple-lib').RippleAPI
-var config = require('../config');
 var Wallet = require('./wallet');
 var mongoose = require('mongoose');
 var WalletDB = mongoose.model('Wallet');
 
 const api = new RippleAPI({
-    server: 'wss://s1.ripple.com'
+    server: process.env.RIPPLE_API
 })
 
 // wallet class to be extended with prototype method.
@@ -19,7 +18,7 @@ class RippleWallet extends Wallet{
 
 const WebSocket = require('ws');
 
-const ws = new WebSocket('ws://localhost:8080');
+const ws = new WebSocket(process.env.RIPPLE_WS_CLIENT);
 
 ws.on('open', function open() {
     ws.on('message', function incoming(data) {
