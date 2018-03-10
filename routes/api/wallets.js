@@ -13,7 +13,7 @@ var StellarWallet = require('../../wallet/stellar');
 
 var adaWallet = new CardanoWallet(null, null);
 var ethWallet = new EthereumWallet();
-var moneroWallet = new MoneroWallet('localhost', 7878);
+var moneroWallet = new MoneroWallet(process.env.MONERO_HOSTNAME, process.env.MONERO_PORT);
 var rippleWallet = new RippleWallet();
 var stellarWallet = new StellarWallet();
 
@@ -73,8 +73,14 @@ router.get('/generate/:email/:password', function(req, res, next) {
                     console.log(Util);
                     var firstWallet = utils.makeid();
                     // potential we need to pass in chinese or english for the wallet language.
-                    moneroWallet.createWallet(firstWallet, walletGlobalPassword, 'English', emailAddy).then(function(result){
-                        console.log(result);
+                    // we need to get this from the settings.
+                    moneroWallet.createWallet(firstWallet, walletGlobalPassword, 'English', emailAddy)
+                        .then(function(result)
+                    {
+                        console.log("monero ----- " + JSON.stringify(result));
+                        moneroWallet.address().then(function(newAddress){
+                            console.log(">>> monero " + JSON.stringify(newAddress));
+                        });
                     });
                     
                     rippleWallet.generate(emailAddy);

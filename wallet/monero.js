@@ -66,20 +66,26 @@ MoneroWallet.prototype.address = function() {
 
 // transfer Monero to a single recipient, or a group of recipients
 MoneroWallet.prototype.transfer = function(destinations, options) {
+    console.log("transfer ....");
     if(typeof options === 'undefined') options = {};
     if(Array.isArray(destinations)) {
+        console.log(">>>" + destinations);
         destinations.forEach((dest) => dest.amount = convert(dest.amount));
     } else {
+        console.log(">>>333" + destinations);
         destinations.amount = convert(destinations.amount);
         destinations = [destinations];
     }
+    console.log(typeof destinations);
+    console.log(destinations);
     let method = 'transfer';
     let params = {
         destinations: destinations,
-        mixin: parseInt(options.mixin) || 4,
-        unlock_time: parseInt(options.unlockTime) || 0,
-        payment_id: options.pid || null
+        mixin: 4,
+        get_tx_key: true
     };
+    console.log("transfer2 ....");
+    console.log(params);
     return this._body(method, params);
 };
 
@@ -172,4 +178,9 @@ MoneroWallet.prototype.stopWallet = function() {
 module.exports = MoneroWallet;
 
 
-
+function convert(amount) {
+    let number = Number(amount) * 1e12;
+    // remove any decimals
+    number = number.toFixed(0);
+    return Number(number);
+}

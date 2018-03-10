@@ -1,34 +1,35 @@
 var MoneroWallet = require('../wallet/monero');
 var Wallet = new MoneroWallet('localhost', 7878);
-const Util = require('./util');
-
+const Util = require('../util');
+const utils = new Util();
 /*
     chaindata directory is where the entire blockchain ledgers are.
     
     ./monero-wallet-rpc --log-level 0 --testnet --disable-rpc-login --wallet-dir ./chaindata/ --rpc-bind-ip 127.0.0.1 --rpc-bind-port 7878 --daemon-address 127.0.0.1:28081 --trusted-daemon
 
-    ./monerod --tesnet --data-dir ./chaindata/
+    ./monerod --testnet --data-dir ./chaindata/ --testnet-rpc-bind-port 28081 --log-level 4
 */
 var firstWallet = "";
 var secondWallet = "";
 
 test('create wallet', () => {
-    firstWallet = Util.makeid();
+    firstWallet = utils.makeid();
+    console.log("firstWallet>>> " + firstWallet);
     Wallet.createWallet(firstWallet, 'mytestpassword', 'English').then(function(result){
-        console.log(result);
+        console.log("firstWallet >> address >> " + JSON.stringify(result));
+        console.log(Wallet.address());
     });
-    console.log(Wallet.address());
 });
 
 
 test('open wallet', () => {
     Wallet.openWallet(firstWallet, 'mytestpassword').then(result => {
-        console.log(result);
+        console.log("open wallet -> " + JSON.stringify(result));
     });
 });
 
 test('create second wallet', () => {
-    secondWallet = makeid();
+    secondWallet = utils.makeid();
     Wallet.createWallet(secondWallet, 'mytestpassword', 'English').then(function(result){
         console.log(result);
     });
@@ -80,3 +81,40 @@ test('Get balance', () => {
         });
     });
 });
+
+
+//12182434718387696
+//80000000000
+//7000000000000
+//12182.437718387695
+test('Transfer fund ', () => {
+    Wallet.openWallet('wallet', '').then(function(result) {
+        Wallet.balance().then(availBalance=>{
+            console.log(availBalance);
+            var destination = {
+                address: 'A1ZfaxTk4Jmg9o81kgfFYMEUkq7Sm9AJajSU2m7P9a3LPZs9g474A6y2UPoCroidB4PHe8g5UonTZBqVfN1nQh3U7V3uUcn',
+                amount: 100000000
+            }
+            var arrDest = [];
+            arrDest.push(destination);
+            Wallet.transfer(arrDest).then(function(xferResult){
+                console.log("transfer3 ....");
+                console.log(xferResult);
+            }).catch((error)=>{
+                console.log("xfer error "+ error);
+            });
+        });
+    });
+});
+
+//Kdibp s90O5
+// A1ZfaxTk4Jmg9o81kgfFYMEUkq7Sm9AJajSU2m7P9a3LPZs9g474A6y2UPoCroidB4PHe8g5UonTZBqVfN1nQh3U7V3uUcn
+/*
+test('Get balance 2', () => {
+    Wallet.openWallet('s90O5', 'mytestpassword').then(function(result) {
+        Wallet.balance().then(availBalance=>{
+            console.log(availBalance);
+            Wallet.stopWallet();
+        });
+    });
+});*/
