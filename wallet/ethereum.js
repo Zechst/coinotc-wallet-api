@@ -4,7 +4,7 @@ var ethers = require('ethers');
 var providers = require('ethers').providers;
 var bip39 = require('bip39');
 var Wallet = require('./wallet');
-
+const logger = require('../util/logger');
 var network = providers.networks.rinkeby;
 var provider = new providers.JsonRpcProvider(process.env.ETH_RPC, network);
 
@@ -13,52 +13,52 @@ class EthereumWallet extends Wallet{
     constructor(gethAddress){
         var ethAddress = process.env.GETH_ADDRESS;
         var ethAddressPort = process.env.GETH_PORT;
-        console.log(ethAddress);
-        console.log(ethAddressPort);
+        //logger.debug(ethAddress);
+        //logger.debug(ethAddressPort);
         super(ethAddress, parseInt(ethAddressPort));
     }
 }
 
 function callback(percent) {
     if(percent == 0.1 || percent == 0.5 || percent == 1 ){
-        console.log("Encrypting: " + parseInt(percent * 100) + "% complete");
+        logger.info("Encrypting: " + parseInt(percent * 100) + "% complete");
     }
 }
 
 EthereumWallet.prototype.createWallet = (passphrase, emailAddress)=> {
-    console.log("....");
+    //logger.debug("....");
     var mnemonic = bip39.generateMnemonic();
     var wallet = ethers.Wallet.fromMnemonic(mnemonic);
     wallet.provider = provider;
     
-    console.log("Address: " + wallet.address);
+    //logger.debug("Address: " + wallet.address);
     let generatedEthAcc = {
         privateKey: wallet.privateKey,
         mnemonic: mnemonic,
         address: wallet.address
     }
-    console.log(generatedEthAcc);
+    //logger.debug(generatedEthAcc);
     let requestPromise = new Promise((resolve, reject) => {
         if(!(typeof(wallet.address) === 'undefined')){
             var encryptPromise = wallet.encrypt(passphrase, callback);
             
             encryptPromise.then(function(json) {
-                console.log(json);
+                //logger.debug(json);
                 resolve(generatedEthAcc);
             });
         }
-    }).catch(error => { console.log('caught', err.message); });
+    }).catch(error => { logger.error('caught', err.message); });
     return requestPromise;
 }
 
 EthereumWallet.prototype.balance = (privateKey)=> {
-    console.log("...check balance" + privateKey);
+    //logger.debug("...check balance" + privateKey);
     var wallet = new ethers.Wallet(privateKey);
     wallet.provider = provider;
     
-    console.log("...wallet >" + JSON.stringify(wallet));
-    console.log("...check provider" + JSON.stringify(wallet.provider));
-    console.log("...check address" + JSON.stringify(wallet.getAddress()));
+    //logger.debug("...wallet >" + JSON.stringify(wallet));
+    //logger.debug("...check provider" + JSON.stringify(wallet.provider));
+    //logger.debug("...check address" + JSON.stringify(wallet.getAddress()));
 
     return wallet.getBalance('latest');
 }

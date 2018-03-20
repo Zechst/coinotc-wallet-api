@@ -4,8 +4,8 @@ const dotenvParseVariables = require('dotenv-parse-variables');
 let env = dotenv.config({})
 if (env.error) throw env.error;
 env = dotenvParseVariables(env.parsed);
-
-console.log(env);
+var logger = require('./util/logger');  
+//logger.debug(env);
 
 var http = require('http'),
     path = require('path'),
@@ -39,7 +39,7 @@ if (!isProduction) {
   app.use(errorhandler());
 }
 
-console.log("mongodb url > "+ process.env.MONGODB_URI);
+logger.debug("mongodb url > "+ process.env.MONGODB_URI);
 mongoose.connect("mongodb://localhost/walletapi");
 mongoose.set('debug', process.env.MONGODB_DEBUG);
 
@@ -62,7 +62,7 @@ app.use(function(req, res, next) {
 // will print stacktrace
 if (!isProduction) {
   app.use(function(err, req, res, next) {
-    console.log(err.stack);
+    //logger.debug(err.stack);
 
     res.status(err.status || 500);
 
@@ -85,5 +85,5 @@ app.use(function(err, req, res, next) {
 
 // finally, let's start our server...
 var server = app.listen( process.env.PORT, function(){
-  console.log(' Listening on port ' + server.address().port);
+  logger.info(' Listening on port ' + server.address().port);
 });

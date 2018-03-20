@@ -1,5 +1,6 @@
 var StellarWallet = require('../wallet/stellar');
-console.log("ripple wallet" + StellarWallet);
+const logger = require('./util/logger');
+logger.debug("ripple wallet" + StellarWallet);
 var Wallet = new StellarWallet();
 /*
 Stellar

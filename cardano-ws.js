@@ -9,6 +9,7 @@ const util = require('util');
 const bs58 = require('bs58');
 const config = require('./config');
 const Util = require('./util');
+const logger = require('./util/logger');
 
 const app = express();
 var b64c = config.cardanoHexRand;
@@ -30,66 +31,66 @@ const wss = new WebSocket.Server({ server });
 
 wss.on('connection', function connection(ws, req) {
   ws.on('error', function(error) {
-      console.log('errored' + error);
-      if (error.errno) return;
-      throw error;
+    logger.error('errored' + error);
+    if (error.errno) return;
+    throw error;
   });
 
   ws.on('close', function(){
-      console.log("client closed connection!");
+    logger.info("client closed connection!");
   });
 
   ws.on('message', function incoming(message) {
-    console.log('received: %s', message);
+    logger.debug('received: %s', message);
     var txnMessage = JSON.parse(message);
 
       if(txnMessage.type === 'accounts'){
-          console.log("accounts ...");
+          logger.debug("accounts ...");
           options.method = 'GET';
           options.path = '/api/accounts';
-          console.log("accounts ...");
+          logger.debug("accounts ...");
           var accountsReq = https.request(options, function(res) {
-              console.log("res"  + res);
+              logger.debug("res"  + res);
               res.on('data', function(data) {
                   process.stdout.write(data);
-                  console.log('\n');
+                  logger.debug('\n');
                   var result = JSON.parse(data);
               });
           });
           accountsReq.end();
       } else if(txnMessage.type === 'wallets'){
-        console.log("wallets ...");
+        logger.debug("wallets ...");
         options.method = 'GET';
         options.path = '/api/wallets';
-        console.log("wallets ...");
+        logger.debug("wallets ...");
         var walletsReq = https.request(options, function(res) {
-            console.log("res"  + res);
+            logger.debug("res"  + res);
             res.on('data', function(data) {
                 process.stdout.write(data);
-                console.log('\n');
+                logger.debug('\n');
                 var result = JSON.parse(data);
             });
         });
         walletsReq.end();
     } else if(txnMessage.type === 'balance'){
-      console.log("balance ...");
+      logger.debug("balance ...");
       options.method = 'GET';
       options.path = '/api/wallets/' + txnMessage.walletId;
-      console.log("before ...");
+      logger.debug("before ...");
       var balreq = https.request(options, function(res) {
-          console.log("res"  + res);
+          logger.debug("res"  + res);
           res.on('data', function(data) {
               process.stdout.write(data);
-              console.log('\n');
+              logger.debug('\n');
               var result = JSON.parse(data);
-              console.log(result.Right.cwAmount.getCCoin);
+              logger.debug(result.Right.cwAmount.getCCoin);
           });
       });
       balreq.end();
     } else if( txnMessage.type === 'new') {
         var mnemonic = bip39.generateMnemonic();
         var bpListArr = mnemonic.split(' ');
-        console.log(bpListArr);
+        logger.debug(bpListArr);
         var postData = {
             "cwInitMeta": {
                 "cwName": "test1",
@@ -105,8 +106,8 @@ wss.on('connection', function connection(ws, req) {
         var encodedPassphrase = utils.toHexBase16(txnMessage.passphrase);
 
         options.path = '/api/wallets/new?passphrase=' + encodedPassphrase;
-        console.log(options.path);
-        console.log(JSON.stringify(postData).length);
+        logger.debug(options.path);
+        logger.debug(JSON.stringify(postData).length);
         options.headers = {
             'Content-Type': 'application/json',
             'Content-Length': JSON.stringify(postData).length
@@ -117,7 +118,7 @@ wss.on('connection', function connection(ws, req) {
         submitRequest(options, postData, ws, txnMessage.email);
 
     } else if( txnMessage.type === 'transfer') {
-        console.log('transfer --- ');
+        logger.debug('transfer --- ');
           var postData = {"groupingPolicy": "OptimizeForSecurity"};
 
           options.method = 'POST';
@@ -128,8 +129,8 @@ wss.on('connection', function connection(ws, req) {
           var encodedPassphrase = utils.toHexBase16(txnMessage.passphrase);
           options.path = '/api/txs/payments/'+ fromAddress +'/' + toAddress + '/' + amount
               + '?passphrase=' + encodedPassphrase;
-          console.log(options.path);
-          console.log(JSON.stringify(postData).length);
+          logger.debug(options.path);
+          logger.debug(JSON.stringify(postData).length);
           options.headers = {
               'Content-Type': 'application/json',
               'Content-Length': JSON.stringify(postData).length
@@ -139,7 +140,7 @@ wss.on('connection', function connection(ws, req) {
           submitRequest(options, postData, ws, txnMessage.email);
 
      } else if (txnMessage.type === 'fee'){
-        console.log('fee --- ');
+        logger.debug('fee --- ');
         var postData = {"groupingPolicy": "OptimizeForSecurity"};
 
         options.method = 'POST';
@@ -149,8 +150,8 @@ wss.on('connection', function connection(ws, req) {
         var amount = txnMessage.amount;
 
         options.path = '/api/txs/fee/'+ fromAddress +'/' + toAddress + '/' + amount;
-        console.log(options.path);
-        console.log(JSON.stringify(postData).length);
+        logger.debug(options.path);
+        logger.debug(JSON.stringify(postData).length);
         options.headers = {
             'Content-Type': 'application/json',
             'Content-Length': JSON.stringify(postData).length
@@ -165,18 +166,18 @@ wss.on('connection', function connection(ws, req) {
 });
 
 server.listen(8080, function listening() {
-  console.log('Cardano Engine Listening on %d', server.address().port);
+  logger.debug('Cardano Engine Listening on %d', server.address().port);
 });
 
 function submitRequest(options, postData, _ws, emailAddress){
     var newAccReq = https.request(options, function (res) {
         res.on('data', function(data) {
             process.stdout.write("???>>>" + data);
-            console.log("sending back to the client ...");
+            logger.debug("sending back to the client ...");
             var _result = JSON.parse(data);
             postData.result = _result;
             postData.email = emailAddress;
-            console.log(JSON.stringify(postData));
+            logger.debug(JSON.stringify(postData));
             _ws.send(JSON.stringify(postData));
         });
     });

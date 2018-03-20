@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var router = require('express').Router();
+const logger = require('../../util/logger');
 var Transactions = mongoose.model('Transactions');
 //var auth = require('../auth');
 

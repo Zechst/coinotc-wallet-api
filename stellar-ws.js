@@ -1,5 +1,6 @@
 const dotenv = require('dotenv');
 const dotenvParseVariables = require('dotenv-parse-variables');
+const logger = require('./util/logger');
 
 let env = dotenv.config({})
 if (env.error) throw env.error;
@@ -16,27 +17,27 @@ StellarSdk.Network.useTestNetwork();
 const currencyType = StellarSdk.Asset.native()
 
 const fail = (message) => {
-    console.log(typeof message.name);
-    console.log(message.name);
+    logger.debug(typeof message.name);
+    logger.debug(message.name);
     if(message.name != 'Error'){
-      console.log(JSON.stringify(message.data.extras.result_codes));
+      logger.debug(JSON.stringify(message.data.extras.result_codes));
     }
     console.error(chalk.red(message.name), '\n')
 }
 
 wss.on('connection', function connection(ws) {
   ws.on('message', function incoming(message) {
-    console.log('received: %s', message);
+    logger.debug('received: %s', message);
     let incomingObj = JSON.parse(message);
     
     if(incomingObj.type == 'generateAddress'){
 
       const account = StellarSdk.Keypair.random();
-      console.log('  Public address:', chalk.yellow(account.publicKey()))
-      console.log('  Wallet secret:', chalk.yellow(account.secret()), '\n')
+      logger.debug('  Public address:', chalk.yellow(account.publicKey()))
+      logger.debug('  Wallet secret:', chalk.yellow(account.secret()), '\n')
 
-      console.log(chalk.red('  Print this wallet and make sure to store it somewhere safe!'), '\n')
-      console.log('  Note: You need to put at least 20XLM on this key for it to be an active account', '\n')
+      logger.debug(chalk.red('  Print this wallet and make sure to store it somewhere safe!'), '\n')
+      logger.debug('  Note: You need to put at least 20XLM on this key for it to be an active account', '\n')
       let stellarGeneratedWallet = {
           type: 'generateAddress',
           public_address: account.publicKey(), 
@@ -47,13 +48,13 @@ wss.on('connection', function connection(ws) {
     }
 
     if(incomingObj.type == 'balance'){
-        console.log(incomingObj.walletAddress);
+        logger.debug(incomingObj.walletAddress);
         server.loadAccount(incomingObj.walletAddress).then(function(account){
           account.balances.forEach((balance) => {
-            console.log(balance);
+            logger.debug(balance);
             if (balance.balance > 0) {
-              console.log('  ' + chalk.green(incomingObj.walletAddress));
-              console.log('  ' + chalk.green(balance.balance, balance.asset_code || 'XLM'));
+              logger.debug('  ' + chalk.green(incomingObj.walletAddress));
+              logger.debug('  ' + chalk.green(balance.balance, balance.asset_code || 'XLM'));
               var returnBalance = {
                 currency: balance.asset_code,
                 value: balance.balance,
@@ -79,12 +80,12 @@ wss.on('connection', function connection(ws) {
             transaction.sign(sourceKeypair);
             server.submitTransaction(transaction)
                 .then((transactionResult) => {
-                console.log('\nSuccess! View the transaction at: ')
-                console.log(chalk.yellow(transactionResult._links.transaction.href), "\n")
+                logger.debug('\nSuccess! View the transaction at: ')
+                logger.debug(chalk.yellow(transactionResult._links.transaction.href), "\n")
                 ws.send(JSON.stringify(transactionResult));
             })
             .catch((message)=>{
-              console.log(message);
+              logger.debug(message);
             });
 
       }).catch(fail);

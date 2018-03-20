@@ -3,7 +3,7 @@ var request = require('request');
 var bitcore = require('bitcore-lib');
 var explorers = require('bitcore-explorers');
 var bitcoinaddress = require('bitcoin-address');
-
+const logger = require('../util/logger');
 
 class BitcoinWallet extends Wallet{
     constructor(address, port){
@@ -29,7 +29,7 @@ BitcoinWallet.prototype.createTransaction = (passphrase, emailAddress)=> {
         insight.getUnspentUtxos(transaction.fromaddress, function(error, utxos) {
             if (error) {
             //any other error
-            console.log(error);
+            logger.debug(error);
             return reject(error);
             } else {
             if (utxos.length == 0) {
@@ -42,9 +42,9 @@ BitcoinWallet.prototype.createTransaction = (passphrase, emailAddress)=> {
                 balance += unit.fromSatoshis(parseInt(utxos[i]['satoshis'])).toSatoshis();
             }
 
-            console.log('transactionAmount: ' + transactionAmount);
-            console.log('minerFee: ' + minerFee);
-            console.log('balance: ' + balance);
+            logger.debug('transactionAmount: ' + transactionAmount);
+            logger.debug('minerFee: ' + minerFee);
+            logger.debug('balance: ' + balance);
 
             //check whether the balance of the address covers the miner fee
             if ((balance - transactionAmount - minerFee) > 0) {

@@ -4,6 +4,7 @@ var http = require('http');
 const chalk = require('chalk');
 var Wallet = require('./wallet');
 var mongoose = require('mongoose');
+const logger = require('../util/logger');
 var WalletDB = mongoose.model('Wallet');
 
 const WebSocket = require('ws');
@@ -11,20 +12,20 @@ const WebSocket = require('ws');
 const ws = new WebSocket('ws://localhost:8081');
 
 ws.on('open', function open() {
-    console.log("connected ...");
+    //logger.debug("connected ...");
     ws.on('message', function incoming(data) {
-        console.log("--- Stellar ------");
-        console.log(data);
+        //logger.debug("--- Stellar ------");
+        //logger.debug(data);
         var incData = JSON.parse(data);
-        console.log(incData);
+        //logger.debug(incData);
         if(incData.type === 'generateAddress'){
             WalletDB.findOne({ 'email': incData.email },function (err, wallet) {
-                console.log("found ! " + wallet);
+                //logger.debug("found ! " + wallet);
                 wallet.stellar = incData;
     
                 wallet.save(function (err, updatedWallet) {
                     if (err) return handleError(err);
-                    console.log(updatedWallet);
+                    //logger.debug(updatedWallet);
                 });
             });
         }
@@ -39,7 +40,7 @@ class StellarWallet extends Wallet{
 }
 
 StellarWallet.prototype.balance = function(walletAddress){
-    console.log(walletAddress);
+    logger.debug(walletAddress);
     let messageIn = {
         type: 'balance',
         walletAddress: walletAddress
@@ -74,5 +75,9 @@ StellarWallet.prototype.transfer = function(sourceAddress, sourceSecret,
     ws.send(JSON.stringify(messageIn));
 }
 
+const handleError = (message) => {
+    logger.error(message);
+    logger.error(chalk.red(message.name), '\n')
+}
 
 module.exports = StellarWallet;

@@ -1,5 +1,5 @@
 var router = require('express').Router();
-
+const logger = require('../../util/logger');
 router.use('/', require('./wallet-api'));
 router.use('/wallets', require('./wallets'));
 router.use('/transactions', require('./transactions'));

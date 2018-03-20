@@ -1,13 +1,15 @@
 'use strict'
 var mongoose = require('mongoose');
 const WebSocket = require('ws');
+const chalk = require('chalk');
 var Wallet = require('./wallet');
 var WalletDB = mongoose.model('Wallet');
+const logger = require('../util/logger');
 
 var cardanoAddress = String(process.env.CARDANO_WS_ADDRESS);
 var ws = new WebSocket(cardanoAddress);
 ws.on('open', function open(){
-    console.log("connection established...");
+    logger.debug("ADA WS Client ... connection established...");
     ws.on('message', function incoming(data){
         handleIncomingData(data);
     });
@@ -20,13 +22,13 @@ class CardanoWallet extends Wallet{
 }
 
 CardanoWallet.prototype.createWallet = (passphrase, emailAddress)=> {
-    console.log("inside>>>"  +ws);
+    //logger.debug("inside>>>"  +ws);
     var txn_message_new = {
         type: 'new',
         email: emailAddress,
         passphrase: passphrase
     };
-    console.log("before inside>2>>");
+    //logger.debug("before inside>2>>");
     sendTxn(txn_message_new);
 };
 
@@ -80,15 +82,15 @@ CardanoWallet.prototype.allaccounts = ()=> {
 
 
 function sendTxn(obj){
-    console.log(">>>>3" + obj);
-    console.log(ws.readyState === WebSocket.CLOSED);
+    //logger.debug(">>>>3" + obj);
+    //logger.debug(ws.readyState === WebSocket.CLOSED);
     if(ws.readyState === WebSocket.CLOSED){
-        console.log("why not reconnect?");
+        //logger.debug("why not reconnect?");
         ws = new WebSocket(cardanoAddress);
         ws.on('open', function open(){
-            console.log("reconnect possible...");
+            //logger.debug("reconnect possible...");
             ws.send(JSON.stringify(obj),function ack(error) {
-                console.log(error);
+                logger.debug(error);
             });
 
             ws.on('message', function incoming(data){
@@ -99,26 +101,32 @@ function sendTxn(obj){
 
     if(ws.readyState === WebSocket.OPEN){
         ws.send(JSON.stringify(obj),function ack(error) {
-            console.log(error);
+            logger.debug(error);
         });
     }
 }
 
 function handleIncomingData(data){
-    console.log("<<<<< Back from engines >>>>> " + data);
+    //logger.debug("<<<<< Back from engines >>>>> " + data);
     var returnData = JSON.parse(data);
-    console.log("<<<<< Back from engines >>>>> " + returnData.email);
+    //logger.debug("<<<<< Back from engines >>>>> " + returnData.email);
     if(returnData.txnMessage.type === 'new'){
         WalletDB.findOne({ 'email': returnData.txnMessage.email },function (err, wallet) {
-            console.log(wallet);
+            //logger.debug(wallet);
             wallet.cardano = returnData;
     
             wallet.save(function (err, updatedWallet) {
                 if (err) return handleError(err);
-                console.log(updatedWallet);
+                //logger.debug(updatedWallet);
             });
         });
     }
 }
+
+const handleError = (message) => {
+    logger.error(message);
+    logger.error(chalk.red(message.name), '\n')
+}
+
 
 module.exports = CardanoWallet;

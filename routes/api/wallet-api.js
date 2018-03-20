@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var router = require('express').Router();
 var WalletApi = mongoose.model('WalletApi');
+const logger = require('../../util/logger');
 //var auth = require('../auth');
 
 /**

@@ -1,11 +1,12 @@
 var RippleWallet = require('../wallet/ripple');
-console.log("ripple wallet" + RippleWallet);
+const logger = require('./util/logger');
+logger.debug("ripple wallet" + RippleWallet);
 var Wallet = new RippleWallet();
-console.log("ripple wallet" + JSON.stringify(Wallet));
+logger.debug("ripple wallet" + JSON.stringify(Wallet));
 
 test('create wallet', () => {
     var generatedRippleWallet = Wallet.generate();
-    console.log(generatedRippleWallet);
+    logger.debug(generatedRippleWallet);
 });
 
 /*

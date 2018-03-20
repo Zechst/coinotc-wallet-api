@@ -4,9 +4,9 @@ function checkAllBalances() {
         var acct = eth.accounts[acctNum];
         var acctBal = web3.fromWei(eth.getBalance(acct), "ether");
         totalBal += parseFloat(acctBal);
-        console.log("  eth.accounts[" + acctNum + "]: \t" + acct + " \tbalance: " + acctBal + " ether");
+        logger.debug("  eth.accounts[" + acctNum + "]: \t" + acct + " \tbalance: " + acctBal + " ether");
     }
-    console.log("  Total balance: " + totalBal + " ether");
+    logger.debug("  Total balance: " + totalBal + " ether");
 };
 
  checkAllBalances();

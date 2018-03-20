@@ -1,5 +1,6 @@
 var CardanoWallet = require('../wallet/cardano');
-console.log("cardano wallet" + CardanoWallet);
+const logger = require('./util/logger');
+logger.debug("cardano wallet" + CardanoWallet);
 var Wallet = new CardanoWallet();
 
 test('create wallet', () => {

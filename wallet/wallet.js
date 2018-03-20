@@ -1,6 +1,11 @@
 'user strict'
 
-var http = require('http');
+const evtEmitter = require('../util/evtemitter');
+const http = require('http');
+const Promise = require("bluebird");
+const logger = require('../util/logger');
+
+var promises = [];
 
 class Wallet {
     constructor(hostname, port){
@@ -13,7 +18,9 @@ class Wallet {
 Wallet.prototype._request = function (body){
     // encode the request into JSON
     let requestJSON = JSON.stringify(body);
-
+    //logger.debug(requestJSON);
+    logger.debug(body.method);
+    logger.debug(body.params);
     // set basic headers
     let headers = {};
     headers['Content-Type'] = 'application/json';
@@ -35,21 +42,33 @@ Wallet.prototype._request = function (body){
             res.on('end', function() {
                 let body = JSON.parse(data);
                 if(body && body.result) {
-                    console.log(body.result);
+                    logger.debug("1" + JSON.stringify(body.result));
+                    logger.debug("11" + JSON.stringify(body));
                     resolve(body.result);
+                    evtEmitter.emit('walletEvt',{result: body.result});
                 } else if (body && body.error) {
-                    resolve(body.error);
+                    //logger.debug("2" + JSON.stringify(body.error));
+                    reject(body.error);
                 } else {
-                    resolve('Wallet response error. Please try again.');
+                    //logger.debug("3" + body.error);
+                    reject('Wallet response error. Please try again.');
                 }
             });
         });
-        req.on('error', (e) => resolve(e));
+        req.on('error', (e) => {
+            reject(e)
+        });
         req.write(requestJSON);
         req.end();
     });
-
-    return requestPromise;
+    promises.push(requestPromise);
+    //return requestPromise;
+    Promise.map(promises, function(requestPromise) {
+        // Promise.map awaits for returned promises as well.
+        return requestPromise;
+    }).then(function() {
+        logger.info("done");
+    });
 }
 
 
