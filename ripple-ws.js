@@ -55,18 +55,25 @@ wss.on('connection', function connection(ws) {
       }
 
       if(incomingObj.type == 'balance'){
-          logger.debug(incomingObj.walletAddress);
+          //logger.debug(incomingObj.walletAddress);
+          //logger.debug(incomingObj.email);
+          
           api.getBalances(incomingObj.walletAddress).then(balances => {
               balances.map((currency) => {
                 logger.debug('  ' + currency.value + ' ' + currency.currency)
                 var returnBalance = {
                   currency: currency.currency,
                   value: currency.value,
+                  type: 'balance',
+                  email: incomingObj.email
                 }
                 ws.send(JSON.stringify(returnBalance));
                 api.disconnect();
               })
-          }, fail)
+          }, fail).catch((error)=>{
+            console.log(">>> error >>> " + error);
+            ws.send(JSON.stringify(error));
+          })
       }
 
       if(incomingObj.type == 'transfer'){
@@ -102,7 +109,11 @@ wss.on('connection', function connection(ws) {
             logger.debug('Ok submitted ripple');
             ws.send(JSON.stringify(signedTransaction));
             api.disconnect();
-          }, fail)
+          }, fail).catch((error)=>{
+            console.log(error);
+            // send back the client of the websocket
+            ws.send(JSON.stringify(error));
+          })
 
         });
       }
@@ -112,4 +123,5 @@ wss.on('connection', function connection(ws) {
 
 const fail = (message) => {
   logger.debug(message);
+  throw new Error(message);
 }

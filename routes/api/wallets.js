@@ -7,6 +7,7 @@ var bluebird = require("bluebird");
 const Util = require('../../util');
 const evtEmitter = require('../../util/evtemitter');
 const logger = require('../../util/logger');
+var ethers = require('ethers');
 
 var CardanoWallet = require('../../wallet/cardano');
 var EthereumWallet = require('../../wallet/ethereum');
@@ -32,19 +33,70 @@ var moneroAccInfo = {
 
 router.get('/:email', function(req, res, next) {
     var emailAddy  = req.params.email;
-    //logger.debug(emailAddy);
-    // Wallet.findOne({ 'email': emailAddy },function (err, wallet) {
-    //     wallet.cardano.
-    //     var cryptoWallet = {
-
-    //     }
-    // });
-    adaWallet.allwallets();
+    logger.debug(emailAddy);
+    Wallet.findOne({ 'email': emailAddy },function (err, wallet) {
+        if(err) res.status(500).json(err);
+        return res.status(200).json(wallet);
+    });
 });
 
 router.get('/balance/:walletid/:type', function(req, res, next) {
     var walletId  = req.params.walletid;
-    //logger.debug(walletId);
+    var walletType  = req.params.type.toUpperCase();
+
+    logger.debug(walletId);
+    logger.debug(walletType);
+    
+    Wallet.findById(walletId, function(err, wallet){
+        if(err) res.status(500).json(err);
+        console.log(">>>" + wallet);
+        if('ETH' === walletType){
+            console.log(wallet.eth.privateKey);
+            ethWallet.balance(wallet.eth.privateKey).then(bal => {
+                logger.debug("-> balance -> result - > " + bal);
+                logger.debug("In ETH > " + ethers.utils.formatEther(bal, {}));
+                logger.debug("Typeof In ETH > " + typeof (ethers.utils.formatEther(bal, {})));
+                let ethNested = JSON.parse(JSON.stringify(wallet.eth));
+                ethNested.amount = ethers.utils.formatEther(bal, {});
+                wallet.eth = ethNested;
+                wallet.save (function (err, updatedWallet) {
+                    if (err) return handleError(err);
+                    return res.status(200).json(updatedWallet.eth);
+                });
+            }).catch(error => { console.error('caught', error); });     
+        }else if('XMR' === walletType){
+            console.log(wallet.monero);
+            moneroWallet.openWallet(wallet.monero.name, wallet.monero.password).then(function(result) {
+                moneroWallet.balance().then(availBalance=>{
+                    logger.debug(availBalance);
+                    let moneroNested = JSON.parse(JSON.stringify(wallet.monero));
+                    wallet.monero.balance = availBalance;
+                    wallet.monero = moneroNested;
+                    wallet.save(function (err, updatedWallet) {
+                        if (err) return handleError(err);
+                        return res.status(200).json(updatedWallet.monero);
+                    });
+                });
+            });
+        }else if('XLM' === walletType){
+            console.log(wallet.stellar);
+            stellarWallet.balance(wallet.stellar.public_address, wallet.email);
+            Wallet.findById(walletId, function(err, wallet){
+                if (err) return handleError(err);
+                return res.status(200).json(wallet.stellar);
+            });
+        }else if('ADA' === walletType){
+            console.log(wallet.cardano);
+            return res.status(200).json(wallet.cardano);
+        }else if('XRP' === walletType){
+            //console.log(wallet.ripple);
+            rippleWallet.balance(wallet.ripple.account.address, wallet.email);
+            return res.status(200).json(wallet.ripple);
+        }else{
+            res.status(500).json({error: 'unsupported crypto currency'});
+        }
+    })
+    
 });
 
 
@@ -52,8 +104,6 @@ router.get('/generate/:email/:password/:language', function(req, res, next) {
     var emailAddy = req.params.email;
     var walletGlobalPassword = req.params.password;
     var _language = req.params.language;
-    //logger.debug(emailAddy);
-    //logger.debug(walletGlobalPassword);
     
     Wallet.findOne({ 'email': emailAddy },function (err, wallet) {
         logger.debug(err);
@@ -102,10 +152,10 @@ router.get('/generate/:email/:password/:language', function(req, res, next) {
                     stellarWallet.generate(emailAddy);
                 }
                 
-                return res.json(createdWallet);
+                return res.status(200).json(createdWallet);
             })
         }else{
-            return res.json(wallet);
+            return res.status(200).json(wallet);
         }
     });
 });
@@ -164,6 +214,13 @@ evtEmitter.on('walletEvt', function (arg) {
 
 function handleError(error){
     logger.error(error);
+}
+
+function web3StringToBytes32(text) {
+    var result = ethers.utils.hexlify(ethers.utils.toUtf8Bytes(text));
+    while (result.length < 66) { result += '0'; }
+    if (result.length !== 66) { throw new Error("invalid web3 implicit bytes32"); }
+    return result;
 }
 
 module.exports = router;

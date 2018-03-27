@@ -16,15 +16,6 @@ StellarSdk.Config.setDefault();
 StellarSdk.Network.useTestNetwork();
 const currencyType = StellarSdk.Asset.native()
 
-const fail = (message) => {
-    logger.debug(typeof message.name);
-    logger.debug(message.name);
-    if(message.name != 'Error'){
-      logger.debug(JSON.stringify(message.data.extras.result_codes));
-    }
-    console.error(chalk.red(message.name), '\n')
-}
-
 wss.on('connection', function connection(ws) {
   ws.on('message', function incoming(message) {
     logger.debug('received: %s', message);
@@ -49,46 +40,65 @@ wss.on('connection', function connection(ws) {
 
     if(incomingObj.type == 'balance'){
         logger.debug(incomingObj.walletAddress);
-        server.loadAccount(incomingObj.walletAddress).then(function(account){
-          account.balances.forEach((balance) => {
-            logger.debug(balance);
-            if (balance.balance > 0) {
-              logger.debug('  ' + chalk.green(incomingObj.walletAddress));
-              logger.debug('  ' + chalk.green(balance.balance, balance.asset_code || 'XLM'));
+        return new Promise(function(resolve, reject){
+          server.loadAccount(incomingObj.walletAddress).then(function(account){
+            account.balances.forEach((balance) => {
+              logger.debug(balance);
+              if (balance.balance > 0) {
+                logger.debug('  ' + chalk.green(incomingObj.walletAddress));
+                logger.debug('  ' + chalk.green(balance.balance, balance.asset_code || 'XLM'));
+                var returnBalance = {
+                  currency: balance.asset_code,
+                  value: balance.balance,
+                  email: incomingObj.email
+                }
+                ws.send(JSON.stringify(returnBalance));
+                resolve(balance);
+              }
+            })
+          }).catch(function(err){
+            //console.log(err);
+            if(err.name=='NotFoundError'){
               var returnBalance = {
-                currency: balance.asset_code,
-                value: balance.balance,
+                type: 'balance',
+                currency: 'XLM',
+                email: incomingObj.email,
+                value: 0,
               }
               ws.send(JSON.stringify(returnBalance));
             }
+            reject(err);
           })
-        }).catch(fail)
+        });
     }
 
     if(incomingObj.type == 'transfer'){
-      server.loadAccount(incomingObj.transfer.sourceAddress)
-        .then((account) => {
-            const sourceKeypair = StellarSdk.Keypair.fromSecret(incomingObj.transfer.sourceSecret);
-            let transaction = new StellarSdk.TransactionBuilder(account)
-                .addOperation(StellarSdk.Operation.payment({
-                  destination: incomingObj.transfer.destinationAddress,
-                  asset: currencyType,
-                  amount: String(incomingObj.transfer.amount)
-            }));
-            transaction = transaction.addMemo(StellarSdk.Memo.text(incomingObj.transfer.memo))
-            transaction = transaction.build();
-            transaction.sign(sourceKeypair);
-            server.submitTransaction(transaction)
-                .then((transactionResult) => {
-                logger.debug('\nSuccess! View the transaction at: ')
-                logger.debug(chalk.yellow(transactionResult._links.transaction.href), "\n")
-                ws.send(JSON.stringify(transactionResult));
-            })
-            .catch((message)=>{
-              logger.debug(message);
-            });
+      return new Promise(function(resolve, reject){
+        server.loadAccount(incomingObj.transfer.sourceAddress)
+          .then((account) => {
+              const sourceKeypair = StellarSdk.Keypair.fromSecret(incomingObj.transfer.sourceSecret);
+              let transaction = new StellarSdk.TransactionBuilder(account)
+                  .addOperation(StellarSdk.Operation.payment({
+                    destination: incomingObj.transfer.destinationAddress,
+                    asset: currencyType,
+                    amount: String(incomingObj.transfer.amount)
+              }));
+              transaction = transaction.addMemo(StellarSdk.Memo.text(incomingObj.transfer.memo))
+              transaction = transaction.build();
+              transaction.sign(sourceKeypair);
+              server.submitTransaction(transaction)
+                  .then((transactionResult) => {
+                  logger.debug('\nSuccess! View the transaction at: ')
+                  logger.debug(chalk.yellow(transactionResult._links.transaction.href), "\n")
+                  resolve(transactionResult);
+                  ws.send(JSON.stringify(transactionResult));
+              })
+              .catch((message)=>{
+                reject(message);
+                logger.error(message);
+              });
 
-      }).catch(fail);
+        }).catch(function(error){reject(message)})});
     }
   }); 
 });

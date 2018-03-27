@@ -26,12 +26,26 @@ ws.on('open', function open() {
         var incData = JSON.parse(data);
         //logger.debug(data);
         //logger.debug("--- Ripple ------" + incData.email);
-        //logger.debug(incData);
+        //logger.debug("incoming data from websocket > " + JSON.stringify(incData));
+        
         if(incData.type === 'generateAddress'){
             WalletDB.findOne({ 'email': incData.email },function (err, wallet) {
                 //logger.debug("found ! " + wallet);
                 wallet.ripple = incData;
-    
+                wallet.ripple.amount = 0;
+                wallet.save(function (err, updatedWallet) {
+                    if (err) return handleError(err);
+                    //logger.debug(updatedWallet);
+                });
+            });
+        }else if(incData.type === 'balance'){
+            //console.log('get balance for ripple ...');
+            WalletDB.findOne({ 'email': incData.email },function (err, wallet) {
+                //console.log(incData);
+                //wallet.ripple = incData;
+                let rippleNested = JSON.parse(JSON.stringify(wallet.ripple));
+                rippleNested.amount = incData.value;
+                wallet.ripple = rippleNested;
                 wallet.save(function (err, updatedWallet) {
                     if (err) return handleError(err);
                     //logger.debug(updatedWallet);

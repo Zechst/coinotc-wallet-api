@@ -17,15 +17,25 @@ ws.on('open', function open() {
         //logger.debug("--- Stellar ------");
         //logger.debug(data);
         var incData = JSON.parse(data);
-        //logger.debug(incData);
+        logger.debug(incData);
         if(incData.type === 'generateAddress'){
             WalletDB.findOne({ 'email': incData.email },function (err, wallet) {
                 //logger.debug("found ! " + wallet);
                 wallet.stellar = incData;
-    
+                
                 wallet.save(function (err, updatedWallet) {
                     if (err) return handleError(err);
-                    //logger.debug(updatedWallet);
+                });
+            });
+        }
+
+        if(incData.type === 'balance'){
+            WalletDB.findOne({ 'email': incData.email },function (err, wallet) {
+                let stellarNested = JSON.parse(JSON.stringify(wallet.stellar));
+                stellarNested.balance = incData.value;
+                wallet.stellar = stellarNested;
+                wallet.save(function (err, updatedWallet) {
+                    if (err) return handleError(err);
                 });
             });
         }
@@ -39,11 +49,12 @@ class StellarWallet extends Wallet{
     }
 }
 
-StellarWallet.prototype.balance = function(walletAddress){
+StellarWallet.prototype.balance = function(walletAddress, emailAddress){
     logger.debug(walletAddress);
     let messageIn = {
         type: 'balance',
-        walletAddress: walletAddress
+        walletAddress: walletAddress,
+        email: emailAddress
     }
     ws.send(JSON.stringify(messageIn));
 }
