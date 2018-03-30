@@ -1,11 +1,16 @@
 var mongoose = require('mongoose');
 var uniqueValidator = require('mongoose-unique-validator');
 
-var TransactionsSchema = new mongoose.Schema({
-  escrowWalletAddress: {type: String, lowercase: true, unique: true, required: [true, "can't be blank"], index: true},
-  chargeRate: Number
+var EscrowSchema = new mongoose.Schema({
+  cryptoType: {type: String, unique: true, required: [true, "can't be blank"], index: true},
+  escrowWalletAddress: {type: String, required: [true, "can't be blank"]},
+  unauthorizedEscrowWalletAddress: String,
+  unauthorizedFeeRate: Number,
+  feeRate: Number,
+  authorizeCode: Number,
+  status: String
 }, {timestamps: true});
 
-TransactionsSchema.plugin(uniqueValidator, {message: 'is already taken.'});
+EscrowSchema.plugin(uniqueValidator, {message: 'is already taken.'});
 
-mongoose.model('escrow', TransactionsSchema);
+mongoose.model('Escrow', EscrowSchema);

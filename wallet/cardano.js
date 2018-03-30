@@ -15,9 +15,23 @@ ws.on('open', function open(){
     });
 });
 
+
+const singleton = Symbol();
+const singletonEnforcer = Symbol();
+
+
 class CardanoWallet extends Wallet{
-    constructor(address, port){
+    constructor(enforcer){
+        if(enforcer != singletonEnforcer) throw "Cannot construct singleton";
         super(null , null);
+        this._type = 'CardanoWallet';
+    }
+    
+    static get instance() {
+        if(!this[singleton]) {
+          this[singleton] = new CardanoWallet(singletonEnforcer);
+        }
+        return this[singleton];
     }
 }
 
@@ -32,10 +46,10 @@ CardanoWallet.prototype.createWallet = (passphrase, emailAddress)=> {
     sendTxn(txn_message_new);
 };
 
-CardanoWallet.prototype.balance = (accountAddress, walletId, emailAddress)=> {
+// accountAddress
+CardanoWallet.prototype.balance = (walletId, emailAddress)=> {
     var txn_message_bal = {
         type: 'balance',
-        cardanoAddress: accountAddress,
         walletId: walletId,
         email: emailAddress
     };
@@ -109,17 +123,30 @@ function sendTxn(obj){
 function handleIncomingData(data){
     //logger.debug("<<<<< Back from engines >>>>> " + data);
     var returnData = JSON.parse(data);
-    //logger.debug("<<<<< Back from engines >>>>> " + returnData.email);
+    logger.debug("<<<<< Back from engines email >>>>> " + returnData.email);
+    logger.debug("<<<<< Back from engines type >>>>> " + returnData.txnMessage.type);
+    
     if(returnData.txnMessage.type === 'new'){
         WalletDB.findOne({ 'email': returnData.txnMessage.email },function (err, wallet) {
-            //logger.debug(wallet);
             wallet.cardano = returnData;
-    
+            wallet.cardano.totalLockedAmount = 0;
             wallet.save(function (err, updatedWallet) {
                 if (err) return handleError(err);
-                //logger.debug(updatedWallet);
             });
         });
+    }else if(returnData.txnMessage.type === 'balance'){
+        console.log('Inside balance ... of the handling of the incoming data');
+        WalletDB.findOne({'email': returnData.txnMessage.email}, function(err, wallet){
+            console.log("found waller for the balance ...");
+            console.log(JSON.stringify(returnData));
+            console.log(returnData.Right.cwAmount.getCCoin);
+            let cardanoNested = JSON.parse(JSON.stringify(wallet.cardano));
+            cardanoNested.amount = returnData.Right.cwAmount.getCCoin;
+            wallet.cardano = cardanoNested;
+            wallet.save(function (err, updatedWallet) {
+                if (err) return handleError(err);
+            });
+        })
     }
 }
 
@@ -127,6 +154,7 @@ const handleError = (message) => {
     logger.error(message);
     logger.error(chalk.red(message.name), '\n')
 }
+
 
 
 module.exports = CardanoWallet;

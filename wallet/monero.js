@@ -4,10 +4,24 @@ var http = require('http');
 var Wallet = require('./wallet');
 const logger = require('../util/logger');
 
+const singleton = Symbol();
+const singletonEnforcer = Symbol();
+
 // wallet class to be extended with prototype method.
 class MoneroWallet extends Wallet{
-    constructor(hostname, port){
+    constructor(enforcer){
+        if(enforcer != singletonEnforcer) throw "Cannot construct singleton";
+        let hostname = process.env.MONERO_HOSTNAME;
+        let port = process.env.MONERO_PORT;
         super(hostname, port);
+        this._type = 'MoneroWallet';
+    }
+
+    static get instance() {
+        if(!this[singleton]) {
+          this[singleton] = new MoneroWallet(singletonEnforcer);
+        }
+        return this[singleton];
     }
 }
 

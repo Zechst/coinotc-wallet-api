@@ -3,7 +3,11 @@ var mongoose = require('mongoose');
 var router = require('express').Router();
 var Wallet = mongoose.model('Wallet');
 var bluebird = require("bluebird");
-//var auth = require('../auth');
+var _ = require('lodash');
+var crypto = require('crypto');
+var Escrow = mongoose.model('Escrow');
+var Cryptocurrency = mongoose.model('Cryptocurrency');
+
 const Util = require('../../util');
 const evtEmitter = require('../../util/evtemitter');
 const logger = require('../../util/logger');
@@ -15,11 +19,11 @@ var MoneroWallet = require('../../wallet/monero');
 var RippleWallet = require('../../wallet/ripple');
 var StellarWallet = require('../../wallet/stellar');
 
-var adaWallet = new CardanoWallet(null, null);
-var ethWallet = new EthereumWallet();
-var moneroWallet = new MoneroWallet(process.env.MONERO_HOSTNAME, process.env.MONERO_PORT);
-var rippleWallet = new RippleWallet();
-var stellarWallet = new StellarWallet();
+var adaWallet = CardanoWallet.instance;
+var ethWallet = EthereumWallet.instance;
+var moneroWallet = MoneroWallet.instance;
+var rippleWallet = RippleWallet.instance;
+var stellarWallet = StellarWallet.instance;
 
 const utils = new Util();
 var moneroAccInfo = {
@@ -30,6 +34,124 @@ var moneroAccInfo = {
     language: 'English',
     email: ''
 }
+
+router.get('/escrow', function(req, res, next) {
+    Escrow.find({},function (err, result) {
+        if(err) res.status(500).json(err);
+        return res.status(200).json(result);
+    });
+});
+
+router.post('/escrow', function(req, res, next) {
+    var escrowBody =  req.body;
+    Escrow.find({},function (err, result) {
+        if(err) res.status(500).json(err);
+        if(result){
+            let newEscrow =  new Escrow({
+                escrowWalletAddress: escrowBody.address,
+                cryptoType: escrowBody.type,
+                feeRate: escrowBody.fee,
+                status: escrowBody.status
+            });
+            escrow.save(function (err, newEscrow) {
+                if (err) return res.status(500).json(err);
+                return res.status(200).json(newEscrow);
+            });
+        }
+    });
+});
+
+router.put('/escrow/:escrowId', function(req, res, next) {
+    var generatedAuthCode = randomValueHex(7);
+    let escrowId = req.params.escrowId;
+    let unauthorizedEscrowWalletAddress = req.body.unauthorizedEscrowWalletAddress;
+    let unauthorizedFeeRate = req.body.unauthorizedFeeRate;
+    let escrowStatus = req.body.escrowStatus;
+    console.log("generatedAuthCode " + generatedAuthCode);
+    Escrow.findByIdAndUpdate(escrowId, { $set: 
+            {   unauthorizedEscrowWalletAddress: unauthorizedEscrowWalletAddress, 
+                unauthorizedFeeRate: unauthorizedFeeRate,
+                status: escrowStatus
+            }}, { new: true }, 
+        function (err, updatedCrypto) {
+            if (err) return res.status(500).json(err);
+            return res.status(200).json(updatedCrypto);
+        }
+    );
+});
+
+router.put('/escrow/approve/:escrowId/:authCode', function(req, res, next) {
+    let escrowId = req.params.escrowId;
+    let authCode = req.params.authCode;
+
+    Escrow.findOne({'id': escrowId, 'authorizeCode': authCode },function (err, escrow) {
+        if(err) res.status(500).json(err);
+        let isAuthorizedFieldsUpd = false;
+
+        if(!escrow){
+            if(!unauthorizedEscrowWalletAddress){
+                escrow.escrowWalletAddress = escrow.unauthorizedEscrowWalletAddress;
+                escrow.unauthorizedEscrowWalletAddress = null;
+                isAuthorizedFieldsUpd = true;
+            }
+            
+            if(!unauthorizedFeeRate){
+                escrow.escrowWalletAddress = escrow.unauthorizedFeeRate;
+                escrow.unauthorizedEscrowWalletAddress = null;
+                isAuthorizedFieldsUpd = true;
+            }
+
+            if(isAuthorizedFieldsUpd){
+                escrow.authorizeCode = null;
+            }
+            
+            escrow.save(function (err, updatedCrypto) {
+                if (err) return res.status(500).json(err);
+                return res.status(200).json(updatedCrypto);
+            });
+        }
+    });
+});
+
+router.get('/cryptos', function(req, res, next) {
+    Cryptocurrency.find({},function (err, result) {
+        if(err) res.status(500).json(err);
+        return res.status(200).json(result);
+    });
+});
+
+router.post('/cryptos', function(req, res, next) {
+    let currencyCode = req.body.code;
+    let description = req.body.desc;
+    Cryptocurrency.findOne({'code': currencyCode },function (err, cryptos) {
+        if(err) res.status(500).json(err);
+        if(cryptos){
+            var newCryptocurrency = new Cryptocurrency({
+                code: currencyCode,
+                desc: description
+            });
+            newCryptocurrency.save(function (err, insertedCrypto) {
+                if (err) return res.status(500).json(err);
+                return res.status(200).json(insertedCrypto);
+            });
+        }
+        
+    });
+});
+
+router.put('/cryptos', function(req, res, next) {
+    let updateCryptoBody = req.body;
+    let cryptoId = req.params.id;
+    let cryptoCode = updateCryptoBody.code;
+    let description = updateCryptoBody.desc;
+    
+    Cryptocurrency.findByIdAndUpdate(cryptoId, { $set: {desc: description, code: cryptoCode}}, { new: true }, 
+        function (err, updatedCrypto) {
+            if (err) return res.status(500).json(err);
+            return res.status(200).json(updatedCrypto);
+        }
+    );
+});
 
 router.get('/:email', function(req, res, next) {
     var emailAddy  = req.params.email;
@@ -49,15 +171,19 @@ router.get('/balance/:walletid/:type', function(req, res, next) {
     
     Wallet.findById(walletId, function(err, wallet){
         if(err) res.status(500).json(err);
-        console.log(">>>" + wallet);
+        //console.log(">>>" + wallet);
         if('ETH' === walletType){
-            console.log(wallet.eth.privateKey);
+            if(typeof(_.get(wallet, 'eth')) === 'undefined'){
+                return res.status(500).json({error: 'eth wallet not initialize.'});
+            }
+            //console.log(wallet.eth.privateKey);
             ethWallet.balance(wallet.eth.privateKey).then(bal => {
                 logger.debug("-> balance -> result - > " + bal);
                 logger.debug("In ETH > " + ethers.utils.formatEther(bal, {}));
                 logger.debug("Typeof In ETH > " + typeof (ethers.utils.formatEther(bal, {})));
                 let ethNested = JSON.parse(JSON.stringify(wallet.eth));
                 ethNested.amount = ethers.utils.formatEther(bal, {});
+                ethNested.totalLockedAmount = 0;
                 wallet.eth = ethNested;
                 wallet.save (function (err, updatedWallet) {
                     if (err) return handleError(err);
@@ -65,12 +191,16 @@ router.get('/balance/:walletid/:type', function(req, res, next) {
                 });
             }).catch(error => { console.error('caught', error); });     
         }else if('XMR' === walletType){
-            console.log(wallet.monero);
+            console.log(typeof(_.get(wallet, 'monero')));
+            if(typeof(_.get(wallet, 'monero')) === 'undefined'){
+                return res.status(500).json({error: 'monero wallet not initialize.'});
+            }
             moneroWallet.openWallet(wallet.monero.name, wallet.monero.password).then(function(result) {
                 moneroWallet.balance().then(availBalance=>{
                     logger.debug(availBalance);
                     let moneroNested = JSON.parse(JSON.stringify(wallet.monero));
                     wallet.monero.balance = availBalance;
+                    moneroNested.totalLockedAmount = 0;
                     wallet.monero = moneroNested;
                     wallet.save(function (err, updatedWallet) {
                         if (err) return handleError(err);
@@ -79,6 +209,9 @@ router.get('/balance/:walletid/:type', function(req, res, next) {
                 });
             });
         }else if('XLM' === walletType){
+            if(typeof(_.get(wallet, 'stellar')) === 'undefined'){
+                return res.status(500).json({error: 'stellar wallet not initialize.'});
+            }
             console.log(wallet.stellar);
             stellarWallet.balance(wallet.stellar.public_address, wallet.email);
             Wallet.findById(walletId, function(err, wallet){
@@ -86,19 +219,34 @@ router.get('/balance/:walletid/:type', function(req, res, next) {
                 return res.status(200).json(wallet.stellar);
             });
         }else if('ADA' === walletType){
+            console.log(_.get(wallet, 'cardano'));
+            if(typeof(_.get(wallet, 'cardano')) === 'undefined'){
+                return res.status(500).json({error: 'cardano wallet not initialize.'});
+            }
+            console.log("-- wallet ada --");
             console.log(wallet.cardano);
-            return res.status(200).json(wallet.cardano);
+            console.log(wallet.cardano.result.Right.cwId);
+            console.log(wallet.email);
+            console.log("-- before calling api wallet ada --");
+            adaWallet.balance(wallet.cardano.result.Right.cwId,wallet.email);
+            Wallet.findById(walletId, function(err, updatedWallet){
+                if (err) return handleError(err);
+                return res.status(200).json(updatedWallet.cardano);
+            });
+            
         }else if('XRP' === walletType){
-            //console.log(wallet.ripple);
+            console.log(_.get(wallet, 'ripple'));
+            if(typeof(_.get(wallet, 'ripple')) === 'undefined'){
+                return res.status(500).json({error: 'ripple wallet not initialize.'});
+            }
+            console.log("wallet.ripple");
             rippleWallet.balance(wallet.ripple.account.address, wallet.email);
             return res.status(200).json(wallet.ripple);
         }else{
             res.status(500).json({error: 'unsupported crypto currency'});
         }
-    })
-    
+    })  
 });
-
 
 router.get('/generate/:email/:password/:language', function(req, res, next) {
     var emailAddy = req.params.email;
@@ -109,6 +257,7 @@ router.get('/generate/:email/:password/:language', function(req, res, next) {
         logger.debug(err);
         if (err) {
             logger.error(err);
+            res.status(500).json({error: err});
         }
         if (wallet == null) {
             logger.debug("creating wallet ....");
@@ -221,6 +370,12 @@ function web3StringToBytes32(text) {
     while (result.length < 66) { result += '0'; }
     if (result.length !== 66) { throw new Error("invalid web3 implicit bytes32"); }
     return result;
+}
+
+function randomValueHex (len) {
+    return crypto.randomBytes(Math.ceil(len/2))
+        .toString('hex') // convert to hexadecimal format
+        .slice(0,len);   // return required number of characters
 }
 
 module.exports = router;

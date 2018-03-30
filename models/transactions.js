@@ -3,14 +3,19 @@ var uniqueValidator = require('mongoose-unique-validator');
 var crypto = require('crypto');
 
 var TransactionsSchema = new mongoose.Schema({
-  email: {type: String, lowercase: true, unique: true, required: [true, "can't be blank"], match: [/\S+@\S+\.\S+/, 'is invalid'], index: true},
-  fromAddress: {type: String, lowercase: true, unique: true, required: [true, "can't be blank"], index: true},
-  toAddress: {type: String, lowercase: true, unique: true, required: [true, "can't be blank"], index: true},
+  orderNo: {type: String, unique: true, required: [true, "can't be blank"], index: true},
+  email: {type: String, lowercase: true, required: [true, "can't be blank"], match: [/\S+@\S+\.\S+/, 'is invalid'], index: true},
+  fromAddress: {type: String, required: [true, "can't be blank"], index: true},
+  toAddress: {type: String, required: [true, "can't be blank"], index: true},
   unit: Number,
   equivalentAmount: Number,
   transactCurrency: String,
-  exchangeRate: Number,
   cryptoCurrency: String,
+  transactionFee: Number,
+  platformFee: Number,
+  escrowId: String,
+  beneficiaryEmail: String,
+  status: Number,
   memo: String
 
 }, {timestamps: true});

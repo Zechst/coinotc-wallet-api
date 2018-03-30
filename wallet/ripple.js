@@ -10,10 +10,23 @@ const api = new RippleAPI({
     server: process.env.RIPPLE_API
 })
 
+const singleton = Symbol();
+const singletonEnforcer = Symbol();
+
 // wallet class to be extended with prototype method.
 class RippleWallet extends Wallet{
-    constructor(){
+    
+    constructor(enforcer){
+        if(enforcer != singletonEnforcer) throw "Cannot construct singleton";
         super(null, null);
+        this._type = 'RippleWallet';
+    }
+
+    static get instance() {
+        if(!this[singleton]) {
+          this[singleton] = new RippleWallet(singletonEnforcer);
+        }
+        return this[singleton];
     }
 }
 
@@ -45,6 +58,7 @@ ws.on('open', function open() {
                 //wallet.ripple = incData;
                 let rippleNested = JSON.parse(JSON.stringify(wallet.ripple));
                 rippleNested.amount = incData.value;
+                rippleNested.totalLockedAmount = 0;
                 wallet.ripple = rippleNested;
                 wallet.save(function (err, updatedWallet) {
                     if (err) return handleError(err);

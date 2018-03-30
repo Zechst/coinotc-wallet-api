@@ -8,14 +8,24 @@ const logger = require('../util/logger');
 var network = providers.networks.rinkeby;
 var provider = new providers.JsonRpcProvider(process.env.ETH_RPC, network);
 
+const singleton = Symbol();
+const singletonEnforcer = Symbol();
+
 class EthereumWallet extends Wallet{
     
-    constructor(gethAddress){
+    constructor(enforcer){
+        if(enforcer != singletonEnforcer) throw "Cannot construct singleton";
         var ethAddress = process.env.GETH_ADDRESS;
         var ethAddressPort = process.env.GETH_PORT;
-        //logger.debug(ethAddress);
-        //logger.debug(ethAddressPort);
         super(ethAddress, parseInt(ethAddressPort));
+        this._type = 'EthereumWallet';
+    }
+
+    static get instance() {
+        if(!this[singleton]) {
+          this[singleton] = new EthereumWallet(singletonEnforcer);
+        }
+        return this[singleton];
     }
 }
 

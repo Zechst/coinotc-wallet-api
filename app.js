@@ -27,8 +27,8 @@ app.use(cors());
 
 // Normal express config defaults
 app.use(require('morgan')('dev'));
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+app.use(bodyParser.json({limit: '50mb'}));
 
 app.use(require('method-override')());
 app.use(express.static(__dirname + '/wallet-mgmt-web/dist'));
@@ -43,9 +43,11 @@ logger.debug("mongodb url > "+ process.env.MONGODB_URI);
 mongoose.connect("mongodb://localhost/walletapi");
 mongoose.set('debug', process.env.MONGODB_DEBUG);
 
-require('./models/wallet-api');
+require('./models/wallet-auth');
 require('./models/transactions');
 require('./models/wallet');
+require('./models/escrow');
+require('./models/crypto-currencies');
 
 app.use(require('./routes'));
 

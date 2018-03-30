@@ -33,6 +33,7 @@ ws.on('open', function open() {
             WalletDB.findOne({ 'email': incData.email },function (err, wallet) {
                 let stellarNested = JSON.parse(JSON.stringify(wallet.stellar));
                 stellarNested.balance = incData.value;
+                stellarNested.totalLockedAmount = 0;
                 wallet.stellar = stellarNested;
                 wallet.save(function (err, updatedWallet) {
                     if (err) return handleError(err);
@@ -42,10 +43,22 @@ ws.on('open', function open() {
     });
 });
 
+const singleton = Symbol();
+const singletonEnforcer = Symbol();
+
 // wallet class to be extended with prototype method.
 class StellarWallet extends Wallet{
-    constructor(){
+    constructor(enforcer){
+        if(enforcer != singletonEnforcer) throw "Cannot construct singleton";
         super("127.0.0.1", 8081);
+        this._type = 'StellarWallet';
+    }
+
+    static get instance() {
+        if(!this[singleton]) {
+          this[singleton] = new StellarWallet(singletonEnforcer);
+        }
+        return this[singleton];
     }
 }
 

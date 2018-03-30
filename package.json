@@ -18,6 +18,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "big.js": "^5.0.3",
     "bip39": "^2.5.0",
     "bitcoin-address": "^0.3.0",
     "bitcore-explorers": "^1.0.1",
