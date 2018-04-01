@@ -6,21 +6,19 @@ var Wallet = require('./wallet');
 var mongoose = require('mongoose');
 const logger = require('../util/logger');
 var WalletDB = mongoose.model('Wallet');
+var Transactions = mongoose.model('Transactions');
 
 const WebSocket = require('ws');
 
-const ws = new WebSocket('ws://localhost:8081');
+const ws = new WebSocket(process.env.STELLAR_WS_ADDRESS);
+//const ws = new WebSocket('ws://localhost:8081');
 
 ws.on('open', function open() {
-    //logger.debug("connected ...");
     ws.on('message', function incoming(data) {
-        //logger.debug("--- Stellar ------");
-        //logger.debug(data);
         var incData = JSON.parse(data);
         logger.debug(incData);
         if(incData.type === 'generateAddress'){
             WalletDB.findOne({ 'email': incData.email },function (err, wallet) {
-                //logger.debug("found ! " + wallet);
                 wallet.stellar = incData;
                 
                 wallet.save(function (err, updatedWallet) {
@@ -40,6 +38,33 @@ ws.on('open', function open() {
                 });
             });
         }
+
+        if(incData.type === 'transfer'){
+            let wsInsertedTrxn = JSON.parse(JSON.stringify(incData.insertedTransaction));
+            var newTransaction = new Transactions({ 
+                orderNo: wsInsertedTrxn.orderNo,
+                email: wsInsertedTrxn.email,
+                fromAddress: wsInsertedTrxn.fromAddress,
+                toAddress: wsInsertedTrxn.toAddress,
+                unit: wsInsertedTrxn.unit,
+                equivalentAmount: wsInsertedTrxn.equivalentAmount,
+                transactCurrency: wsInsertedTrxn.transactCurrency,
+                cryptoCurrency: wsInsertedTrxn.cryptoCurrency,
+                platformFee: wsInsertedTrxn.platformFee,
+                escrowId: wsInsertedTrxn.escrowId,
+                beneficiaryEmail: wsInsertedTrxn.beneficiaryEmail,
+                status: wsInsertedTrxn.status,
+                memo: wsInsertedTrxn.memo
+            });
+            newTransaction.save(function(err, insertedTransaction){
+                console.log();
+                if (err) {
+                    console.log(err);
+                    return res.status(500).json(err);
+                }
+                return res.status(200).json(insertedTransaction);
+            });
+        }
     });
 });
 
@@ -50,6 +75,7 @@ const singletonEnforcer = Symbol();
 class StellarWallet extends Wallet{
     constructor(enforcer){
         if(enforcer != singletonEnforcer) throw "Cannot construct singleton";
+        // read from process.env instead of hardcoded here.
         super("127.0.0.1", 8081);
         this._type = 'StellarWallet';
     }
@@ -84,7 +110,8 @@ StellarWallet.prototype.generate = function(emailAddress){
 StellarWallet.prototype.transfer = function(sourceAddress, sourceSecret,
     destinationAddress, 
     amount,
-    memo
+    memo,
+    insertedTransaction
 ){
     let messageIn = {
         type: 'transfer',
@@ -93,7 +120,8 @@ StellarWallet.prototype.transfer = function(sourceAddress, sourceSecret,
             destinationAddress: destinationAddress,
             amount:  amount,
             memo: memo,
-            sourceSecret: sourceSecret
+            sourceSecret: sourceSecret,
+            insertedTransaction: insertedTransaction
         }
     }
     ws.send(JSON.stringify(messageIn));

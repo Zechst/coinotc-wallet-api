@@ -44,16 +44,23 @@ router.get('/escrow', function(req, res, next) {
 
 router.post('/escrow', function(req, res, next) {
     var escrowBody =  req.body;
-    Escrow.find({},function (err, result) {
+    Cryptocurrency.find({type: escrowBody.type},function (err, result) {
         if(err) res.status(500).json(err);
-        if(result){
+        if(result == null){
+            res.status(500).json({error: 'Please setup crypto currencies list'});
+        }
+    });
+
+    Escrow.find({escrowWalletAddress: escrowBody.address, cryptoType: escrowBody.type},function (err, escrow) {
+        if(err) res.status(500).json(err);
+        if(escrow){
             let newEscrow =  new Escrow({
                 escrowWalletAddress: escrowBody.address,
                 cryptoType: escrowBody.type,
                 feeRate: escrowBody.fee,
                 status: escrowBody.status
             });
-            escrow.save(function (err, newEscrow) {
+            newEscrow.save(function (err, newEscrow) {
                 if (err) return res.status(500).json(err);
                 return res.status(200).json(newEscrow);
             });
@@ -71,10 +78,12 @@ router.put('/escrow/:escrowId', function(req, res, next) {
     Escrow.findByIdAndUpdate(escrowId, { $set: 
             {   unauthorizedEscrowWalletAddress: unauthorizedEscrowWalletAddress, 
                 unauthorizedFeeRate: unauthorizedFeeRate,
-                status: escrowStatus
+                unauthorizedStatus: escrowStatus,
+                authorizeCode: generatedAuthCode
             }}, { new: true }, 
         function (err, updatedCrypto) {
             if (err) return res.status(500).json(err);
+            // send the auth code out to the wallet management team if update is made.
             return res.status(200).json(updatedCrypto);
         }
     );
@@ -84,20 +93,33 @@ router.put('/escrow/approve/:escrowId/:authCode', function(req, res, next) {
     let escrowId = req.params.escrowId;
     let authCode = req.params.authCode;
 
-    Escrow.findOne({'id': escrowId, 'authorizeCode': authCode },function (err, escrow) {
+    Escrow.findOne({_id: escrowId, authorizeCode: authCode},function (err, escrow) {
         if(err) res.status(500).json(err);
         let isAuthorizedFieldsUpd = false;
-
-        if(!escrow){
-            if(!unauthorizedEscrowWalletAddress){
+        console.log(escrow);
+        if(escrow != null){
+            console.log(escrow.unauthorizedEscrowWalletAddress);
+            console.log(escrow.unauthorizedFeeRate);
+            console.log(escrow.unauthorizedStatus);
+            
+            if(escrow.unauthorizedEscrowWalletAddress != null){
+                console.log("escrow address changed!");
                 escrow.escrowWalletAddress = escrow.unauthorizedEscrowWalletAddress;
                 escrow.unauthorizedEscrowWalletAddress = null;
                 isAuthorizedFieldsUpd = true;
             }
             
-            if(!unauthorizedFeeRate){
-                escrow.escrowWalletAddress = escrow.unauthorizedFeeRate;
+            if(escrow.unauthorizedFeeRate != null){
+                console.log("escrow rate changed!");
+                escrow.feeRate = escrow.unauthorizedFeeRate;
                 escrow.unauthorizedEscrowWalletAddress = null;
+                isAuthorizedFieldsUpd = true;
+            }
+
+            if(escrow.unauthorizedStatus != null){
+                console.log("disable escrow!");
+                escrow.status = escrow.unauthorizedStatus;
+                escrow.unauthorizedStatus = null;
                 isAuthorizedFieldsUpd = true;
             }
 
@@ -109,6 +131,8 @@ router.put('/escrow/approve/:escrowId/:authCode', function(req, res, next) {
                 if (err) return res.status(500).json(err);
                 return res.status(200).json(updatedCrypto);
             });
+        }else{
+            return res.status(500).json({error:"No record to approve!"});
         }
     });
 });
@@ -121,31 +145,37 @@ router.get('/cryptos', function(req, res, next) {
 });
 
 router.post('/cryptos', function(req, res, next) {
-    let currencyCode = req.body.code;
-    let description = req.body.desc;
+    console.log(req.body);
+    var cryptosBody = JSON.parse(JSON.stringify(req.body));
+    let currencyCode = cryptosBody.code;
+    let description = cryptosBody.desc;
     Cryptocurrency.findOne({'code': currencyCode },function (err, cryptos) {
         if(err) res.status(500).json(err);
-        if(cryptos){
+        console.log(cryptos);
+        if(cryptos == null){
             var newCryptocurrency = new Cryptocurrency({
                 code: currencyCode,
                 desc: description
             });
             newCryptocurrency.save(function (err, insertedCrypto) {
                 if (err) return res.status(500).json(err);
+                console.log(insertedCrypto);
                 return res.status(200).json(insertedCrypto);
             });
+        }else{
+            res.status(500).json({error:'crypto currency already exist'});
         }
         
     });
 });
 
-router.put('/cryptos', function(req, res, next) {
+router.put('/cryptos/:cryptoId', function(req, res, next) {
     let updateCryptoBody = req.body;
-    let cryptoId = req.params.id;
+    let cryptoId = req.params.cryptoId;
     let cryptoCode = updateCryptoBody.code;
     let description = updateCryptoBody.desc;
     
-    Cryptocurrency.findByIdAndUpdate(cryptoId, { $set: {desc: description, code: cryptoCode}}, { new: true }, 
+    Cryptocurrency.findByIdAndUpdate(cryptoId, { $set: {desc: description, code: cryptoCode}}, { new: false }, 
         function (err, updatedCrypto) {
             if (err) return res.status(500).json(err);
             return res.status(200).json(updatedCrypto);

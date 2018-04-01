@@ -5,6 +5,7 @@ const chalk = require('chalk');
 var Wallet = require('./wallet');
 var WalletDB = mongoose.model('Wallet');
 const logger = require('../util/logger');
+var Transactions = mongoose.model('Transactions');
 
 var cardanoAddress = String(process.env.CARDANO_WS_ADDRESS);
 var ws = new WebSocket(cardanoAddress);
@@ -68,13 +69,14 @@ CardanoWallet.prototype.fees = (fromAddresswithAlias, toAddress, amount, emailAd
 };
 
 
-CardanoWallet.prototype.transfer = (fromAddresswithAlias, toAddress, amount, emailAddress)=> {
+CardanoWallet.prototype.transfer = (fromAddresswithAlias, toAddress, amount, emailAddress, insertedTransaction)=> {
     var txn_message_transfer = {
         type: 'transfer',
         fromAddress: fromAddresswithAlias,
         toAddress: toAddress,
         amount: amount,
-        email: emailAddress
+        email: emailAddress,
+        insertedTransaction: insertedTransaction
     };
     sendTxn(txn_message_transfer);
 };
@@ -96,13 +98,9 @@ CardanoWallet.prototype.allaccounts = ()=> {
 
 
 function sendTxn(obj){
-    //logger.debug(">>>>3" + obj);
-    //logger.debug(ws.readyState === WebSocket.CLOSED);
     if(ws.readyState === WebSocket.CLOSED){
-        //logger.debug("why not reconnect?");
         ws = new WebSocket(cardanoAddress);
         ws.on('open', function open(){
-            //logger.debug("reconnect possible...");
             ws.send(JSON.stringify(obj),function ack(error) {
                 logger.debug(error);
             });
@@ -147,6 +145,31 @@ function handleIncomingData(data){
                 if (err) return handleError(err);
             });
         })
+    }else if(returnData.txnMessage.type === 'transfer'){
+        let wsInsertedTrxn = JSON.parse(JSON.stringify(returnData.insertedTransaction));
+        var newTransaction = new Transactions({ 
+            orderNo: wsInsertedTrxn.orderNo,
+            email: wsInsertedTrxn.email,
+            fromAddress: wsInsertedTrxn.fromAddress,
+            toAddress: wsInsertedTrxn.toAddress,
+            unit: wsInsertedTrxn.unit,
+            equivalentAmount: wsInsertedTrxn.equivalentAmount,
+            transactCurrency: wsInsertedTrxn.transactCurrency,
+            cryptoCurrency: wsInsertedTrxn.cryptoCurrency,
+            platformFee: wsInsertedTrxn.platformFee,
+            escrowId: wsInsertedTrxn.escrowId,
+            beneficiaryEmail: wsInsertedTrxn.beneficiaryEmail,
+            status: wsInsertedTrxn.status,
+            memo: wsInsertedTrxn.memo
+        });
+        newTransaction.save(function(err, insertedTransaction){
+            console.log();
+            if (err) {
+                console.log(err);
+                return res.status(500).json(err);
+            }
+            return res.status(200).json(insertedTransaction);
+        });
     }
 }
 

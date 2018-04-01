@@ -7,7 +7,9 @@ var EscrowSchema = new mongoose.Schema({
   unauthorizedEscrowWalletAddress: String,
   unauthorizedFeeRate: Number,
   feeRate: Number,
-  authorizeCode: Number,
+  authorizeCode: String,
+  unauthorizedStatus: String,
+  security: mongoose.Schema.Types.Mixed,
   status: String
 }, {timestamps: true});
 

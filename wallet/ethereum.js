@@ -36,24 +36,20 @@ function callback(percent) {
 }
 
 EthereumWallet.prototype.createWallet = (passphrase, emailAddress)=> {
-    //logger.debug("....");
     var mnemonic = bip39.generateMnemonic();
     var wallet = ethers.Wallet.fromMnemonic(mnemonic);
     wallet.provider = provider;
     
-    //logger.debug("Address: " + wallet.address);
     let generatedEthAcc = {
         privateKey: wallet.privateKey,
         mnemonic: mnemonic,
         address: wallet.address
     }
-    //logger.debug(generatedEthAcc);
     let requestPromise = new Promise((resolve, reject) => {
         if(!(typeof(wallet.address) === 'undefined')){
             var encryptPromise = wallet.encrypt(passphrase, callback);
             
             encryptPromise.then(function(json) {
-                //logger.debug(json);
                 resolve(generatedEthAcc);
             });
         }
@@ -62,14 +58,8 @@ EthereumWallet.prototype.createWallet = (passphrase, emailAddress)=> {
 }
 
 EthereumWallet.prototype.balance = (privateKey)=> {
-    //logger.debug("...check balance" + privateKey);
     var wallet = new ethers.Wallet(privateKey);
     wallet.provider = provider;
-    
-    //logger.debug("...wallet >" + JSON.stringify(wallet));
-    //logger.debug("...check provider" + JSON.stringify(wallet.provider));
-    //logger.debug("...check address" + JSON.stringify(wallet.getAddress()));
-
     return wallet.getBalance('latest');
 }
 
@@ -84,8 +74,10 @@ EthereumWallet.prototype.transfer = (destAct, value, privateKey)=> {
     };
 
     var promiseSend = wallet.send(destAct, value, options);
+    
     return promiseSend;    
 }
+
 
 EthereumWallet.prototype.estimateTransaction = (destAct, value, privateKey)=> {
     var wallet = new ethers.Wallet(privateKey);

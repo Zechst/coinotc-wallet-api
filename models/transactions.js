@@ -4,10 +4,10 @@ var crypto = require('crypto');
 
 var TransactionsSchema = new mongoose.Schema({
   orderNo: {type: String, unique: true, required: [true, "can't be blank"], index: true},
-  email: {type: String, lowercase: true, required: [true, "can't be blank"], match: [/\S+@\S+\.\S+/, 'is invalid'], index: true},
-  fromAddress: {type: String, required: [true, "can't be blank"], index: true},
-  toAddress: {type: String, required: [true, "can't be blank"], index: true},
-  unit: Number,
+  email: {type: String, lowercase: true, required: [true, "can't be blank"], match: [/\S+@\S+\.\S+/, 'is invalid']},
+  fromAddress: {type: String, required: [true, "can't be blank"]},
+  toAddress: {type: String, required: [true, "can't be blank"]},
+  unit: {type: Number, required: [true, "can't be blank"]},
   equivalentAmount: Number,
   transactCurrency: String,
   cryptoCurrency: String,
@@ -15,6 +15,7 @@ var TransactionsSchema = new mongoose.Schema({
   platformFee: Number,
   escrowId: String,
   beneficiaryEmail: String,
+  receipt: mongoose.Schema.Types.Mixed,
   status: Number,
   memo: String
 
