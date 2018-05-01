@@ -83,3 +83,4 @@ testem.log
 Thumbs.db
 
 wallet-mgmt-web/node_modules
+package-lock.json
