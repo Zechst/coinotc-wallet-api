@@ -42,6 +42,9 @@ var payment_id = crypto.randomBytes(8).toString('hex');
 
     ./monero-wallet-rpc --testnet --daemon-address 127.0.0.1:28081 --wallet-dir ./wallets/ --disable-rpc-login --rpc-bind-port 7879 --rpc -bind-ip 127.0.0.1
 
+    ./monerod --testnet --data-dir /media/kenneth/b13ae9f7-5727-4bc0-94fe-77d72079f2ee/monero-data-test
+
+    ./monero-wallet-rpc --testnet --daemon-address 127.0.0.1:28081 --wallet-dir /media/kenneth/b13ae9f7-5727-4bc0-94fe-77d72079f2ee/monero-data-test/wallet --disable-rpc-login --rpc-bind-port 7879 --rpc-bind-ip 127.0.0.1
 */
 
 var firstWallet = "";

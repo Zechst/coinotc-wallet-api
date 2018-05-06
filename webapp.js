@@ -4,8 +4,6 @@ const dotenvParseVariables = require('dotenv-parse-variables');
 let env = dotenv.config({})
 if (env.error) throw env.error;
 env = dotenvParseVariables(env.parsed);
-var logger = require('./util/logger');  
-//logger.debug(env);
 
 var http = require('http'),
     path = require('path'),
@@ -13,13 +11,9 @@ var http = require('http'),
     express = require('express'),
     bodyParser = require('body-parser'),
     session = require('express-session'),
-    cors = require('cors'),
-    passport = require('passport'),
     errorhandler = require('errorhandler'),
-    mongoose = require('mongoose')
-
-var isProduction = process.env.NODE_ENV === 'production';
-
+    cors = require('cors');
+var logger = require('./util/logger'); 
 // Create global app object
 var app = express();
 
@@ -33,23 +27,14 @@ app.use(bodyParser.json({limit: '50mb'}));
 app.use(require('method-override')());
 app.use(express.static(__dirname + '/wallet-mgmt-web/dist'));
 
-app.use(session({ secret: process.env.API_SECRET, cookie: { maxAge: 60000 }, resave: false, saveUninitialized: false  }));
+app.use(session({ secret: process.env.WEB_SECRET, cookie: { maxAge: 60000 }, resave: false, saveUninitialized: false  }));
+
+var isProduction = process.env.NODE_ENV === 'production';
 
 if (!isProduction) {
   app.use(errorhandler());
 }
 
-logger.debug("mongodb url > "+ process.env.MONGODB_URI);
-mongoose.connect("mongodb://localhost/walletapi");
-mongoose.set('debug', process.env.MONGODB_DEBUG);
-
-require('./models/wallet-auth');
-require('./models/transactions');
-require('./models/wallet');
-require('./models/escrow');
-require('./models/crypto-currencies');
-
-app.use(require('./routes'));
 
 /// catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -86,6 +71,6 @@ app.use(function(err, req, res, next) {
 });
 
 // finally, let's start our server...
-var server = app.listen( process.env.PORT, function(){
+var server = app.listen( process.env.WEBAPP_PORT, function(){
   logger.info(' Listening on port ' + server.address().port);
 });

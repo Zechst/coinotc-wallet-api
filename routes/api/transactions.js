@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 const router = require('express').Router();
 const logger = require('../../util/logger');
-const Big = require('big.js');
 var _ = require('lodash');
+var Decimal = require('decimal.js');
 
 var Escrow = mongoose.model('Escrow');
 var Wallet = mongoose.model('Wallet');
@@ -12,12 +12,17 @@ var EthereumWallet = require('../../wallet/ethereum');
 var MoneroWallet = require('../../wallet/monero');
 var RippleWallet = require('../../wallet/ripple');
 var StellarWallet = require('../../wallet/stellar');
+const evtEmitter = require('../../util/evtemitter');
 
 var adaWallet = CardanoWallet.instance;
 var ethWallet = EthereumWallet.instance;
 var moneroWallet = MoneroWallet.instance;
 var rippleWallet = RippleWallet.instance;
 var stellarWallet = StellarWallet.instance;
+
+// need to move this crypto currency code to a js constant object.
+const XMR = 'XMR';
+const ETH = 'ETH';
 
 router.get('/get-transaction/:type/:trxId/:email', function(req, res, next) {
     let email = req.params.email;
@@ -57,6 +62,7 @@ router.post('/held', function(req, res, next) {
         // get platform fee from the escrow
         getEscrowInformationByType(transferBody.cryptoCurrency)
             .then(function(result){
+                console.log("escrow > "  +  result);
                 escrowInfo = result;
                 transferBody.transactionFee = escrowInfo.feeRate;
         });
@@ -66,8 +72,8 @@ router.post('/held', function(req, res, next) {
                                     transferBody.cryptoCurrency, 
                                     walletFromEmail)
                 .then(function(fromAddressFromWallet){
-                    console.log(`fromAddressFromWallet ${fromAddressFromWallet}`);
-                getBeneficiaryEmail(transferBody.type, transferBody.toAddress).then(function(receipentEmail){
+                console.log(`fromAddressFromWallet ???? ${fromAddressFromWallet}`);
+                getBeneficiaryEmail(transferBody.cryptoCurrency, transferBody.toAddress).then(function(receipentEmail){
                     Transactions.findOne({'orderNo': transferBody.orderNo },function (err, trxn) {
                         if(err) {
                             console.log(err);
@@ -79,7 +85,7 @@ router.post('/held', function(req, res, next) {
                             console.log("fromAddressFromWallet << >>>" + fromAddressFromWallet);
                             // status 0 means locked !
                             executeTransfertoEscrow(0, fromAddressFromWallet, transferBody, 
-                                escrowInfo, res, walletFromEmail, receipentEmail, escrowInfo.address);
+                                escrowInfo, res, walletFromEmail, receipentEmail);
                         }else{
                             console.log(`Order already exist. 
                                     ${transferBody.orderNo} - from ${fromAddressFromWallet}
@@ -145,27 +151,29 @@ function getfromAddress(email, type, wallet){
     let fromAddress = null;
     if(wallet.email === email){
         return new Promise(function(resolve, reject){
-            if('eth' === type){
+            if(ETH === type){
                 if(typeof(_.get(wallet, 'eth')) === 'undefined'){
                     reject({error: 'getFromAddress for eth is null.'});
                 }
                 fromAddress = wallet.eth.address;
-            }else if('xmr' === type){
+            }else if(XMR === type){
                 if(typeof(_.get(wallet, 'monero')) === 'undefined'){
                     reject({error: 'getFromAddress for xmr is null.'});
                 }
-                fromAddress = wallet.monero.accInfo[0].result.address;
-            }else if('xlm' === type){
+                console.log("fromAddress > " + JSON.stringify(wallet.monero.accInfo));
+                fromAddress = wallet.monero.accInfo[1].result.addresses[0].address;
+                console.log("fromAddress fromAddress> " + fromAddress);
+            }else if('XLM' === type){
                 if(typeof(_.get(wallet, 'stellar')) === 'undefined'){
                     reject({error: 'getFromAddress for xlm is null.'});
                 }
                 fromAddress = wallet.stellar.public_address;
-            }else if('xrp' === type){
+            }else if('XRP' === type){
                 if(typeof(_.get(wallet, 'ripple')) === 'undefined'){
                     reject({error: 'getFromAddress for xrp is null.'});
                 }
                 fromAddress = wallet.ripple.account.address;
-            }else if('ada' === type){
+            }else if('ADA' === type){
                 if(typeof(_.get(wallet, 'cardano')) === 'undefined'){
                     reject({error: 'getFromAddress for ada is null.'});
                 }
@@ -182,22 +190,25 @@ function getfromAddress(email, type, wallet){
 function getBeneficiaryEmail(type, address){
     console.log(`type : ${type} , address ${address}`);
     let whereClause ="";
-    if('eth' === type){
+    if(ETH === type){
         whereClause = {'eth.address': address };
-    }else if('xmr' === type){
-        whereClause = {'monero.accInfo[0].address': address };
-    }else if('xlm' === type){
+    }else if(XMR === type){
+        whereClause = {'monero.accInfo.2.result.addresses.0.address': address };
+    }else if('XLM' === type){
         whereClause = {'stellar.public_address': address };
-    }else if('xrp' === type){
+    }else if('XRP' === type){
         whereClause = {'ripple.account.address': address };
-    }else if('ada' === type){
+    }else if('ADA' === type){
         whereClause = {'cardano.result.Right.cwId': address };
     }
-
+    console.log("where clause >" + whereClause);
     return new Promise(function(resolve, reject){
         Wallet.findOne(whereClause,function (err, wallet) {
             if(err) {
                 console.log(err);
+                return reject(err);
+            }
+            if(wallet == null){
                 return reject(err);
             }
             console.log("Beneficiary email -> " + wallet.email);
@@ -207,18 +218,19 @@ function getBeneficiaryEmail(type, address){
 }
 
 function updateTransaction(newTransaction, res){
-    newTransaction.save(function(err, insertedTransaction){
+    newTransaction.save(function(err, newTransaction){
         console.log();
         if (err) {
             console.log(err);
             return res.status(500).json(err);
         }
-        return res.status(200).json(insertedTransaction);
+        return res.status(200).json(newTransaction);
     });
 }
 
 function executeTransfertoEscrow(_status, fromAddressFromWallet, 
         transferBody, escrowInfo, res, walletFromEmail, receipentEmail){
+    console.log("fromAddressFromWallet > " + fromAddressFromWallet);
     var newTransaction = new Transactions({ 
         orderNo: transferBody.orderNo,
         email: transferBody.email,
@@ -236,59 +248,70 @@ function executeTransfertoEscrow(_status, fromAddressFromWallet,
     });
 
     console.log("Calling wallet handlers....held by escrow");
-    console.log("[ SOURCE ADDRESS ] ==> " + escrowInfo.address);
-    if(transferBody.cryptoCurrency === 'eth'){
-        let amountToBeTransferForEth =  new Big(transferBody.unit);
+    console.log("[ SOURCE ADDRESS ] ==> " + escrowInfo.escrowWalletAddress);
+    if(transferBody.cryptoCurrency === ETH){
+        console.log("transferBody.unit " + transferBody.unit);
+        x = new Decimal(transferBody.unit);
         // multiple by 1000000 before sending to the API.
-        amountToBeTransferForEth.times(1000000000000000000);
-        ethWallet.transfer(escrowInfo.address, amountToBeTransferForEth, 
+        y = x.times(1000000000000000000);
+        console.log("" + escrowInfo.escrowWalletAddress);
+        console.log(y.toNumber());
+        console.log(walletFromEmail.eth.privateKey);
+        ethWallet.transfer(escrowInfo.escrowWalletAddress, y.toNumber(), 
             walletFromEmail.eth.privateKey).then(transactionHash => {
             logger.debug("ETH transfer -> " + JSON.stringify(transactionHash));
-            insertedTransaction.receipt = transactionHash;
-            updateTransaction(insertedTransaction,res);
+            logger.debug("ETH transfer -> " + transactionHash.gasLimit.toNumber());
+            newTransaction.receipt = transactionHash;
+            updateTransaction(newTransaction,res);
         }).catch(error => { 
-            console.error('caught', error); 
+            console.error('caught', error);
+            return res.status(500).json(error);
         });
-    }else if(transferBody.cryptoCurrency === 'xmr'){
+    }else if(transferBody.cryptoCurrency === XMR){
+        console.log(walletFromEmail.monero.name);
         moneroWallet.openWallet(walletFromEmail.monero.name, 
             walletFromEmail.monero.password).then((result)=> {
-            let amountToBeTransferForXMR =  new Big(transferBody.unit);
+            let amountToBeTransferForXMR =  new Decimal(transferBody.unit);
+            console.log("escrowInfo.address" +  escrowInfo.escrowWalletAddress);
             var destination = {
-                address: escrowInfo.address,
-                amount: amountToBeTransferForXMR
+                address: escrowInfo.escrowWalletAddress,
+                amount: amountToBeTransferForXMR.toNumber(),
+                orderNo: transferBody.orderNo
             }
             var arrDest = [];
             arrDest.push(destination);
-            moneroWallet.transfer(arrDest).then(function(xferResult){
+            moneroWallet.transfer(arrDest).then(function(){
                 logger.debug("transfer ....");
-                logger.debug(xferResult);
-                insertedTransaction.receipt = xferResult
-                updateTransaction(insertedTransaction,res);
+                moneroWallet.storeWallet().then(function(){
+                    console.log('store wallet data spending on sender....');
+                    updateTransaction(newTransaction,res);
+                })
             }).catch((error)=>{
                 logger.debug("xfer error "+ error);
+                return res.status(500).json(error);
             });
         });
-        
-    }else if(transferBody.cryptoCurrency === 'xlm'){
-        let amountToBeTransferForXLM =  new Big(transferBody.unit);
+    
+    }else if(transferBody.cryptoCurrency === 'XLM'){
+        let amountToBeTransferForXLM =  new Decimal(transferBody.unit);
         stellarWallet.transfer(walletFromEmail.stellar.public_address,
             walletFromEmail.stellar.wallet_secret,
             escrowInfo.address,
             amountToBeTransferForXLM,
             transferBody.memo,
-            insertedTransaction
+            newTransaction
         );
-        return res.status(200).json(insertedTransaction);
-    }else if(transferBody.cryptoCurrency === 'xrp'){
-        let amountToBeTransferForXRP =  new Big(transferBody.unit);
+        return res.status(200).json(newTransaction);
+    }else if(transferBody.cryptoCurrency === 'XRP'){
+        let amountToBeTransferForXRP =  new Decimal(transferBody.unit);
         rippleWallet.transfer(walletFromEmail.ripple.account.address, 
             escrowInfo.address, 
             amountToBeTransferForXRP, 
             walletFromEmail.ripple.account.secret,
-            insertedTransaction);
-        return res.status(200).json(insertedTransaction);
-    }else if(transferBody.cryptoCurrency === 'ada'){
-        let amountToBeTransferForAda =  new Big(transferBody.unit);
+            newTransaction);
+        return res.status(200).json(newTransaction);
+    }else if(transferBody.cryptoCurrency === 'ADA'){
+        let amountToBeTransferForAda =  new Decimal(transferBody.unit);
         // multiple by 1000000 before sending to the API.
         amountToBeTransferForAda.times(1000000);
         console.log(">> " + walletFromEmail.cardano.result.Right.cwId)
@@ -296,9 +319,57 @@ function executeTransfertoEscrow(_status, fromAddressFromWallet,
                 walletFromEmail.cardano.result.Right.cwId,
                 escrowInfo.address, 
                 amountToBeTransferForAda,
-                insertedTransaction);
-        return res.status(200).json(insertedTransaction);
+                newTransaction);
+        return res.status(200).json(newTransaction);
     }
 }
+
+evtEmitter.on('transferEvt', function (arg) {
+    try{
+        logger.debug("transferEvt Event !");
+        logger.debug(arg);
+        if(arg.orderNo != null){
+            Transactions.findOne({orderNo: arg.orderNo}).then(function(foundTransaction){
+                console.log("arg.orderNo" + arg.orderNo);
+                console.log("foundTransaction > " + foundTransaction);
+                //var copy = Object.assign({}, arg);
+                foundTransaction.receipt = JSON.parse(JSON.stringify(arg));
+                console.log("< receipt > " + foundTransaction.receipt);
+                foundTransaction.save(function(err, updatedTrxn){
+                    console.log();
+                    if (err) {
+                        console.log(err);
+                    }
+                    console.log("updatedTrxn > " + updatedTrxn);
+                });
+            });
+        }
+    }catch(error){
+        console.log(error);
+        throw new Error(error);
+    }
+});
+
+evtEmitter.on('transferEvtError', function (arg) {
+    console.log("error for transaction !");
+    logger.debug(arg);
+        if(arg.orderNo != null){
+            Transactions.findOne({orderNo: arg.orderNo}).then(function(foundTransaction){
+                console.log("arg.orderNo" + arg.orderNo);
+                console.log("foundTransaction > " + foundTransaction);
+                //var copy = Object.assign({}, arg);
+                foundTransaction.error = JSON.stringify(arg);
+                foundTransaction.status = -1;
+                console.log("< ERROR > " + foundTransaction.error);
+                foundTransaction.save(function(err, updatedTrxn){
+                    console.log();
+                    if (err) {
+                        console.log(err);
+                    }
+                    console.log("updatedTrxn > " + updatedTrxn);
+                });
+            });
+        }
+});
 
 module.exports = router;

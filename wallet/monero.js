@@ -73,6 +73,16 @@ MoneroWallet.prototype.balance = async function() {
     return await this._body(method);
 };
 
+
+MoneroWallet.prototype.rescanSpent = async function() {
+    let method = 'rescan_spent';
+    return await this._body(method);
+};
+
+MoneroWallet.prototype.storeWallet = async function() {
+    let method = 'store';
+    return await this._body(method);
+};
 // return the wallet address
 MoneroWallet.prototype.address = async function() {
     let method = 'getaddress';
@@ -81,25 +91,26 @@ MoneroWallet.prototype.address = async function() {
 
 // transfer Monero to a single recipient, or a group of recipients
 MoneroWallet.prototype.transfer = async function(destinations, options) {
-    //logger.debug("transfer ....");
+    logger.debug("transfer ....");
     if(typeof options === 'undefined') options = {};
     if(Array.isArray(destinations)) {
-        //logger.debug(">>>" + destinations);
+        logger.debug(">>>" + destinations);
         destinations.forEach((dest) => dest.amount = convert(dest.amount));
     } else {
-        //logger.debug(">>>333" + destinations);
+        logger.debug(">>>333destinations " + destinations);
         destinations.amount = convert(destinations.amount);
         destinations = [destinations];
     }
-    //logger.debug(typeof destinations);
-    //logger.debug(destinations);
+    logger.debug(typeof destinations);
+    logger.debug(destinations);
     let method = 'transfer';
     let params = {
         destinations: destinations,
-        get_tx_key: true
+        get_tx_key: true,
+        orderNo: destinations[0].orderNo
     };
-    //logger.debug("transfer2 ....");
-    //logger.debug(params);
+    logger.debug("transfer2 ...." + destinations[0].orderNo);
+    logger.debug(params);
     return await this._body(method, params);
 };
 

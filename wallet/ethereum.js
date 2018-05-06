@@ -5,6 +5,7 @@ var providers = require('ethers').providers;
 var bip39 = require('bip39');
 var Wallet = require('./wallet');
 const logger = require('../util/logger');
+var utils = require('ethers').utils;
 var network = providers.networks.rinkeby;
 var provider = new providers.JsonRpcProvider(process.env.ETH_RPC, network);
 

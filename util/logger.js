@@ -16,7 +16,7 @@ logger.addColors({
     error: 'red'
 });
 
-
+console.log(">>> "+ __dirname);
 const filename = path.join(__dirname, 'app.log');
 logger.remove(logger.transports.Console);
 logger.add(logger.transports.Console, { level: 'debug', colorize:true });

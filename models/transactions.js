@@ -17,9 +17,10 @@ var TransactionsSchema = new mongoose.Schema({
   beneficiaryEmail: String,
   receipt: mongoose.Schema.Types.Mixed,
   status: Number,
-  memo: String
+  memo: String,
+  error: String
 
-}, {timestamps: true});
+}, {strict: false, timestamps: true});
 
 TransactionsSchema.plugin(uniqueValidator, {message: 'is already taken.'});
 

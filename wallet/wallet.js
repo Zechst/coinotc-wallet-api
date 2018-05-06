@@ -19,13 +19,19 @@ Wallet.prototype._request = function (body){
     // encode the request into JSON
     let requestJSON = JSON.stringify(body);
     //logger.debug(requestJSON);
-    logger.debug(body.method);
-    logger.debug(body.params);
+    logger.debug("METHOD >>>> " + body.method);
+    logger.debug("params> " + JSON.stringify(body.params));
+    
     // set basic headers
     let headers = {};
     headers['Content-Type'] = 'application/json';
     headers['Content-Length'] = Buffer.byteLength(requestJSON, 'utf8');
-
+    console.log("type of > " + typeof(body.params));
+    
+    if(typeof(body.params) === 'object' && typeof(body.params.orderNo) !== 'undefined'){
+        headers['coinotc-orderNo'] = body.params.orderNo;
+    }
+        
     // make a request to the wallet
     let options = {
         hostname: this.hostname,
@@ -40,23 +46,33 @@ Wallet.prototype._request = function (body){
             res.setEncoding('utf8');
             res.on('data', (chunk) => { data += chunk; });
             res.on('end', function() {
+                console.log(options.headers);
                 let body = JSON.parse(data);
                 if(body && body.result) {
                     logger.debug("1" + JSON.stringify(body.result));
                     logger.debug("11" + JSON.stringify(body));
                     resolve(body.result);
-                    evtEmitter.emit('walletEvt',{result: body.result});
+                    if(typeof(body.result.amount) !== 'undefined'){
+                        evtEmitter.emit('transferEvt',{result: body.result, orderNo: options.headers['coinotc-orderNo']});
+                    }else{
+                        console.log("???? " + body.method);
+                        evtEmitter.emit('walletEvt',{result: body.result});
+                    }
                 } else if (body && body.error) {
-                    //logger.debug("2" + JSON.stringify(body.error));
+                    logger.debug("2" + JSON.stringify(body.error));
                     reject(body.error);
+                    evtEmitter.emit('transferEvtError',{result: body.error, orderNo: options.headers['coinotc-orderNo']});
                 } else {
-                    //logger.debug("3" + body.error);
+                    logger.debug("3" + body.error);
                     reject('Wallet response error. Please try again.');
+                    evtEmitter.emit('transferEvtError',{result: body.error, orderNo: options.headers['coinotc-orderNo']});
                 }
             });
         });
         req.on('error', (e) => {
-            reject(e)
+            console.log("ERROR !");
+            reject(e);
+            evtEmitter.emit('transferEvtError',{result: e, orderNo: options.headers['coinotc-orderNo']});
         });
         req.write(requestJSON);
         req.end();

@@ -321,7 +321,7 @@ router.get('/generate/:email/:password/:language', function(req, res, next) {
                     moneroAccInfo.email = emailAddy;
                     
                     //logger.debug("moneroAccInfo>>>" + JSON.stringify(moneroAccInfo));
-                    bluebird.reduce( [createWallet(moneroAccInfo), getAddress(moneroAccInfo), getViewKey(moneroAccInfo), getSpendKey(moneroAccInfo), getSeed(moneroAccInfo), updateWallet(moneroAccInfo)], function ( moneroAccInfo ) {
+                    bluebird.reduce( [createWallet(moneroAccInfo), openWallet(moneroAccInfo), getAddress(moneroAccInfo), getViewKey(moneroAccInfo), getSpendKey(moneroAccInfo), getSeed(moneroAccInfo), updateWallet(moneroAccInfo)], function ( moneroAccInfo ) {
                         return moneroAccInfo;             
                     }, moneroAccInfo ).then( function ( result ) {
                         //logger.debug( "---> --> seq result "  + JSON.stringify(result ));
@@ -341,6 +341,11 @@ router.get('/generate/:email/:password/:language', function(req, res, next) {
 
 function createWallet(moneroAccInfo){
     return moneroWallet.createWallet(moneroAccInfo);
+}
+
+// this is a serious bug for monero after creation we need to open the wallet.  
+function openWallet(moneroAccInfo){
+    return moneroWallet.openWallet(moneroAccInfo.name, moneroAccInfo.password);
 }
 
 function getAddress(moneroAccInfo){
@@ -379,15 +384,24 @@ evtEmitter.on('walletEvt', function (arg) {
     logger.debug(arg);
     moneroAccInfo.accInfo.push(arg);
     logger.debug("moneroAccInfo.accInfo.length>" + moneroAccInfo.accInfo.length);
-    if(moneroAccInfo.accInfo.length == 5) {
-        Wallet.findOne({ 'email': moneroAccInfo.email },function (err, wallet) {
-            //logger.debug(wallet);
-            wallet.monero = moneroAccInfo;
-            wallet.save(function (err, updatedWallet) {
-                if (err) return handleError(err);
-                //logger.debug(updatedWallet);
-            });
-        });
+    try{
+        if(moneroAccInfo.accInfo.length == 5) {
+            console.log(moneroAccInfo.email);
+            if(moneroAccInfo.email != ''){
+                Wallet.findOne({ 'email': moneroAccInfo.email },function (err, wallet) {
+                    if(moneroAccInfo != null  || wallet != null  || wallet.monero != null){
+                        wallet.monero = moneroAccInfo;
+                        wallet.save(function (err, updatedWallet) {
+                            if (err) return handleError(err);
+                            //logger.debug(updatedWallet);
+                        });
+                    }
+                });
+            }
+        }
+    }catch(error){
+        console.log(error);
+        throw new Error(error);
     }
 });
 
