@@ -23,6 +23,9 @@ var stellarWallet = StellarWallet.instance;
 // need to move this crypto currency code to a js constant object.
 const XMR = 'XMR';
 const ETH = 'ETH';
+const XLM = 'XLM';
+const XRP = 'XRP';
+const ADA = 'ADA';
 
 router.get('/get-transaction/:type/:trxId/:email', function(req, res, next) {
     let email = req.params.email;
@@ -163,12 +166,12 @@ function getfromAddress(email, type, wallet){
                 console.log("fromAddress > " + JSON.stringify(wallet.monero.accInfo));
                 fromAddress = wallet.monero.accInfo[1].result.addresses[0].address;
                 console.log("fromAddress fromAddress> " + fromAddress);
-            }else if('XLM' === type){
+            }else if(XLM === type){
                 if(typeof(_.get(wallet, 'stellar')) === 'undefined'){
                     reject({error: 'getFromAddress for xlm is null.'});
                 }
                 fromAddress = wallet.stellar.public_address;
-            }else if('XRP' === type){
+            }else if(XRP === type){
                 if(typeof(_.get(wallet, 'ripple')) === 'undefined'){
                     reject({error: 'getFromAddress for xrp is null.'});
                 }
@@ -194,9 +197,9 @@ function getBeneficiaryEmail(type, address){
         whereClause = {'eth.address': address };
     }else if(XMR === type){
         whereClause = {'monero.accInfo.2.result.addresses.0.address': address };
-    }else if('XLM' === type){
+    }else if(XLM === type){
         whereClause = {'stellar.public_address': address };
-    }else if('XRP' === type){
+    }else if(XRP === type){
         whereClause = {'ripple.account.address': address };
     }else if('ADA' === type){
         whereClause = {'cardano.result.Right.cwId': address };
@@ -292,21 +295,21 @@ function executeTransfertoEscrow(_status, fromAddressFromWallet,
             });
         });
     
-    }else if(transferBody.cryptoCurrency === 'XLM'){
+    }else if(transferBody.cryptoCurrency === XLM){
         let amountToBeTransferForXLM =  new Decimal(transferBody.unit);
         stellarWallet.transfer(walletFromEmail.stellar.public_address,
             walletFromEmail.stellar.wallet_secret,
-            escrowInfo.address,
-            amountToBeTransferForXLM,
+            escrowInfo.escrowWalletAddress,
+            amountToBeTransferForXLM.toNumber(),
             transferBody.memo,
             newTransaction
         );
         return res.status(200).json(newTransaction);
-    }else if(transferBody.cryptoCurrency === 'XRP'){
+    }else if(transferBody.cryptoCurrency === XRP){
         let amountToBeTransferForXRP =  new Decimal(transferBody.unit);
         rippleWallet.transfer(walletFromEmail.ripple.account.address, 
-            escrowInfo.address, 
-            amountToBeTransferForXRP, 
+            escrowInfo.escrowWalletAddress, 
+            amountToBeTransferForXRP.toNumber(), 
             walletFromEmail.ripple.account.secret,
             newTransaction);
         return res.status(200).json(newTransaction);
@@ -317,8 +320,8 @@ function executeTransfertoEscrow(_status, fromAddressFromWallet,
         console.log(">> " + walletFromEmail.cardano.result.Right.cwId)
         adaWallet.transfer(
                 walletFromEmail.cardano.result.Right.cwId,
-                escrowInfo.address, 
-                amountToBeTransferForAda,
+                escrowInfo.escrowWalletAddress, 
+                amountToBeTransferForAda.toNumber(),
                 newTransaction);
         return res.status(200).json(newTransaction);
     }

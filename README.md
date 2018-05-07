@@ -1,4 +1,4 @@
-# ![Node/Express/Mongoose Example App](project-logo.png)
+<img src="project-logo.png" width="200">
 
 > ### CoinOTC Wallet API spec.
 
