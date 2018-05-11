@@ -100,6 +100,7 @@ ngrok http 8080 -subdomain=coinotc-ada
 Just start the websocket server
 
 ```
+cd $COINOTC_PROJ
 nodemon ripple-ws.js
 ```
 debug: received: {"type":"generateAddress","email":"bunnyppl@yahoo.com"}
@@ -116,6 +117,7 @@ debug: disconnected, code: 1000
 Just start the websocket server
 
 ```
+cd $COINOTC_PROJ
 nodemon stellar-ws.js
 ```
 received: {"type":"generateAddress","email":"bunnyppl@yahoo.com"}
@@ -134,6 +136,7 @@ debug:   Wallet secret: SCOPV4NH3OKEZTQVC7QM7A7WP2WFXV5BTHZPZEFJPMREFU2JHLLZKAGE
 
 
 # Environment varilables
+```bash
 API_SECRET=password@123456
 WEB_SECRET=password@12345632
 MONERO_HOSTNAME=127.0.0.1
@@ -158,6 +161,7 @@ APPLOGFILE=combined.log
 PORT=3001
 COINOTC_ESCROW_EMAIL=admin@nimbus.sg
 WEBAPP_PORT=3002
+```
 
 Explanation :
 
