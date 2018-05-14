@@ -2,9 +2,16 @@
 
 > ### CoinOTC Wallet API spec.
 
+# Pre-requisite
+- Mongodb
+- Cardano Wallet Client
+- Monero CLI package from master branch (if production then is the binaries)
+- Postman
+- Geth from Ethereum
+
 # Ethereum
 
-Start the geth daemon to sync the ethereum 
+Start the geth daemon to sync the ethereum blockchain dataset
 ```
 geth --datadir=/media/kenneth/b13ae9f7-5727-4bc0-94fe-77d72079f2ee/eth/.rinkeby console --ethstats='kenken6443443:Respect my authoritah!@stats.rinkeby.io' --networkid=4 --rinkeby --rpc --rpcapi="db,eth,net,web3,personal,web3" console
 ```
@@ -36,7 +43,7 @@ slogan scare major material fun cloud merge document piano chunk hire slender
 ```
 
 # Monero
-We need to checkout the master monero cli, rpc and daemon before running the blockchain dataset
+We need to checkout the master branch of the monero cli, rpc and daemon before running against the blockchain dataset
 ```
 ./monero-wallet-cli --testnet --wallet-file /media/kenneth/b13ae9f7-5727-4bc0-94fe-77d72079f2ee/monero-data-test/wallet/zjoqD --mnemonic-language English --password 123456h67890fsfrdssdcdredsafd432 --daemon-address 127.0.0.1:28081
 ```
@@ -81,7 +88,8 @@ public: 954992c343cdecb6527a735a6fd14dbc2fed6721dd7a4fbc85252b615550d76e
 
 # Cardano
 
-Download the Daedalus Wallet based on Microsoft Windows Server
+* Download the Daedalus Wallet based on Microsoft Windows Server/ Mac 
+* Launch the wallet once it is done start the below scripts.
 
 ```
 scripts/startCardanoEngine.sh
@@ -97,10 +105,10 @@ ngrok http 8080 -subdomain=coinotc-ada
 
 # Ripple
 
-Just start the websocket server
+Just start the websocket server for ripple
 
 ```
-cd $COINOTC_PROJ
+cd $COINOTC_WALLET_API_PROJ
 nodemon ripple-ws.js
 ```
 debug: received: {"type":"generateAddress","email":"bunnyppl@yahoo.com"}
@@ -114,10 +122,10 @@ debug: disconnected, code: 1000
 
 
 # Stellar 
-Just start the websocket server
+Just start the websocket server for stellar
 
 ```
-cd $COINOTC_PROJ
+cd $COINOTC_WALLET_API_PROJ
 nodemon stellar-ws.js
 ```
 received: {"type":"generateAddress","email":"bunnyppl@yahoo.com"}
@@ -132,10 +140,13 @@ debug: received: {"type":"generateAddress","email":"bunnyppl@gmail.com"}
 debug:   Public address: GAZPKLJPLYDCAJXY3XRLGHGTK5SKJVSUOAH23DU6PPU4WLTJZ3KPVKWK
 debug:   Wallet secret: SCOPV4NH3OKEZTQVC7QM7A7WP2WFXV5BTHZPZEFJPMREFU2JHLLZKAGE 
 
+# API Wallet Microservices
+
+Make sure all the above dependencies is UP if not there is no way the API microservice will be functioning properly.
+$COINOTC_WALLET_API_PROJ/nodemon app.js
 
 
-
-# Environment varilables
+# Environment variables (.env)
 ```bash
 API_SECRET=password@123456
 WEB_SECRET=password@12345632
