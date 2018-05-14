@@ -271,7 +271,10 @@ router.get('/balance/:walletid/:type', function(req, res, next) {
             }
             console.log("wallet.ripple");
             rippleWallet.balance(wallet.ripple.account.address, wallet.email);
-            return res.status(200).json(wallet.ripple);
+            Wallet.findById(walletId, function(err, updatedWallet){
+                if (err) return handleError(err);
+                return res.status(200).json(updatedWallet.ripple);
+            });
         }else{
             res.status(500).json({error: 'unsupported crypto currency'});
         }

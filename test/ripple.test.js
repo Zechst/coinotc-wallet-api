@@ -14,6 +14,11 @@ ADDRESS
 rGHXrYhVUrPrK71PgChbCEqCDvR1FiCCB3
 SECRET
 shv7DjD6oigQV9uQvu3HqsoH9ZWCq
+
+ADDRESS
+rDLuTbGrfHTyGUq8uoi5usJvu3oGQvmNmq
+SECRET
+shEpMF7kBhxWTtJyK8awRM9aSuA9A
 */
 test('get wallet balance', () => {
     Wallet.balance('rGHXrYhVUrPrK71PgChbCEqCDvR1FiCCB3');

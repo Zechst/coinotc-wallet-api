@@ -1,6 +1,7 @@
 const dotenv = require('dotenv');
 const dotenvParseVariables = require('dotenv-parse-variables');
 const logger = require('./util/logger');
+
 let env = dotenv.config({})
 if (env.error) throw env.error;
 env = dotenvParseVariables(env.parsed);
@@ -81,33 +82,41 @@ wss.on('connection', function connection(ws) {
             maxLedgerVersionOffset: 5,
             maxFee
         }
-  
+        console.log(currency);
+        console.log(incomingObj);
+        console.log(incomingObj.transfer.sourceAddress);
+        console.log(incomingObj.transfer.destinationAddress);
         const payment = {
             source: {
-              address: incomingObj.transfer.sourceAddress,
-              maxAmount: {
-                value: incomingObj.transfer.amount.toString(),
-                currency
+              'address': incomingObj.transfer.sourceAddress,
+              'maxAmount': {
+                'value': incomingObj.transfer.amount.toString(),
+                'currency': currency.toString().toUpperCase()
               }
             },
             destination: {
-              address: incomingObj.transfer.destinationAddress,
-              tag: incomingObj.transfer.destinationTag || undefined,
-              amount: {
-                value: incomingObj.transfer.amount.toString(),
-                currency
+              'address': incomingObj.transfer.destinationAddress,
+              'amount': {
+                'value': incomingObj.transfer.amount.toString(),
+                'currency': currency.toString().toUpperCase()
               }
             }
         }
-
+        console.log(payment);
         api.preparePayment(incomingObj.transfer.sourceAddress, payment, instructions).then(prepared => {
 
           const { signedTransaction } = api.sign(prepared.txJSON, incomingObj.transfer.sourceSecret)
           logger.debug('Submitting payment...')
           api.submit(signedTransaction).then(() => {
             //waitForBalancesUpdate(sourceAddress, answers.destinationAddress, sourceBalance)
-            logger.debug('Ok submitted ripple');
-            ws.send(JSON.stringify(signedTransaction));
+            logger.debug('Ok submitted ripple >> ' + signedTransaction);
+            let transactionHash = {
+              transaction_id: signedTransaction,
+              datetime: new Date()
+            }
+            incomingObj.receipt = transactionHash;
+            console.log(incomingObj);
+            ws.send(JSON.stringify(incomingObj));
             api.disconnect();
           }, fail).catch((error)=>{
             console.log(error);

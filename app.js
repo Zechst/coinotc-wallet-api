@@ -40,7 +40,7 @@ if (!isProduction) {
 }
 
 logger.debug("mongodb url > "+ process.env.MONGODB_URI);
-mongoose.connect("mongodb://localhost/walletapi");
+mongoose.connect(process.env.MONGODB_URI);
 mongoose.set('debug', process.env.MONGODB_DEBUG);
 
 require('./models/wallet-auth');

@@ -176,7 +176,7 @@ function getfromAddress(email, type, wallet){
                     reject({error: 'getFromAddress for xrp is null.'});
                 }
                 fromAddress = wallet.ripple.account.address;
-            }else if('ADA' === type){
+            }else if(ADA === type){
                 if(typeof(_.get(wallet, 'cardano')) === 'undefined'){
                     reject({error: 'getFromAddress for ada is null.'});
                 }
@@ -201,7 +201,7 @@ function getBeneficiaryEmail(type, address){
         whereClause = {'stellar.public_address': address };
     }else if(XRP === type){
         whereClause = {'ripple.account.address': address };
-    }else if('ADA' === type){
+    }else if(ADA === type){
         whereClause = {'cardano.result.Right.cwId': address };
     }
     console.log("where clause >" + whereClause);
@@ -313,7 +313,7 @@ function executeTransfertoEscrow(_status, fromAddressFromWallet,
             walletFromEmail.ripple.account.secret,
             newTransaction);
         return res.status(200).json(newTransaction);
-    }else if(transferBody.cryptoCurrency === 'ADA'){
+    }else if(transferBody.cryptoCurrency === ADA){
         let amountToBeTransferForAda =  new Decimal(transferBody.unit);
         // multiple by 1000000 before sending to the API.
         amountToBeTransferForAda.times(1000000);
