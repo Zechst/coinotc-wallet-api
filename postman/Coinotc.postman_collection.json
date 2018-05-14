@@ -1,0 +1,494 @@
+{
+	"info": {
+		"_postman_id": "2ec7fec5-1d62-4746-9b60-cd6a0eab738c",
+		"name": "Coinotc",
+		"description": "This is rest testing on coinotc",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "check cardano balance",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/wallets/generate/bunnyppl@yahoo.com/123456h67890fsfrdssdcdredsafd432",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"wallets",
+						"generate",
+						"bunnyppl@yahoo.com",
+						"123456h67890fsfrdssdcdredsafd432"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Generate Wallet for User",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/wallets/generate/bunnyppl@gmail.com/123456h67890fsfrdssdcdredsafd432/English",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"wallets",
+						"generate",
+						"bunnyppl@gmail.com",
+						"123456h67890fsfrdssdcdredsafd432",
+						"English"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get user's wallet information",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/wallets/bunnyppl@yahoo.com",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"wallets",
+						"bunnyppl@yahoo.com"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get user's wallet balance",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/wallets/balance/5abe650debc84b8e3ece446f/eth",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"wallets",
+						"balance",
+						"5abe650debc84b8e3ece446f",
+						"eth"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Crypto Wallet Transfer (release)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"orderNo\": \"fsdfdsfdsfds353543sdf3df\",\n\t\"cryptoCurrency\": \"eth\",\n\t\"toAddress\": \"ghjhjhgj\",\n\t\"email\": \"bunnyppl@hotmail.com\",\n\t\"unit\": 1,\n\t\"transactCurrency\": \"USD\",\n\t\"pin\": 123456,\n\t\"equivalentAmount\": 234.3,\n\t\"beneficiaryEmail\": \"bunnyppl@yahoo.com\",\n\t\"memo\": \"test\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/transactions/unlock-transfer/232432433",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"transactions",
+						"unlock-transfer",
+						"232432433"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Crypto Wallet Transfer (Held) XMR",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"orderNo\": \"18\",\n\t\"cryptoCurrency\": \"ETH\",\n\t\"toAddress\": \"0xC24E24a083C2A7B00c94e2B5D14De3B7ED39d8c1\",\n\t\"email\": \"bunnyppl@hotmail.com\",\n\t\"unit\": 1,\n\t\"transactCurrency\": \"USD\",\n\t\"pin\": 123456,\n\t\"equivalentAmount\": 234.3,\n\t\"beneficiaryEmail\": \"bunnyppl@gmail.com\",\n\t\"memo\": \"test\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/transactions/held",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"transactions",
+						"held"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Insert new crypto",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"code\": \"xrp\",\n\t\"desc\": \"Ripple\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/wallets/cryptos",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"wallets",
+						"cryptos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Cryptos",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/wallets/cryptos",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"wallets",
+						"cryptos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Crypto",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"code\": \"xrp\",\n\t\"desc\": \"Ripple\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/wallets/cryptos/5abeab31a18db7f917cf763b",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"wallets",
+						"cryptos",
+						"5abeab31a18db7f917cf763b"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Escrow",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/wallets/escrow",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"wallets",
+						"escrow"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create escrow",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"type\": \"xlm\",\n\t\"address\": \"GCSCSIKV2ZDRNMLF4M4ITCFRLSVGRR6E2ZXE47OKD2B7V5XGAC6QON4I\",\n\t\"fee\": \"0.01\",\n\t\"status\": 1\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/wallets/escrow",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"wallets",
+						"escrow"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Amend escrow information",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"unauthorizedEscrowWalletAddress\": \"0x52FFf86B65893DDF85C4f6C16c13C8b024A651BB\",\n\t\"unauthorizedFeeRate\": 2.0\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/wallets/escrow/5abf02edbd7c37b61cb7023f",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"wallets",
+						"escrow",
+						"5abf02edbd7c37b61cb7023f"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Escrow Approve Changes",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/wallets/escrow/approve/5abf02edbd7c37b61cb7023f/716e4e0",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"wallets",
+						"escrow",
+						"approve",
+						"5abf02edbd7c37b61cb7023f",
+						"716e4e0"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Transactions History",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/transactions/transaction-history/bunnyppl@yahoo.com",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"transactions",
+						"transaction-history",
+						"bunnyppl@yahoo.com"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Crypto Wallet Transfer (Held) ETH",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"orderNo\": \"29\",\n\t\"cryptoCurrency\": \"ETH\",\n\t\"toAddress\": \"0xC24E24a083C2A7B00c94e2B5D14De3B7ED39d8c1\",\n\t\"email\": \"bunnyppl@hotmail.com\",\n\t\"unit\": 0.1,\n\t\"transactCurrency\": \"USD\",\n\t\"pin\": 123456,\n\t\"equivalentAmount\": 234.3,\n\t\"beneficiaryEmail\": \"bunnyppl@gmail.com\",\n\t\"memo\": \"test\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/transactions/held",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"transactions",
+						"held"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Crypto Wallet Transfer (Held) XMR",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"orderNo\": \"16\",\n\t\"cryptoCurrency\": \"XRP\",\n\t\"toAddress\": \"r4MWFXZ7yKHrxU3ryG6d1kp5QG86vNFziy\",\n\t\"email\": \"bunnyppl@yahoo.com\",\n\t\"unit\": 1,\n\t\"transactCurrency\": \"USD\",\n\t\"pin\": 123456,\n\t\"equivalentAmount\": 234.3,\n\t\"beneficiaryEmail\": \"bunnyppl@gmail.com\",\n\t\"memo\": \"test 123\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/transactions/held",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"transactions",
+						"held"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Crypto Wallet Transfer (Held) XRP",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"orderNo\": \"17\",\n\t\"cryptoCurrency\": \"XRP\",\n\t\"toAddress\": \"r4MWFXZ7yKHrxU3ryG6d1kp5QG86vNFziy\",\n\t\"email\": \"bunnyppl@yahoo.com\",\n\t\"unit\": 1,\n\t\"transactCurrency\": \"USD\",\n\t\"pin\": 123456,\n\t\"equivalentAmount\": 234.3,\n\t\"beneficiaryEmail\": \"bunnyppl@gmail.com\",\n\t\"memo\": \"test 123\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/transactions/held",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"transactions",
+						"held"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
