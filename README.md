@@ -3,7 +3,7 @@
 > ### CoinOTC Wallet API spec.
 
 # Pre-requisite
-- Mongodb
+- MongoDB
 - Cardano Wallet Client
 - Monero CLI package from master branch (if production then is the binaries)
 - Postman
@@ -219,4 +219,4 @@ Requests are authenticated using the `Authorization` header with a valid API key
 
 <br />
 
-[![Brought to you by CoinOTC]
+Brought to you by Nimbus LLP (Singapore)
