@@ -250,6 +250,23 @@ function executeTransfertoEscrow(_status, fromAddressFromWallet,
         memo: transferBody.memo
     });
 
+    // check unit is more than zero 
+    validateAmount = new Decimal(transferBody.unit);
+    console.log(validateAmount);
+    console.log(validateAmount.s);
+    console.log(validateAmount.s > 0);
+    console.log(validateAmount.isPositive());
+    if(validateAmount.isPositive()){
+        console.log(validateAmount.toNumber());
+        if(validateAmount.toNumber() == 0){
+            return res.status(500).json({error: 'Amount/Unit transfer must not be zero'});
+         }
+    }else{
+        if(validateAmount.s <= 0){
+            return res.status(500).json({error: 'Amount/Unit transfer must be more than zero'});
+         }
+    }
+    
     console.log("Calling wallet handlers....held by escrow");
     console.log("[ SOURCE ADDRESS ] ==> " + escrowInfo.escrowWalletAddress);
     if(transferBody.cryptoCurrency === ETH){
