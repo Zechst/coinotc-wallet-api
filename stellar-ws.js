@@ -88,10 +88,12 @@ wss.on('connection', function connection(ws) {
               transaction.sign(sourceKeypair);
               server.submitTransaction(transaction)
                   .then((transactionResult) => {
-                  logger.debug('\nSuccess! View the transaction at: ')
+                  logger.debug('\nSuccess! View the transaction at: ');
+                  console.log(transactionResult);
                   logger.debug(chalk.yellow(transactionResult._links.transaction.href), "\n")
                   resolve(transactionResult);
-                  ws.send(JSON.stringify(transactionResult));
+                  incomingObj.receipt = transactionResult;
+                  ws.send(JSON.stringify(incomingObj));
               })
               .catch((message)=>{
                 reject(message);

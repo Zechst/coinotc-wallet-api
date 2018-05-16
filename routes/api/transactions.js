@@ -115,20 +115,110 @@ router.post('/held', function(req, res, next) {
 
 router.post('/unlock-transfer/:orderNo', function(req, res, next) {
     let orderNo = req.params.orderNo;
+    let escrowInfo = null;
     logger.debug(orderNo);
     Transactions.findOne({'orderNo':orderNo} ,function (err, trxn) {
         if(err) res.status(500).json(err);
-        trxn.status = 1;
-        trxn.save(function(err, updateTransaction){
-            console.log();
-            if (err) {
-                console.log(err);
-                return res.status(500).json(err);
-            }
-            return res.status(200).json(updateTransaction);
-        })
+        getEscrowInformationByType(transferBody.cryptoCurrency)
+            .then(function(result){
+                console.log("escrow > "  +  result);
+                escrowInfo = result;
+                var receiverResult = releaseTransactionToReceiver(trxn, escrowInfo, res);
+                if(receiverResult){
+                    trxn.status = 1;
+                    trxn.save(function(err, updateTransaction){
+                        console.log();
+                        if (err) {
+                            console.log(err);
+                            return res.status(500).json(err);
+                        }
+                        return res.status(200).json(updateTransaction);
+                    })
+                }
+        });
     });
 });
+
+async function releaseTransactionToReceiver(transaction, escrowInfo , res){
+    let successRelease = false;
+    
+    console.log("[ SOURCE ADDRESS ] ==> " + escrowInfo.escrowWalletAddress);
+    if(transaction.cryptoCurrency === ETH){
+        console.log("transferBody.unit " + transaction.unit);
+        x = new Decimal(transaction.unit);
+        // multiple by 1000000 before sending to the API.
+        y = x.times(1000000000000000000);
+        console.log("" + escrowInfo.escrowWalletAddress);
+        console.log(y.toNumber());
+        console.log(escrowInfo.privateKey);
+        ethWallet.transfer(transaction.toAddress, y.toNumber(), 
+            escrowInfo.privateKey).then(transactionHash => {
+            logger.debug("ETH transfer -> " + JSON.stringify(transactionHash));
+            logger.debug("ETH transfer -> " + transactionHash.gasLimit.toNumber());
+            transaction.final_receipt = transactionHash;
+            updateTransactionForRelease(transaction,res);
+        }).catch(error => { 
+            console.error('caught', error);
+            return res.status(500).json(error);
+        });
+    }else if(transaction.cryptoCurrency === XMR){
+        console.log(walletFromEmail.monero.name);
+        moneroWallet.openWallet(walletFromEmail.monero.name, 
+            walletFromEmail.monero.password).then((result)=> {
+            let amountToBeTransferForXMR =  new Decimal(transferBody.unit);
+            console.log("escrowInfo.address" +  escrowInfo.escrowWalletAddress);
+            var destination = {
+                address: escrowInfo.escrowWalletAddress,
+                amount: amountToBeTransferForXMR.toNumber(),
+                orderNo: transferBody.orderNo
+            }
+            var arrDest = [];
+            arrDest.push(destination);
+            moneroWallet.transfer(arrDest).then(function(){
+                logger.debug("transfer ....");
+                moneroWallet.storeWallet().then(function(){
+                    console.log('store wallet data spending on sender....');
+                    updateTransaction(transaction,res);
+                })
+            }).catch((error)=>{
+                logger.debug("xfer error "+ error);
+                return res.status(500).json(error);
+            });
+        });
+    
+    }else if(transaction.cryptoCurrency === XLM){
+        let amountToBeTransferForXLM =  new Decimal(transferBody.unit);
+        stellarWallet.transfer(walletFromEmail.stellar.public_address,
+            walletFromEmail.stellar.wallet_secret,
+            escrowInfo.escrowWalletAddress,
+            amountToBeTransferForXLM.toNumber(),
+            transferBody.memo,
+            transaction
+        );
+        return res.status(200).json(transaction);
+    }else if(transaction.cryptoCurrency === XRP){
+        let amountToBeTransferForXRP =  new Decimal(transferBody.unit);
+        rippleWallet.transfer(walletFromEmail.ripple.account.address, 
+            escrowInfo.escrowWalletAddress, 
+            amountToBeTransferForXRP.toNumber(), 
+            walletFromEmail.ripple.account.secret,
+            transaction);
+        return res.status(200).json(transaction);
+    }else if(transaction.cryptoCurrency === ADA){
+        let amountToBeTransferForAda =  new Decimal(transferBody.unit);
+        // multiple by 1000000 before sending to the API.
+        amountToBeTransferForAda.times(1000000);
+        console.log(">> " + walletFromEmail.cardano.result.Right.cwId)
+        adaWallet.transfer(
+                walletFromEmail.cardano.result.Right.cwId,
+                escrowInfo.escrowWalletAddress, 
+                amountToBeTransferForAda.toNumber(),
+                transaction);
+        return res.status(200).json(transaction);
+    }
+    return await successRelease;
+}
+
 
 function getEscrowInformationByType(cryptoType){
     return new Promise(function(resolve, reject){

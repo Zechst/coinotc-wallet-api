@@ -301,7 +301,9 @@ router.get('/generate/:email/:password/:language', function(req, res, next) {
                 }
                 // saved!
                 if(createdWallet != null){
-                    adaWallet.createWallet(walletGlobalPassword, emailAddy);
+                    adaWallet.createWallet(walletGlobalPassword, emailAddy).then(result=> {
+                        console.log(result);
+                    });
                     
                     ethWallet.createWallet(walletGlobalPassword, emailAddy).then(result => {
                         //logger.debug("result" + result);

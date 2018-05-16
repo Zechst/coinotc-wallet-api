@@ -74,24 +74,25 @@ wss.on('connection', function connection(ws, req) {
     console.log('received: %s', message);
     var txnMessage = JSON.parse(message);
 
-      if(txnMessage.type === 'accounts'){
-          console.log("accounts ...");
-          options.method = 'GET';
-          options.path = '/api/accounts';
-          console.log("accounts ...");
-          var accountsReq = https.request(options, function(res) {
-              console.log("res"  + res);
-              res.on('data', function(data) {
-                  process.stdout.write(data);
-                  console.log('\n');
-                  var result = JSON.parse(data);
-              });
-          });
-          accountsReq.end();
-      } else if(txnMessage.type === 'wallets'){
+    if(txnMessage.type === 'accounts'){
+        console.log("accounts ...");
+        let walletId = txnMessage.walletId;
+        options.method = 'GET';
+        options.path = `/api/v1/wallets/${walletId}/accounts`;
+        console.log("accounts ...");
+        var accountsReq = https.request(options, function(res) {
+            console.log("res"  + res);
+            res.on('data', function(data) {
+                process.stdout.write(data);
+                console.log('\n');
+                var result = JSON.parse(data);
+            });
+        });
+        accountsReq.end();
+    } else if(txnMessage.type === 'wallets'){
         //console.log("wallets ...");
         options.method = 'GET';
-        options.path = '/api/wallets';
+        options.path = '/api/v1/wallets';
         //console.log("wallets ...");
         var walletsReq = https.request(options, function(res) {
             //console.log("res"  + res);
@@ -104,10 +105,23 @@ wss.on('connection', function connection(ws, req) {
             });
         });
         walletsReq.end();
+    } else if(txnMessage.type === 'wallet_info'){
+        let walletId = txnMessage.walletId;
+        console.log("wallets ..."  + walletId);
+        options.method = 'GET';
+        options.path = `/api/v1/wallets/${walletId}`;
+        var walletsReq = https.request(options, function(res) {
+            res.on('data', function(data) {
+                data.txnMessage = txnMessage;
+                console.log('\n'  + data);
+                ws.send(JSON.stringify(data));
+            });
+        });
+        walletsReq.end();    
     } else if(txnMessage.type === 'balance'){
       console.log("balance ...");
       options.method = 'GET';
-      options.path = '/api/wallets/' + txnMessage.walletId;
+      options.path = '/api/v1/wallets/' + txnMessage.walletId;
       console.log("before ...");
       var balreq = https.request(options, function(res) {
           console.log("res"  + res);
@@ -125,21 +139,17 @@ wss.on('connection', function connection(ws, req) {
         var mnemonic = bip39.generateMnemonic();
         var bpListArr = mnemonic.split(' ');
         console.log(bpListArr);
+        console.log(txnMessage.email);
+        var encodedPassphrase = toHexBase16(txnMessage.passphrase);
         var postData = {
-            "cwInitMeta": {
-                "cwName": "test1",
-                "cwAssurance": "CWAStrict",
-                "cwUnit": 0
-            },
-            "cwBackupPhrase": {
-                "bpToList": bpListArr
-            }
+            "operation": "create",
+            "assuranceLevel": "normal",
+            "name": txnMessage.email,
+            "backupPhrase": bpListArr,
+            "spendingPassword": encodedPassphrase
         }
         options.method = 'POST';
-
-        var encodedPassphrase = toHexBase16(txnMessage.passphrase);
-
-        options.path = '/api/wallets/new?passphrase=' + encodedPassphrase;
+        options.path = '/api/v1/wallets';
         console.log(options.path);
         console.log(JSON.stringify(postData).length);
         options.headers = {
@@ -153,36 +163,64 @@ wss.on('connection', function connection(ws, req) {
 
     } else if( txnMessage.type === 'transfer') {
         console.log('transfer --- ');
-          var postData = {"groupingPolicy": "OptimizeForSecurity"};
-
-          options.method = 'POST';
-
-          var fromAddress = txnMessage.fromAddress;
-          var toAddress = txnMessage.toAddress;
-          var amount = txnMessage.amount;
-          var encodedPassphrase = toHexBase16(txnMessage.passphrase);
-          options.path = '/api/txs/payments/'+ fromAddress +'/' + toAddress + '/' + amount
-              + '?passphrase=' + encodedPassphrase;
-          console.log(options.path);
-          console.log(JSON.stringify(postData).length);
-          options.headers = {
-              'Content-Type': 'application/json',
-              'Content-Length': JSON.stringify(postData).length
-          };
-          options.json = true;
-          options.body = JSON.stringify(postData);
-          submitRequest(options, postData, ws, txnMessage);
-     } else if (txnMessage.type === 'fee'){
-        console.log('fee --- ');
-        var postData = {"groupingPolicy": "OptimizeForSecurity"};
-
+        
         options.method = 'POST';
 
-        var fromAddress = txnMessage.fromAddress;
+        var fromWalletId = txnMessage.fromWalletId;
+        var fromAccountIndex = txnMessage.fromAccountIndex;
+        
         var toAddress = txnMessage.toAddress;
         var amount = txnMessage.amount;
 
-        options.path = '/api/txs/fee/'+ fromAddress +'/' + toAddress + '/' + amount;
+        let destinationArr = []
+        let destionationObj = {
+            "amount": amount,
+            "address": toAddress
+        }
+        var encodedPassphrase = toHexBase16(txnMessage.passphrase);
+        var postData = {
+            "groupingPolicy": null,
+            "destinations": destinationArr,
+            "source": { "accountIndex": fromAccountIndex, "walletId": fromWalletId},
+            "spendingPassword": encodedPassphrase
+        };
+
+        options.path = '/api/v1/transactions';
+        console.log(options.path);
+        console.log(JSON.stringify(postData).length);
+        options.headers = {
+            'Content-Type': 'application/json',
+            'Content-Length': JSON.stringify(postData).length
+        };
+        options.json = true;
+        options.body = JSON.stringify(postData);
+        submitRequest(options, postData, ws, txnMessage);
+        
+     } else if (txnMessage.type === 'fee'){
+        console.log('fee --- ');
+        
+        options.method = 'POST';
+
+        var fromWalletId = txnMessage.fromWalletId;
+        var fromAccountIndex = txnMessage.fromAccountIndex;
+        
+        var toAddress = txnMessage.toAddress;
+        var amount = txnMessage.amount;
+        let passwd = toHexBase16(txnMessage.passphrase);
+        let destinationArr = []
+        let destionationObj = {
+            "amount": amount,
+            "address": toAddress
+        }
+        destinationArr.push(destionationObj);
+        var postData = {
+            "groupingPolicy": null,
+            "destinations": destinationArr,
+            "source": { "accountIndex": fromAccountIndex, "walletId": fromWalletId},
+            "spendingPassword": passwd
+        };
+
+        options.path = '/api/v1/transaction/fees';
         console.log(options.path);
         console.log(JSON.stringify(postData).length);
         options.headers = {

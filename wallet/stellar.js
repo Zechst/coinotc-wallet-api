@@ -40,29 +40,31 @@ ws.on('open', function open() {
         }
 
         if(incData.type === 'transfer'){
-            let wsInsertedTrxn = JSON.parse(JSON.stringify(incData.insertedTransaction));
+            let wsInsertedTrxn = JSON.parse(JSON.stringify(incData));
+            console.log(wsInsertedTrxn);
             var newTransaction = new Transactions({ 
-                orderNo: wsInsertedTrxn.orderNo,
-                email: wsInsertedTrxn.email,
-                fromAddress: wsInsertedTrxn.fromAddress,
-                toAddress: wsInsertedTrxn.toAddress,
-                unit: wsInsertedTrxn.unit,
-                equivalentAmount: wsInsertedTrxn.equivalentAmount,
-                transactCurrency: wsInsertedTrxn.transactCurrency,
-                cryptoCurrency: wsInsertedTrxn.cryptoCurrency,
-                platformFee: wsInsertedTrxn.platformFee,
-                escrowId: wsInsertedTrxn.escrowId,
-                beneficiaryEmail: wsInsertedTrxn.beneficiaryEmail,
-                status: wsInsertedTrxn.status,
-                memo: wsInsertedTrxn.memo
+                orderNo: wsInsertedTrxn.transfer.insertedTransaction.orderNo,
+                email: wsInsertedTrxn.transfer.insertedTransaction.email,
+                fromAddress: wsInsertedTrxn.transfer.insertedTransaction.fromAddress,
+                toAddress: wsInsertedTrxn.transfer.insertedTransaction.toAddress,
+                unit: wsInsertedTrxn.transfer.insertedTransaction.unit,
+                equivalentAmount: wsInsertedTrxn.transfer.insertedTransaction.equivalentAmount,
+                transactCurrency: wsInsertedTrxn.transfer.insertedTransaction.transactCurrency,
+                cryptoCurrency: wsInsertedTrxn.transfer.insertedTransaction.cryptoCurrency,
+                platformFee: wsInsertedTrxn.transfer.insertedTransaction.platformFee,
+                escrowId: wsInsertedTrxn.transfer.insertedTransaction.escrowId,
+                beneficiaryEmail: wsInsertedTrxn.transfer.insertedTransaction.beneficiaryEmail,
+                status: wsInsertedTrxn.transfer.insertedTransaction.status,
+                memo: wsInsertedTrxn.transfer.insertedTransaction.memo,
+                receipt: wsInsertedTrxn.receipt
             });
             newTransaction.save(function(err, insertedTransaction){
-                console.log();
+                console.log("saved !");
                 if (err) {
                     console.log(err);
-                    return res.status(500).json(err);
+                    return handleError(err);
                 }
-                return res.status(200).json(insertedTransaction);
+                console.log(insertedTransaction);
             });
         }
     });
