@@ -18,6 +18,7 @@ var options = {
     port: 8090,
     key:   fs.readFileSync('client.key'),  // Secret client key
     cert:  fs.readFileSync('client.crt'),
+    ca:    fs.readFileSync('ca.crt') 
 };
 
 app.use(function (req, res) {
