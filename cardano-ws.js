@@ -159,7 +159,7 @@ wss.on('connection', function connection(ws, req) {
         options.json = true;
         options.body = JSON.stringify(postData);
 
-        submitRequest(options, postData, ws, txnMessage);
+        submitRequestForNewWallet(options, postData, ws, txnMessage);
 
     } else if( txnMessage.type === 'transfer') {
         console.log('transfer --- ');
@@ -259,6 +259,32 @@ function toHexBase16(s) {
     }
     return h
 }
+
+function submitRequestForNewWallet(options, postData, _ws, _txnMessage){
+    var newAccReq = https.request(options, function (res) {
+        res.on('data', function(data) {
+            console.log('! !');
+            process.stdout.write("NEW ! << " + data);
+            console.log("sending back to the client ...");
+            var _result = JSON.parse(data);
+            console.log("RESULT >>> "  + _result);
+            postData.result = _result;
+            //delete _txnMessage.passphrase;
+            postData.txnMessage = _txnMessage;
+            console.log(JSON.stringify(postData));
+            _ws.send(JSON.stringify(postData));
+        });
+    });
+
+    newAccReq.on('error', function (e) {
+        console.error(e);
+    });
+
+    newAccReq.write(JSON.stringify(postData), encoding = 'utf8');
+    newAccReq.end();
+}
+
+
 
 function submitRequest(options, postData, _ws, _txnMessage){
     var newAccReq = https.request(options, function (res) {

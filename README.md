@@ -9,6 +9,9 @@
 - Postman
 - Geth from Ethereum
 
+## Global Wallet Password
+123456h67890Fsfrdssdcdredsafd432
+
 # Ethereum
 
 Start the geth daemon to sync the ethereum blockchain dataset

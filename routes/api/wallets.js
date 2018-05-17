@@ -292,6 +292,7 @@ router.get('/generate/:email/:password/:language', function(req, res, next) {
             logger.error(err);
             res.status(500).json({error: err});
         }
+        console.log(wallet);
         if (wallet == null) {
             logger.debug("creating wallet ....");
             Wallet.create({ email: emailAddy, eth: {}, monero: {}, cardano: {}, ripple: {}, stellar: {} }, function (err, createdWallet) {
@@ -301,9 +302,7 @@ router.get('/generate/:email/:password/:language', function(req, res, next) {
                 }
                 // saved!
                 if(createdWallet != null){
-                    adaWallet.createWallet(walletGlobalPassword, emailAddy).then(result=> {
-                        console.log(result);
-                    });
+                    adaWallet.createWallet(walletGlobalPassword, emailAddy);
                     
                     ethWallet.createWallet(walletGlobalPassword, emailAddy).then(result => {
                         //logger.debug("result" + result);
