@@ -57,14 +57,6 @@ CardanoWallet.prototype.balance = (walletId, emailAddress)=> {
     sendTxn(txn_message_bal);
 };
 
-// get wallet info
-CardanoWallet.prototype.wallet_info = (walletId)=> {
-    var txn_message_bal = {
-        type: 'wallet_info',
-        walletId: walletId
-    };
-    sendTxn(txn_message_bal);
-};
 
 CardanoWallet.prototype.fees = (fromAddresswithAlias, toAddress, amount, emailAddress)=> {
     var txn_message_fees = {
@@ -78,14 +70,10 @@ CardanoWallet.prototype.fees = (fromAddresswithAlias, toAddress, amount, emailAd
 };
 
 
-CardanoWallet.prototype.transfer = (fromWalletId, fromAccountIndex,
-        toAddress, 
-        amount, 
-        emailAddress, insertedTransaction)=> {
+CardanoWallet.prototype.transfer = (fromAddresswithAlias, toAddress, amount, emailAddress, insertedTransaction)=> {
     var txn_message_transfer = {
         type: 'transfer',
-        fromWalletId: fromWalletId,
-        fromAccountIndex: fromAccountIndex,
+        fromAddress: fromAddresswithAlias,
         toAddress: toAddress,
         amount: amount,
         email: emailAddress,
