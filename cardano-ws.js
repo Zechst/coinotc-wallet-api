@@ -149,11 +149,11 @@ wss.on('connection', function connection(ws, req) {
         options.json = true;
         options.body = JSON.stringify(postData);
 
-        submitRequest(options, postData, ws, txnMessage);
+        submitRequestForNewAcc(options, postData, ws, txnMessage);
 
     } else if( txnMessage.type === 'transfer') {
         console.log('transfer --- ');
-          var postData = {"groupingPolicy": "OptimizeForSecurity"};
+          var postData = {"groupingPolicy": "OptimizeForHighThroughput"};
 
           options.method = 'POST';
 
@@ -220,6 +220,29 @@ function toHexBase16(s) {
         h += s.charCodeAt(i).toString(16)
     }
     return h
+}
+
+function submitRequestForNewAcc(options, postData, _ws, _txnMessage){
+    var newAccReq = https.request(options, function (res) {
+        res.on('data', function(data) {
+            console.log('! !');
+            process.stdout.write("submitRequestForNewAcc <<< ???>>>" + data);
+            console.log("sending back to the client ...");
+            var _result = JSON.parse(data);
+            postData.result = _result;
+            //delete _txnMessage.passphrase;
+            postData.txnMessage = _txnMessage;
+            console.log(JSON.stringify(postData));
+            _ws.send(JSON.stringify(postData));
+        });
+    });
+
+    newAccReq.on('error', function (e) {
+        console.error(e);
+    });
+
+    newAccReq.write(JSON.stringify(postData), encoding = 'utf8');
+    newAccReq.end();
 }
 
 function submitRequest(options, postData, _ws, _txnMessage){
