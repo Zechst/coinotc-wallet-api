@@ -16,13 +16,15 @@ var http = require('http'),
     cors = require('cors'),
     passport = require('passport'),
     errorhandler = require('errorhandler'),
-    mongoose = require('mongoose')
+    mongoose = require('mongoose'),
+    helmet = require('helmet')
 
 var isProduction = process.env.NODE_ENV === 'production';
 
 // Create global app object
 var app = express();
-
+app.disable('x-powered-by');
+app.use(helmet());
 app.use(cors());
 
 // Normal express config defaults
@@ -32,8 +34,8 @@ app.use(bodyParser.json({limit: '50mb'}));
 
 app.use(require('method-override')());
 app.use(express.static(__dirname + '/wallet-mgmt-web/dist'));
-
-app.use(session({ secret: process.env.API_SECRET, cookie: { maxAge: 60000 }, resave: false, saveUninitialized: false  }));
+var expiryDate = new Date(Date.now() + 60 * 60 * 1000) // 1 hour
+app.use(session({ name: 'coinotcSessionId', secret: process.env.API_SECRET, cookie: { expires: expiryDate }, resave: false, saveUninitialized: false  }));
 
 if (!isProduction) {
   app.use(errorhandler());

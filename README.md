@@ -183,6 +183,15 @@ As an example, when you send a transaction, your wallet uses one of the 'bills' 
 
 This repo is functionality complete — PRs and issues welcome!
 
+# Security Consideration
+
+* https://expressjs.com/en/advanced/best-practice-security.html
+* https://www.npmjs.com/package/express-limiter
+* https://www.npmjs.com/package/csurf
+* https://nmap.org/
+* https://github.com/nabla-c0d3/sslyze
+* https://www.npmjs.com/package/safe-regex
+
 # Getting started
 
 To get the Node server running locally:

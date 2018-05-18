@@ -228,12 +228,27 @@ function submitRequestForNewAcc(options, postData, _ws, _txnMessage){
             console.log('! !');
             process.stdout.write("submitRequestForNewAcc <<< ???>>>" + data);
             console.log("sending back to the client ...");
+            //console.log("wallets ...");
+            options.method = 'GET';
+            options.path = '/api/wallets';
+            //console.log("wallets ...");
             var _result = JSON.parse(data);
-            postData.result = _result;
-            //delete _txnMessage.passphrase;
-            postData.txnMessage = _txnMessage;
-            console.log(JSON.stringify(postData));
-            _ws.send(JSON.stringify(postData));
+            var walletsReq = https.request(options, function(res) {
+                //console.log("res"  + res);
+                res.on('data', function(dataWallets) {
+                    //process.stdout.write(data);
+                    data.txnMessage = txnMessage;
+                    //var result = _parseJSON(data);
+                    console.log('\n'  + dataWallets);
+                    console.log("_result cwId " + _result.result.Right.cwId);
+                    postData.result = _result;
+                    //delete _txnMessage.passphrase;
+                    postData.txnMessage = _txnMessage;
+                    console.log(JSON.stringify(postData));
+                    _ws.send(JSON.stringify(postData));
+                });
+            });
+            walletsReq.end();
         });
     });
 
