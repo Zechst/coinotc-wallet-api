@@ -225,26 +225,28 @@ function toHexBase16(s) {
 function submitRequestForNewAcc(options, postData, _ws, _txnMessage){
     var newAccReq = https.request(options, function (res) {
         res.on('data', function(data) {
-            console.log('! !');
             process.stdout.write("submitRequestForNewAcc <<< ???>>>" + data);
-            console.log("sending back to the client ...");
-            //console.log("wallets ...");
             options.method = 'GET';
-            options.path = '/api/wallets';
-            //console.log("wallets ...");
+            options.path = '/api/accounts';
             var _result = JSON.parse(data);
             var walletsReq = https.request(options, function(res) {
-                //console.log("res"  + res);
-                res.on('data', function(dataWallets) {
-                    //process.stdout.write(data);
-                    data.txnMessage = txnMessage;
-                    //var result = _parseJSON(data);
-                    console.log('\n'  + dataWallets);
-                    console.log("_result cwId " + _result.result.Right.cwId);
+                res.on('data', function(accounts) {
+                    var _accounts = JSON.parse(accounts);
+                    var counter;
+                    var foundAccountAddress = null;
+                    for (counter = 0; counter < _accounts.Right.length; counter++) {
+                        let _caId = _accounts.Right[counter]['caId'];
+                        let cwIdArr = _caId.split('@');
+                        if(_result.Right.cwId === cwIdArr[0]){
+                            foundAccountAddress = _accounts.Right[counter];
+                            break;
+                        }
+                    }
                     postData.result = _result;
-                    //delete _txnMessage.passphrase;
                     postData.txnMessage = _txnMessage;
-                    console.log(JSON.stringify(postData));
+                    if(foundAccountAddress != null){
+                        postData.accountInfo = foundAccountAddress;
+                    }
                     _ws.send(JSON.stringify(postData));
                 });
             });
