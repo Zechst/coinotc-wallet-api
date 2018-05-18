@@ -91,8 +91,38 @@ public: 954992c343cdecb6527a735a6fd14dbc2fed6721dd7a4fbc85252b615550d76e
 
 # Cardano
 
-* Download the Daedalus Wallet based on Microsoft Windows Server/ Mac 
-* Launch the wallet once it is done start the below scripts.
+## Build Cardano From Source
+
+* https://github.com/input-output-hk/cardano-sl/blob/develop/docs/how-to/build-cardano-sl-and-daedalus-from-source-code.md
+
+## How to connect to cluster
+1. Make sure you’ve follow the instructions to build from source using Nix
+2. Make sure you’re on latest cardano-sl-X.X branch
+3. To build a script that will contain everything needed to connect to mainnet: $ nix-build -A connectScripts.mainnetWallet -o connect-to-mainnet
+4. Alternatively you can connect to different environments and different executables by building the scripts:
+5. Explorer node with mainnet: `$ nix-build -A connectScripts.mainnetExplorer -o connect-explorer-to-mainnet
+6. Wallet to staging: $ nix-build -A connectScripts.stagingWallet -o connect-to-staging
+7. Explorer to staging: $ nix-build -A connectScripts.stagingExplorer -o connect-explorer-to-staging
+8. A runtime state folder will be automatically created relative to your current working directory, but you 9. can override it using $ export CARDANO_STATE_DIR=~/wallet-state
+10. Run the script: $ ./connect-to-mainnet Or run ./connect-explorer-to-mainnet if you might want to connect anything listed in 4.
+
+## Configure debug logging to info
+sudo nano /nix/store/39p2dbldbxzhk4278b0rkhg417bgcrzk-cardano-config/log-config-connect-to-cluster.yaml
+
+```
+# This template is used in scripts to connect to a running cluster.
+# In particular, it's used by exchanges, so it should be maintained carefully.
+
+rotation:
+    logLimit: 104857600 # 100MB
+    keepFiles: 100
+loggerTree:
+  severity: Info+
+  files:
+    - node.pub
+    - node
+
+```
 
 ```
 scripts/startCardanoEngine.sh
@@ -147,6 +177,25 @@ debug:   Wallet secret: SCOPV4NH3OKEZTQVC7QM7A7WP2WFXV5BTHZPZEFJPMREFU2JHLLZKAGE
 
 Make sure all the above dependencies is UP if not there is no way the API microservice will be functioning properly.
 $COINOTC_WALLET_API_PROJ/nodemon app.js
+
+# CoinOTC transaction fee
+
+## Setup
+
+* Install truffle a scaldfolding framework for Ethereum smart contract
+* Install the solidity compiler 
+
+```
+npm install -g truffle
+
+npm install -g solc
+```
+## Connecting Metamask to Ethererum RPC
+
+
+Compile:        truffle compile
+Migrate:        truffle migrate
+Test contracts: truffle test
 
 
 # Environment variables (.env)

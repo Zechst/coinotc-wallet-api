@@ -207,7 +207,7 @@ const interval = setInterval(function ping(){
     })
 }, 30000);
 
-server.listen(8080, function listening() {
+server.listen(8077, function listening() {
     console.log('Cardano Engine Server %s', JSON.stringify(server.address()));
     console.log('Cardano Engine Listening on %d', server.address().port);
 });
