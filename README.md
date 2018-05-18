@@ -192,12 +192,12 @@ npm install -g truffle
 
 npm install -g solc
 ```
-## Connecting Metamask to Ethererum RPC
+## Connecting Metamask to Ethererum Geth RPC
 
 
-Compile:        truffle compile
-Migrate:        truffle migrate
-Test contracts: truffle test
+* Compile:        truffle compile
+* Migrate:        truffle migrate
+* Test contracts: truffle test
 
 
 # Environment variables (.env)
