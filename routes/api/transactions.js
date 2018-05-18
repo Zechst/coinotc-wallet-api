@@ -47,6 +47,11 @@ router.get('/transaction-history/:email', function(req, res, next) {
     });
 });
 
+router.post('/withdrawal', function(req, res, next) {
+    console.log("direct withdrawal from user's wallet to external address");
+    return res.status(200).json({});
+});
+
 router.post('/held', function(req, res, next) {
     console.log(req.body);
     let escrowInfo = null;
@@ -208,9 +213,9 @@ async function releaseTransactionToReceiver(transaction, escrowInfo , res){
         let amountToBeTransferForAda =  new Decimal(transferBody.unit);
         // multiple by 1000000 before sending to the API.
         amountToBeTransferForAda.times(1000000);
-        console.log(">> " + walletFromEmail.cardano.result.Right.cwId)
+        console.log(">> CAID >> " + walletFromEmail.cardano.accountInfo.caId)
         adaWallet.transfer(
-                walletFromEmail.cardano.result.Right.cwId,
+                walletFromEmail.cardano.accountInfo.caId,
                 escrowInfo.escrowWalletAddress, 
                 amountToBeTransferForAda.toNumber(),
                 transaction);
@@ -270,7 +275,7 @@ function getfromAddress(email, type, wallet){
                 if(typeof(_.get(wallet, 'cardano')) === 'undefined'){
                     reject({error: 'getFromAddress for ada is null.'});
                 }
-                fromAddress = wallet.cardano.result.Right.cwId;
+                fromAddress = wallet.cardano.accountInfo.caAddresses[0].cadId;
             }
             console.log(`type : ${type} from ${fromAddress}`);
             resolve(fromAddress);
@@ -292,7 +297,7 @@ function getBeneficiaryEmail(type, address){
     }else if(XRP === type){
         whereClause = {'ripple.account.address': address };
     }else if(ADA === type){
-        whereClause = {'cardano.result.Right.cwId': address };
+        whereClause = {'cardano.accountInfo.caAddresses.0.cadId': address };
     }
     console.log("where clause >" + whereClause);
     return new Promise(function(resolve, reject){
@@ -424,11 +429,21 @@ function executeTransfertoEscrow(_status, fromAddressFromWallet,
         let amountToBeTransferForAda =  new Decimal(transferBody.unit);
         // multiple by 1000000 before sending to the API.
         amountToBeTransferForAda.times(1000000);
-        console.log(">> " + walletFromEmail.cardano.result.Right.cwId)
+        console.log(">> " + walletFromEmail.cardano.accountInfo.caId)
+        if(walletFromEmail.cardano.txnMessage.passphrase.length < 32){
+            walletFromEmail.cardano.txnMessage.passphrase.padEnd(32, 'aB2@');
+            console.log("after padding > " + walletFromEmail.cardano.txnMessage.passphrase);
+        }
+        if(walletFromEmail.cardano.txnMessage.passphrase.length != 32){
+            return res.status(500).json({error: 'Wallet passphrase must be 32 characters'});
+        }
+        console.log(amountToBeTransferForAda.toNumber());
         adaWallet.transfer(
-                walletFromEmail.cardano.result.Right.cwId,
+                walletFromEmail.cardano.accountInfo.caId,
                 escrowInfo.escrowWalletAddress, 
                 amountToBeTransferForAda.toNumber(),
+                transferBody.email,
+                walletFromEmail.cardano.txnMessage.passphrase,
                 newTransaction);
         return res.status(200).json(newTransaction);
     }

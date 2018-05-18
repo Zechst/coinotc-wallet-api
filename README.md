@@ -91,6 +91,8 @@ public: 954992c343cdecb6527a735a6fd14dbc2fed6721dd7a4fbc85252b615550d76e
 
 # Cardano
 
+Websocket Server for cardano started on port 8077
+
 ## Build Cardano From Source
 
 * https://github.com/input-output-hk/cardano-sl/blob/develop/docs/how-to/build-cardano-sl-and-daedalus-from-source-code.md

@@ -160,7 +160,10 @@ wss.on('connection', function connection(ws, req) {
           var fromAddress = txnMessage.fromAddress;
           var toAddress = txnMessage.toAddress;
           var amount = txnMessage.amount;
+          console.log("AMOUNT FOR ADA !!!" + amount);
           var encodedPassphrase = toHexBase16(txnMessage.passphrase);
+          console.log(txnMessage.passphrase);
+          console.log(encodedPassphrase);
           options.path = '/api/txs/payments/'+ fromAddress +'/' + toAddress + '/' + amount
               + '?passphrase=' + encodedPassphrase;
           console.log(options.path);
