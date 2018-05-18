@@ -1,0 +1,49 @@
+/* 1 */
+{
+    "_id" : ObjectId("5abeaa7872284766177dfc85"),
+    "updatedAt" : ISODate("2018-03-31T05:22:00.492+08:00"),
+    "createdAt" : ISODate("2018-03-31T05:22:00.492+08:00"),
+    "code" : "ETH",
+    "desc" : "Ethereum",
+    "__v" : 0
+}
+
+/* 2 */
+{
+    "_id" : ObjectId("5abeaa8672284766177dfc86"),
+    "updatedAt" : ISODate("2018-03-31T05:22:14.460+08:00"),
+    "createdAt" : ISODate("2018-03-31T05:22:14.460+08:00"),
+    "code" : "XLM",
+    "desc" : "Stellar",
+    "__v" : 0
+}
+
+/* 3 */
+{
+    "_id" : ObjectId("5abeab14a18db7f917cf7639"),
+    "updatedAt" : ISODate("2018-03-31T05:24:36.182+08:00"),
+    "createdAt" : ISODate("2018-03-31T05:24:36.182+08:00"),
+    "code" : "XMR",
+    "desc" : "Monero",
+    "__v" : 0
+}
+
+/* 4 */
+{
+    "_id" : ObjectId("5abeab20a18db7f917cf763a"),
+    "updatedAt" : ISODate("2018-03-31T05:24:48.973+08:00"),
+    "createdAt" : ISODate("2018-03-31T05:24:48.973+08:00"),
+    "code" : "ADA",
+    "desc" : "Cardano ADA",
+    "__v" : 0
+}
+
+/* 5 */
+{
+    "_id" : ObjectId("5abeab31a18db7f917cf763b"),
+    "updatedAt" : ISODate("2018-03-31T05:29:22.873+08:00"),
+    "createdAt" : ISODate("2018-03-31T05:25:05.638+08:00"),
+    "code" : "XRP",
+    "desc" : "Ripple",
+    "__v" : 0
+}

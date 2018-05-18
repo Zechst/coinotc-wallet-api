@@ -43,7 +43,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://localhost:3001/api/wallets/generate/bunnyppl@gmail.com/123456h67890fsfrdssdcdredsafd432/English",
+					"raw": "http://localhost:3001/api/wallets/generate/a6@gmail.com/123456h67890Fsfrdssdcdredsafd43@/English",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -53,8 +53,8 @@
 						"api",
 						"wallets",
 						"generate",
-						"bunnyppl@gmail.com",
-						"123456h67890fsfrdssdcdredsafd432",
+						"a6@gmail.com",
+						"123456h67890Fsfrdssdcdredsafd43@",
 						"English"
 					]
 				}
@@ -96,7 +96,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://localhost:3001/api/wallets/balance/5abe650debc84b8e3ece446f/eth",
+					"raw": "http://localhost:3001/api/wallets/balance/5aec77c0aafdcd6416d25e23/xrp",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -106,8 +106,8 @@
 						"api",
 						"wallets",
 						"balance",
-						"5abe650debc84b8e3ece446f",
-						"eth"
+						"5aec77c0aafdcd6416d25e23",
+						"xrp"
 					]
 				}
 			},
@@ -485,6 +485,93 @@
 						"api",
 						"transactions",
 						"held"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Crypto Wallet Transfer (Held) XLM",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"orderNo\": \"23\",\n\t\"cryptoCurrency\": \"XLM\",\n\t\"toAddress\": \"GDXPMWJCBWXLKTG6YP7444UMV5222UKU5NYXP26ZH6SFZHQP4Z2JSBCJ\",\n\t\"email\": \"bunnyppl@yahoo.com\",\n\t\"unit\": 21,\n\t\"transactCurrency\": \"USD\",\n\t\"pin\": 123456,\n\t\"equivalentAmount\": 234.3,\n\t\"beneficiaryEmail\": \"bunnyppl@gmail.com\",\n\t\"memo\": \"test 123\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/transactions/held",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"transactions",
+						"held"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Crypto Wallet Transfer (Held) ADA",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"orderNo\": \"24\",\n\t\"cryptoCurrency\": \"ADA\",\n\t\"toAddress\": \"DdzFFzCqrhsfNDaFTix528PF1ECSoonXxspN9BfBgADriuFEG5tCyc3kkRXMTBBDJ2a1czLtVXZFJoydLuF7JhMJTg3fgrEue6eZVVaL\",\n\t\"email\": \"a31@gmail.com\",\n\t\"unit\": 2,\n\t\"transactCurrency\": \"USD\",\n\t\"pin\": 123456,\n\t\"equivalentAmount\": 234.3,\n\t\"beneficiaryEmail\": \"a30@gmail.com\",\n\t\"memo\": \"test 123\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/transactions/held",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"transactions",
+						"held"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get user's wallet balance (ADA)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/wallets/balance/5afe891c2d2a53590a1e3e6b/ada",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"wallets",
+						"balance",
+						"5afe891c2d2a53590a1e3e6b",
+						"ada"
 					]
 				}
 			},

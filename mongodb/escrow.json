@@ -1,0 +1,70 @@
+/* 1 */
+{
+    "_id" : ObjectId("5abf02edbd7c37b61cb7023f"),
+    "updatedAt" : ISODate("2018-03-31T12:24:07.997+08:00"),
+    "createdAt" : ISODate("2018-03-31T11:39:25.500+08:00"),
+    "escrowWalletAddress" : "0xD0d3E63c29679940e169526233E5A0B1eef61863",
+    "privateKey" : "0xb996991b3e37cdf5420f9db6f0f858c5f45996bcdc6d204bf21de0edc8f5bfbd",
+    "cryptoType" : "ETH",
+    "feeRate" : 2,
+    "status" : "1",
+    "__v" : 0,
+    "authorizeCode" : null,
+    "unauthorizedEscrowWalletAddress" : null,
+    "unauthorizedEscrowPrivateKey" : null,
+    "unauthorizedFeeRate" : 2,
+    "unauthorizedStatus" : null
+}
+
+/* 2 */
+{
+    "_id" : ObjectId("5abf0333bd7c37b61cb70240"),
+    "updatedAt" : ISODate("2018-03-31T11:40:35.608+08:00"),
+    "createdAt" : ISODate("2018-03-31T11:40:35.608+08:00"),
+    "escrowWalletAddress" : "DdzFFzCqrhsqVKuW4w5xxmVVm4PAY4KhKoYLe98spy1GqjtRvk1G1zqoUMQs3YPZtMHx4Jif1zPZz6R6F9yFjQ7uM9V9XYVuDj1s3scf",
+    "accountId" : "Ae2tdPwUPEZK2bZdYBq7vFVpXyqQED2fkdzXwsxLHCNk81thwj4mAAzM4Cb@2147483648",
+    "cryptoType" : "ADA",
+    "feeRate" : 0.3,
+    "status" : "1",
+    "__v" : 0
+}
+
+/* 3 */
+{
+    "_id" : ObjectId("5abf036bbd7c37b61cb70241"),
+    "updatedAt" : ISODate("2018-03-31T11:41:31.799+08:00"),
+    "createdAt" : ISODate("2018-03-31T11:41:31.799+08:00"),
+    "escrowWalletAddress" : "9uN59wbwRHtiG6dpmopY11ieeDYB4XxXQ7ojA79t1mMjFjBNgghnBe6TjRGwvX3PeX57KiUFu3TXJbg91cQDVd9bGxvbsA2",
+    "name" : "zjoqD",
+    "password" : "123456h67890fsfrdssdcdredsafd432",
+    "cryptoType" : "XMR",
+    "feeRate" : 0.25,
+    "status" : "1",
+    "__v" : 0
+}
+
+/* 4 */
+{
+    "_id" : ObjectId("5abf039dbd7c37b61cb70242"),
+    "updatedAt" : ISODate("2018-03-31T11:42:21.880+08:00"),
+    "createdAt" : ISODate("2018-03-31T11:42:21.880+08:00"),
+    "escrowWalletAddress" : "rGHXrYhVUrPrK71PgChbCEqCDvR1FiCCB3",
+    "secret" : "shv7DjD6oigQV9uQvu3HqsoH9ZWCq",
+    "cryptoType" : "XRP",
+    "feeRate" : 0.25,
+    "status" : "1",
+    "__v" : 0
+}
+
+/* 5 */
+{
+    "_id" : ObjectId("5abf03f1bd7c37b61cb70243"),
+    "updatedAt" : ISODate("2018-03-31T11:43:45.390+08:00"),
+    "createdAt" : ISODate("2018-03-31T11:43:45.390+08:00"),
+    "escrowWalletAddress" : "GCSCSIKV2ZDRNMLF4M4ITCFRLSVGRR6E2ZXE47OKD2B7V5XGAC6QON4I",
+    "privateKey" : "SD2KAXP63EICTKJZMBY3YJM5G5QYTQ37WPFLYY2TWUEEA3IE3YUUSDHE",
+    "cryptoType" : "XLM",
+    "feeRate" : 0.01,
+    "status" : "1",
+    "__v" : 0
+}
