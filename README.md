@@ -46,7 +46,7 @@ slogan scare major material fun cloud merge document piano chunk hire slender
 ```
 
 # Monero
-We need to checkout the master branch of the monero cli, rpc and daemon before running against the blockchain dataset
+We need to checkout the master branch of the monero cli, rpc and daemon, build it follow the instructions provide on their README.md before running against the monero blockchain dataset
 ```
 ./monero-wallet-cli --testnet --wallet-file /media/kenneth/b13ae9f7-5727-4bc0-94fe-77d72079f2ee/monero-data-test/wallet/zjoqD --mnemonic-language English --password 123456h67890fsfrdssdcdredsafd432 --daemon-address 127.0.0.1:28081
 ```
@@ -180,7 +180,12 @@ debug:   Wallet secret: SCOPV4NH3OKEZTQVC7QM7A7WP2WFXV5BTHZPZEFJPMREFU2JHLLZKAGE
 Make sure all the above dependencies is UP if not there is no way the API microservice will be functioning properly.
 $COINOTC_WALLET_API_PROJ/nodemon app.js
 
-# CoinOTC transaction fee
+# CoinOTC transaction fee (Smart Contract Solidity)
+
+We need to list our ERC20 token to reputable Crypto Exchange to reverse back to Ethereum for the cash out.
+
+* https://hackernoon.com/how-to-transfer-zrx-tokens-to-poloniex-70c20704669d
+* https://ethereum.stackexchange.com/questions/29437/how-to-convert-erc-20-tokens-back-to-ethereum
 
 ## Setup
 
@@ -194,6 +199,7 @@ npm install -g solc
 ```
 ## Connecting Metamask to Ethererum Geth RPC
 
+Create a ethereum wallet account for testing.
 
 * Compile:        truffle compile
 * Migrate:        truffle migrate

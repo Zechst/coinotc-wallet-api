@@ -428,8 +428,10 @@ function executeTransfertoEscrow(_status, fromAddressFromWallet,
     }else if(transferBody.cryptoCurrency === ADA){
         let amountToBeTransferForAda =  new Decimal(transferBody.unit);
         // multiple by 1000000 before sending to the API.
-        amountToBeTransferForAda.times(1000000);
-        console.log(">> " + walletFromEmail.cardano.accountInfo.caId)
+        y2 = amountToBeTransferForAda.times(1000000);
+        console.log(">> " + walletFromEmail.cardano.accountInfo.caId);
+        console.log(y2)
+        console.log(y2.toNumber());
         if(walletFromEmail.cardano.txnMessage.passphrase.length < 32){
             walletFromEmail.cardano.txnMessage.passphrase.padEnd(32, 'aB2@');
             console.log("after padding > " + walletFromEmail.cardano.txnMessage.passphrase);
@@ -437,11 +439,11 @@ function executeTransfertoEscrow(_status, fromAddressFromWallet,
         if(walletFromEmail.cardano.txnMessage.passphrase.length != 32){
             return res.status(500).json({error: 'Wallet passphrase must be 32 characters'});
         }
-        console.log(amountToBeTransferForAda.toNumber());
+        
         adaWallet.transfer(
                 walletFromEmail.cardano.accountInfo.caId,
                 escrowInfo.escrowWalletAddress, 
-                amountToBeTransferForAda.toNumber(),
+                y2.toNumber(),
                 transferBody.email,
                 walletFromEmail.cardano.txnMessage.passphrase,
                 newTransaction);
