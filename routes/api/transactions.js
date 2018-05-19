@@ -3,6 +3,7 @@ const router = require('express').Router();
 const logger = require('../../util/logger');
 var _ = require('lodash');
 var Decimal = require('decimal.js');
+var uuid = require('uuid4');
 
 var Escrow = mongoose.model('Escrow');
 var Wallet = mongoose.model('Wallet');
@@ -49,9 +50,94 @@ router.get('/transaction-history/:email', function(req, res, next) {
 
 router.post('/withdrawal', function(req, res, next) {
     console.log("direct withdrawal from user's wallet to external address");
-    return res.status(200).json({});
+    console.log(req.body);
+    let escrowInfo = null;
+    let emailWallet = null;
+    try{
+        let transferBody  = JSON.parse(JSON.stringify(req.body));
+        console.log(JSON.stringify(transferBody));
+        if(transferBody.beneficiaryEmail === transferBody.email){
+            return res.status(500).json({error: 'transfers to your own wallet address is not allowed.'});
+        }
+        // do not store the pin it is just for verification
+        let pin = transferBody.pin;
+        // use the pin to verify the front end.
+        let beneficiaryEmail = transferBody.beneficiaryEmail;
+        // search the beneficiaryEmail for the fromAddress
+        // get platform fee from the escrow
+        getEscrowInformationByType(transferBody.cryptoCurrency)
+            .then(function(result){
+                console.log("escrow > "  +  result);
+                escrowInfo = result;
+                transferBody.transactionFee = escrowInfo.feeRate;
+        });
+        console.log("transferBody.email > " + transferBody.email);
+        getWalletByEmail(transferBody.email).then(function(walletFromEmail){
+            lookUpWalletAddress(transferBody.email, 
+                                    transferBody.cryptoCurrency, 
+                                    walletFromEmail)
+                .then(function(fromAddressFromWallet){
+                console.log(`fromAddressFromWallet ???? ${fromAddressFromWallet}`);
+                var id = uuid();
+                console.log(">>>> orderno generated >>>  " + id);
+                transferBody.orderNo = id;
+                getBeneficiaryWallet(transferBody.cryptoCurrency, transferBody.beneficiaryEmail).then(function(receipentWallet){
+                    Transactions.findOne({'orderNo': transferBody.orderNo },function (err, trxn) {
+                        if(err) {
+                            console.log(err);
+                            res.status(500).json(err);
+                        }
+                        console.log(trxn);
+                        
+                        if(trxn == null){
+                            // status , fromAddressFromWallet , 
+                            console.log("fromAddressFromWallet << >>>" + fromAddressFromWallet);
+                            console.log("receipentWallet << >>>" + receipentWallet);
+                            let beneficiaryWalletAddress = null;
+                            console.log(typeof(transferBody.cryptoCurrency));
+                            let type = transferBody.cryptoCurrency;
+                            if(ETH === type){
+                                beneficiaryWalletAddress = receipentWallet.eth.address;
+                            }else if(XMR === type){
+                                beneficiaryWalletAddress = receipentWallet.monero.accInfo[2].result.addresses[0].address;
+                            }else if(XLM === type){
+                                beneficiaryWalletAddress = receipentWallet.stellar.public_address;
+                            }else if(XRP === type){
+                                beneficiaryWalletAddress = receipentWallet.ripple.account.address;
+                            }else if(ADA === type){
+                                console.log(type);
+                                beneficiaryWalletAddress = receipentWallet.cardano.accountInfo.caAddresses[0].cadId;
+                            }
+                            console.log(beneficiaryWalletAddress);
+                            executeWithdrawal(0, fromAddressFromWallet, transferBody, 
+                                escrowInfo, res, walletFromEmail, receipentWallet, beneficiaryWalletAddress);
+                        }else{
+                            console.log(`Order already exist. 
+                                    ${transferBody.orderNo} - from ${fromAddressFromWallet}
+                                    - to ${transferBody.toAddress} - type : ${transferBody.type}`);
+                            res.status(500).json({errorCode: 10001, error: `Order already exist. 
+                            ${transferBody.orderNo} - from ${fromAddressFromWallet}
+                            - to ${transferBody.toAddress} - type : ${transferBody.type}`});
+                        }
+                    });
+                }).catch(function(error){ 
+                    console.log(error);
+                    res.status(500).json(error); }); 
+            }).catch(function(error){ 
+                console.log(error);
+                res.status(500).json(error); });
+        }).catch(function(error){ 
+            console.log(error);
+            res.status(500).json(error); });
+    }catch(error){
+        console.log(error);
+        res.status(500).json(error);
+    }
 });
 
+/**
+ * held by escrow.
+ */
 router.post('/held', function(req, res, next) {
     console.log(req.body);
     let escrowInfo = null;
@@ -76,7 +162,7 @@ router.post('/held', function(req, res, next) {
         });
 
         getWalletByEmail(transferBody.email).then(function(walletFromEmail){
-            getfromAddress(transferBody.email, 
+            lookUpWalletAddress(transferBody.email, 
                                     transferBody.cryptoCurrency, 
                                     walletFromEmail)
                 .then(function(fromAddressFromWallet){
@@ -244,45 +330,63 @@ function getWalletByEmail(email){
     });
 }
 
-function getfromAddress(email, type, wallet){
+function lookUpWalletAddress(email, type, wallet){
     console.log(`--> ${email} type : ${type} , wallet ${wallet}`);
-    let fromAddress = null;
+    let walletAddress = null;
     if(wallet.email === email){
         return new Promise(function(resolve, reject){
             if(ETH === type){
                 if(typeof(_.get(wallet, 'eth')) === 'undefined'){
-                    reject({error: 'getFromAddress for eth is null.'});
+                    reject({error: 'lookUpWalletAddress for eth is null.'});
                 }
-                fromAddress = wallet.eth.address;
+                walletAddress = wallet.eth.address;
             }else if(XMR === type){
                 if(typeof(_.get(wallet, 'monero')) === 'undefined'){
-                    reject({error: 'getFromAddress for xmr is null.'});
+                    reject({error: 'lookUpWalletAddress for xmr is null.'});
                 }
-                console.log("fromAddress > " + JSON.stringify(wallet.monero.accInfo));
-                fromAddress = wallet.monero.accInfo[1].result.addresses[0].address;
-                console.log("fromAddress fromAddress> " + fromAddress);
+                console.log("lookUpWalletAddress > " + JSON.stringify(wallet.monero.accInfo));
+                walletAddress = wallet.monero.accInfo[1].result.addresses[0].address;
+                console.log("lookUpWalletAddress walletAddress> " + walletAddress);
             }else if(XLM === type){
                 if(typeof(_.get(wallet, 'stellar')) === 'undefined'){
-                    reject({error: 'getFromAddress for xlm is null.'});
+                    reject({error: 'lookUpWalletAddress for xlm is null.'});
                 }
-                fromAddress = wallet.stellar.public_address;
+                walletAddress = wallet.stellar.public_address;
             }else if(XRP === type){
                 if(typeof(_.get(wallet, 'ripple')) === 'undefined'){
-                    reject({error: 'getFromAddress for xrp is null.'});
+                    reject({error: 'lookUpWalletAddress for xrp is null.'});
                 }
-                fromAddress = wallet.ripple.account.address;
+                walletAddress = wallet.ripple.account.address;
             }else if(ADA === type){
                 if(typeof(_.get(wallet, 'cardano')) === 'undefined'){
-                    reject({error: 'getFromAddress for ada is null.'});
+                    reject({error: 'lookUpWalletAddress for ada is null.'});
                 }
-                fromAddress = wallet.cardano.accountInfo.caAddresses[0].cadId;
+                walletAddress = wallet.cardano.accountInfo.caAddresses[0].cadId;
             }
-            console.log(`type : ${type} from ${fromAddress}`);
-            resolve(fromAddress);
+            console.log(`type : ${type} from ${walletAddress}`);
+            resolve(walletAddress);
         });
     }else{
         reject({error: 'Transfer Email is not the same as the stored wallet\'s email.'});
     }
+}
+
+function getBeneficiaryWallet(type, emailAddress){
+    console.log(`type : ${type} , email ${emailAddress}`);
+    let whereClause ={'email': emailAddress };
+    console.log("where clause >" + whereClause);
+    return new Promise(function(resolve, reject){
+        Wallet.findOne(whereClause,function (err, wallet) {
+            if(err) {
+                console.log(err);
+                return reject(err);
+            }
+            if(wallet == null){
+                return reject(err);
+            }
+            resolve(wallet);
+        });
+    });
 }
 
 function getBeneficiaryEmail(type, address){
@@ -443,6 +547,131 @@ function executeTransfertoEscrow(_status, fromAddressFromWallet,
         adaWallet.transfer(
                 walletFromEmail.cardano.accountInfo.caId,
                 escrowInfo.escrowWalletAddress, 
+                y2.toNumber(),
+                transferBody.email,
+                walletFromEmail.cardano.txnMessage.passphrase,
+                newTransaction);
+        return res.status(200).json(newTransaction);
+    }
+}
+
+function executeWithdrawal(_status, fromAddressFromWallet, 
+    transferBody, escrowInfo, res, walletFromEmail, receipentWallet, beneficiaryWalletAddress){
+    console.log("fromAddressFromWallet > " + fromAddressFromWallet);
+    console.log("beneficiaryWalletAddress <> " + beneficiaryWalletAddress);
+    transferBody.toAddress = beneficiaryWalletAddress;
+    var newTransaction = new Transactions({ 
+        orderNo: transferBody.orderNo,
+        email: transferBody.email,
+        fromAddress: fromAddressFromWallet,
+        toAddress: beneficiaryWalletAddress,
+        unit: transferBody.unit,
+        equivalentAmount: transferBody.equivalentAmount,
+        transactCurrency: transferBody.transactCurrency,
+        cryptoCurrency: transferBody.cryptoCurrency,
+        platformFee: escrowInfo.feeRate,
+        escrowId: escrowInfo.id,
+        beneficiaryEmail: receipentWallet.email,
+        status: _status,
+        memo: transferBody.memo
+    });
+
+    // check unit is more than zero 
+    validateAmount = new Decimal(transferBody.unit);
+    console.log(validateAmount);
+    console.log(validateAmount.s);
+    console.log(validateAmount.s > 0);
+    console.log(validateAmount.isPositive());
+    if(validateAmount.isPositive()){
+        console.log(validateAmount.toNumber());
+        if(validateAmount.toNumber() == 0){
+            return res.status(500).json({error: 'Amount/Unit transfer must not be zero'});
+        }
+    }else{
+        if(validateAmount.s <= 0){
+            return res.status(500).json({error: 'Amount/Unit transfer must be more than zero'});
+        }
+    }
+
+    console.log("Calling wallet handlers....direct withdrawal");
+    if(transferBody.cryptoCurrency === ETH){
+        console.log("transferBody.unit " + transferBody.unit);
+        x = new Decimal(transferBody.unit);
+        // multiple by 1000000 before sending to the API.
+        y = x.times(1000000000000000000);
+        console.log(y.toNumber());
+        console.log(walletFromEmail.eth.privateKey);
+        ethWallet.transfer(transferBody.toAddress, y.toNumber(), 
+            walletFromEmail.eth.privateKey).then(transactionHash => {
+            logger.debug("ETH transfer -> " + JSON.stringify(transactionHash));
+            logger.debug("ETH transfer -> " + transactionHash.gasLimit.toNumber());
+            newTransaction.receipt = transactionHash;
+            updateTransaction(newTransaction,res);
+        }).catch(error => { 
+            console.error('caught', error);
+            return res.status(500).json(error);
+        });
+    }else if(transferBody.cryptoCurrency === XMR){
+        console.log(walletFromEmail.monero.name);
+        moneroWallet.openWallet(walletFromEmail.monero.name, 
+            walletFromEmail.monero.password).then((result)=> {
+            let amountToBeTransferForXMR =  new Decimal(transferBody.unit);
+            console.log("escrowInfo.address" +  escrowInfo.escrowWalletAddress);
+            var destination = {
+                address: transferBody.toAddress,
+                amount: amountToBeTransferForXMR.toNumber(),
+                orderNo: transferBody.orderNo
+            }
+            var arrDest = [];
+            arrDest.push(destination);
+            moneroWallet.transfer(arrDest).then(function(){
+                logger.debug("transfer ....");
+                moneroWallet.storeWallet().then(function(){
+                    console.log('store wallet data spending on sender....');
+                    updateTransaction(newTransaction,res);
+                })
+            }).catch((error)=>{
+                logger.debug("xfer error "+ error);
+                return res.status(500).json(error);
+            });
+        });
+
+    }else if(transferBody.cryptoCurrency === XLM){
+        let amountToBeTransferForXLM =  new Decimal(transferBody.unit);
+        stellarWallet.transfer(walletFromEmail.stellar.public_address,
+            walletFromEmail.stellar.wallet_secret,
+            transferBody.toAddress,
+            amountToBeTransferForXLM.toNumber(),
+            transferBody.memo,
+            newTransaction
+        );
+        return res.status(200).json(newTransaction);
+    }else if(transferBody.cryptoCurrency === XRP){
+        let amountToBeTransferForXRP =  new Decimal(transferBody.unit);
+        rippleWallet.transfer(walletFromEmail.ripple.account.address, 
+            transferBody.toAddress, 
+            amountToBeTransferForXRP.toNumber(), 
+            walletFromEmail.ripple.account.secret,
+            newTransaction);
+        return res.status(200).json(newTransaction);
+    }else if(transferBody.cryptoCurrency === ADA){
+        let amountToBeTransferForAda =  new Decimal(transferBody.unit);
+        // multiple by 1000000 before sending to the API.
+        y2 = amountToBeTransferForAda.times(1000000);
+        console.log(">> " + walletFromEmail.cardano.accountInfo.caId);
+        console.log(y2)
+        console.log(y2.toNumber());
+        if(walletFromEmail.cardano.txnMessage.passphrase.length < 32){
+            walletFromEmail.cardano.txnMessage.passphrase.padEnd(32, 'aB2@');
+            console.log("after padding > " + walletFromEmail.cardano.txnMessage.passphrase);
+        }
+        if(walletFromEmail.cardano.txnMessage.passphrase.length != 32){
+            return res.status(500).json({error: 'Wallet passphrase must be 32 characters'});
+        }
+        
+        adaWallet.transfer(
+                walletFromEmail.cardano.accountInfo.caId,
+                transferBody.toAddress, 
                 y2.toNumber(),
                 transferBody.email,
                 walletFromEmail.cardano.txnMessage.passphrase,
