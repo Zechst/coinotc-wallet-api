@@ -8,6 +8,11 @@
 - Monero CLI package from master branch (if production then is the binaries)
 - Postman
 - Geth from Ethereum
+- Docker
+
+# Dockerize the entire wallet API
+
+https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04
 
 ## Global Wallet Password
 123456h67890Fsfrdssdcdredsafd432
