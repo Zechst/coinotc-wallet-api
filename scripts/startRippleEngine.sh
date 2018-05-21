@@ -1,1 +1,1 @@
-node ../ripple-ws.js
+nohup nodemon ../ripple-ws.js &

@@ -1,0 +1,1 @@
+nohup ./monerod --testnet --data-dir $COINOTC_BLOCKCHAIN_DIR/monero-data-test --hide-my-port --no-igd &

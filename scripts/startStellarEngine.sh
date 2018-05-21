@@ -1,1 +1,1 @@
-node ../stellar-ws.js
+nohup nodemon ../stellar-ws.js &

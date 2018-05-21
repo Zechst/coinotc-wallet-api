@@ -8,13 +8,25 @@
 - Monero CLI package from master branch (if production then is the binaries)
 - Postman
 - Geth from Ethereum
-- Docker
+- Docker CE Ubuntu
 
-# Dockerize the entire wallet API
+# Dockerize CoinOTC Wallet API
 
 https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04
 
+Build the wallet api docker image 
+```
+docker build --force-rm --compress -t coinotc-wallet-api-nodejs:latest .
+```
+Run the wallet api docker image
+```
+docker run -t -i -v /media/kenneth/b13ae9f7-5727-4bc0-94fe-77d72079f2ee:/root/blockchain-drive  --env-file ./docker.env coinotc-wallet-api-nodejs /bin/bash
+```
+
 ## Global Wallet Password
+
+* Currently this is the global wallet password being used across crypto currencies.
+
 123456h67890Fsfrdssdcdredsafd432
 
 # Ethereum
