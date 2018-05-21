@@ -1,0 +1,7 @@
+FROM coinotc-wallet-api-nodejs:latest
+
+MAINTAINER Kenneth Phang "kenneth.phang@lemo.io"
+
+WORKDIR /expressjs/src/github.com/coinotc-wallet-api
+
+EXPOSE 3001/tcp

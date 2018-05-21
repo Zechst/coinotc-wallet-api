@@ -1,0 +1,28 @@
+FROM ubuntu:16.04
+
+MAINTAINER Kenneth Phang "kenneth.phang@lemo.io"
+
+WORKDIR /expressjs/src/github.com/coinotc-wallet-api.git
+
+# Update aptitude with new repo
+RUN apt-get update
+
+RUN apt-get install git -y
+
+RUN apt-get install -y software-properties-common
+
+RUN add-apt-repository -y ppa:ethereum/ethereum
+
+RUN apt-get update
+
+RUN apt-get install ethereum -y
+
+RUN apt-get install -y curl libc6 libcurl3 zlib1g
+
+RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
+
+RUN apt-get install -y nodejs
+
+RUN apt-get install -y build-essential
+
+RUN npm install -g nodemon

@@ -1,1 +1,1 @@
-nohup nodemon ../stellar-ws.js &
+nohup nodemon $COINOTC_WORKDIR/stellar-ws.js &

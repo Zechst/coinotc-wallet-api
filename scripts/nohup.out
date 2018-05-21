@@ -1,0 +1,32 @@
+2018-05-21T23:18:14.263+0800 I CONTROL  [initandlisten] MongoDB starting : pid=19190 port=27017 dbpath=/media/kenneth/b13ae9f7-5727-4bc0-94fe-77d72079f2ee/mongodb/bin/data 64-bit host=kenneth-N550RC-RC1
+2018-05-21T23:18:14.263+0800 I CONTROL  [initandlisten] db version v3.6.2
+2018-05-21T23:18:14.263+0800 I CONTROL  [initandlisten] git version: 489d177dbd0f0420a8ca04d39fd78d0a2c539420
+2018-05-21T23:18:14.263+0800 I CONTROL  [initandlisten] OpenSSL version: OpenSSL 1.0.2g  1 Mar 2016
+2018-05-21T23:18:14.263+0800 I CONTROL  [initandlisten] allocator: tcmalloc
+2018-05-21T23:18:14.264+0800 I CONTROL  [initandlisten] modules: none
+2018-05-21T23:18:14.264+0800 I CONTROL  [initandlisten] build environment:
+2018-05-21T23:18:14.264+0800 I CONTROL  [initandlisten]     distmod: ubuntu1604
+2018-05-21T23:18:14.264+0800 I CONTROL  [initandlisten]     distarch: x86_64
+2018-05-21T23:18:14.264+0800 I CONTROL  [initandlisten]     target_arch: x86_64
+2018-05-21T23:18:14.264+0800 I CONTROL  [initandlisten] options: { storage: { dbPath: "/media/kenneth/b13ae9f7-5727-4bc0-94fe-77d72079f2ee/mongodb/bin/data" } }
+2018-05-21T23:18:14.290+0800 I -        [initandlisten] Detected data files in /media/kenneth/b13ae9f7-5727-4bc0-94fe-77d72079f2ee/mongodb/bin/data created by the 'wiredTiger' storage engine, so setting the active storage engine to 'wiredTiger'.
+2018-05-21T23:18:14.290+0800 I STORAGE  [initandlisten] 
+2018-05-21T23:18:14.290+0800 I STORAGE  [initandlisten] ** WARNING: Using the XFS filesystem is strongly recommended with the WiredTiger storage engine
+2018-05-21T23:18:14.290+0800 I STORAGE  [initandlisten] **          See http://dochub.mongodb.org/core/prodnotes-filesystem
+2018-05-21T23:18:14.309+0800 I STORAGE  [initandlisten] wiredtiger_open config: create,cache_size=7451M,session_max=20000,eviction=(threads_min=4,threads_max=4),config_base=false,statistics=(fast),log=(enabled=true,archive=true,path=journal,compressor=snappy),file_manager=(close_idle_time=100000),statistics_log=(wait=0),verbose=(recovery_progress),
+2018-05-21T23:18:14.763+0800 I STORAGE  [initandlisten] WiredTiger message [1526915894:763183][19190:0x7f801e4f59c0], txn-recover: Main recovery loop: starting at 50/60672
+2018-05-21T23:18:14.885+0800 I STORAGE  [initandlisten] WiredTiger message [1526915894:885243][19190:0x7f801e4f59c0], txn-recover: Recovering log 50 through 51
+2018-05-21T23:18:14.961+0800 I STORAGE  [initandlisten] WiredTiger message [1526915894:961813][19190:0x7f801e4f59c0], txn-recover: Recovering log 51 through 51
+2018-05-21T23:18:15.615+0800 I CONTROL  [initandlisten] 
+2018-05-21T23:18:15.615+0800 I CONTROL  [initandlisten] ** WARNING: Access control is not enabled for the database.
+2018-05-21T23:18:15.615+0800 I CONTROL  [initandlisten] **          Read and write access to data and configuration is unrestricted.
+2018-05-21T23:18:15.615+0800 I CONTROL  [initandlisten] 
+2018-05-21T23:18:15.615+0800 I CONTROL  [initandlisten] ** WARNING: This server is bound to localhost.
+2018-05-21T23:18:15.615+0800 I CONTROL  [initandlisten] **          Remote systems will be unable to connect to this server. 
+2018-05-21T23:18:15.615+0800 I CONTROL  [initandlisten] **          Start the server with --bind_ip <address> to specify which IP 
+2018-05-21T23:18:15.615+0800 I CONTROL  [initandlisten] **          addresses it should serve responses from, or with --bind_ip_all to
+2018-05-21T23:18:15.615+0800 I CONTROL  [initandlisten] **          bind to all interfaces. If this behavior is desired, start the
+2018-05-21T23:18:15.615+0800 I CONTROL  [initandlisten] **          server with --bind_ip 127.0.0.1 to disable this warning.
+2018-05-21T23:18:15.615+0800 I CONTROL  [initandlisten] 
+2018-05-21T23:18:15.935+0800 I FTDC     [initandlisten] Initializing full-time diagnostic data capture with directory '/media/kenneth/b13ae9f7-5727-4bc0-94fe-77d72079f2ee/mongodb/bin/data/diagnostic.data'
+2018-05-21T23:18:15.937+0800 I NETWORK  [initandlisten] waiting for connections on port 27017

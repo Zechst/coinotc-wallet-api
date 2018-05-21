@@ -1,0 +1,1 @@
+nohup $COINOTC_BLOCKCHAIN_DIR/cardano-sl/connect-to-mainnet &

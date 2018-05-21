@@ -16,11 +16,14 @@ https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-o
 
 Build the wallet api docker image 
 ```
-docker build --force-rm --compress -t coinotc-wallet-api-nodejs:latest .
+docker build -f Dockerfile.stack --force-rm --compress -t coinotc-wallet-api-nodejs:latest .
+
+docker build -f Dockerfile.api --force-rm --compress -t coinotc-wallet-api:latest .
+
 ```
 Run the wallet api docker image
 ```
-docker run -t -i -v /media/kenneth/b13ae9f7-5727-4bc0-94fe-77d72079f2ee:/root/blockchain-drive  --env-file ./docker.env coinotc-wallet-api-nodejs /bin/bash
+docker run -t -i -v /media/kenneth/b13ae9f7-5727-4bc0-94fe-77d72079f2ee:/root/blockchain-drive  --env-file ./docker.env coinotc-wallet-api /bin/bash
 ```
 
 ## Global Wallet Password

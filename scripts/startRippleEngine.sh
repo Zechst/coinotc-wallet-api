@@ -1,1 +1,1 @@
-nohup nodemon ../ripple-ws.js &
+nohup nodemon $COINOTC_WORKDIR/ripple-ws.js &

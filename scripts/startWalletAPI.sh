@@ -1,1 +1,1 @@
-nodemon ../app.js &
+nohup nodemon $COINOTC_WORKDIR/app.js &

@@ -1,1 +1,1 @@
-nohup ./monero-wallet-rpc --testnet --daemon-address 127.0.0.1:28081 --wallet-dir $COINOTC_BLOCKCHAIN_DIR/monero-data-test/wallet --disable-rpc-login --rpc-bind-port 7879 --rpc-bind-ip 127.0.0.1 --trusted-daemon &
+nohup $COINOTC_BLOCKCHAIN_DIR/monero/build/release/bin/monero-wallet-rpc --testnet --daemon-address 127.0.0.1:28081 --wallet-dir $COINOTC_BLOCKCHAIN_DIR/monero-data-test/wallet --disable-rpc-login --rpc-bind-port 7879 --rpc-bind-ip 127.0.0.1 --trusted-daemon &
