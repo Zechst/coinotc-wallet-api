@@ -17,6 +17,7 @@ var http = require('http'),
     passport = require('passport'),
     errorhandler = require('errorhandler'),
     mongoose = require('mongoose'),
+    compression = require('compression'),
     helmet = require('helmet')
 
 var isProduction = process.env.NODE_ENV === 'production';
@@ -28,7 +29,8 @@ app.use(helmet());
 app.use(cors());
 
 // Normal express config defaults
-app.use(require('morgan')('dev'));
+app.use(require('morgan')('combined'));
+app.use(compression());
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 app.use(bodyParser.json({limit: '50mb'}));
 
@@ -36,6 +38,9 @@ app.use(require('method-override')());
 app.use(express.static(__dirname + '/wallet-mgmt-web/dist'));
 var expiryDate = new Date(Date.now() + 60 * 60 * 1000) // 1 hour
 app.use(session({ name: 'coinotcSessionId', secret: process.env.API_SECRET, cookie: { expires: expiryDate }, resave: false, saveUninitialized: false  }));
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 if (!isProduction) {
   app.use(errorhandler());
@@ -46,6 +51,7 @@ mongoose.connect(process.env.MONGODB_URI);
 mongoose.set('debug', process.env.MONGODB_DEBUG);
 
 require('./models/wallet-auth');
+require('./config/passport');
 require('./models/transactions');
 require('./models/wallet');
 require('./models/escrow');

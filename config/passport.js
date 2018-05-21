@@ -1,5 +1,5 @@
 var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
+var Strategy = require('passport-http-bearer').Strategy;
 var mongoose = require('mongoose');
 var WalletApi = mongoose.model('WalletApi');
 
@@ -8,22 +8,22 @@ passport.serializeUser(function(user, done) {
 });
 
 passport.deserializeUser(function(id, done) {
-findById(id, function (err, user) {
-  done(err, user);
-});
+  findById(id, function (err, user) {
+    done(err, user);
+  });
 });
 
-function findByApiKey(apikey, fn) {
-  WalletApi.findOne({email: email}).then(function(user){
-    if(!user || !user.validApiToken(apikey)){
+function findByApiKey(apikey, done) {
+  WalletApi.findOne({token: apikey}).then(function(authInfo){
+    if(!authInfo || !authInfo.validApiToken(apikey)){
       return done(null, false, {errors: {'Api token ': 'is invalid'}});
     }
-
-    return done(null, user);
+    console.log("Valid >>> " + authInfo);
+    return done(null, authInfo);
   }).catch(done);
 }
 
-passport.use(new LocalStrategy(
+passport.use(new Strategy(
     function(apikey, done) {
       process.nextTick(function () {
         

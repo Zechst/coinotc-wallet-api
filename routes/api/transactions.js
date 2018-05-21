@@ -4,6 +4,7 @@ const logger = require('../../util/logger');
 var _ = require('lodash');
 var Decimal = require('decimal.js');
 var uuid = require('uuid4');
+var passport = require('passport');
 
 var Escrow = mongoose.model('Escrow');
 var Wallet = mongoose.model('Wallet');
@@ -28,7 +29,7 @@ const XLM = 'XLM';
 const XRP = 'XRP';
 const ADA = 'ADA';
 
-router.get('/get-transaction/:type/:trxId/:email', function(req, res, next) {
+router.get('/get-transaction/:type/:trxId/:email', passport.authenticate('bearer', { session: false }), function(req, res, next) {
     let email = req.params.email;
     let orderNo = req.params.orderNo;
     let type = req.params.type;
@@ -39,7 +40,7 @@ router.get('/get-transaction/:type/:trxId/:email', function(req, res, next) {
     });
 });
 
-router.get('/transaction-history/:email', function(req, res, next) {
+router.get('/transaction-history/:email', passport.authenticate('bearer', { session: false }), function(req, res, next) {
     let email = req.params.email;
     console.log(`${email}`);
     Transactions.findOne({'email':email} ,function (err, result) {
@@ -48,7 +49,7 @@ router.get('/transaction-history/:email', function(req, res, next) {
     });
 });
 
-router.post('/withdrawal', function(req, res, next) {
+router.post('/withdrawal', passport.authenticate('bearer', { session: false }), function(req, res, next) {
     console.log("direct withdrawal from user's wallet to external address");
     console.log(req.body);
     let escrowInfo = null;
@@ -138,7 +139,7 @@ router.post('/withdrawal', function(req, res, next) {
 /**
  * held by escrow.
  */
-router.post('/held', function(req, res, next) {
+router.post('/held', passport.authenticate('bearer', { session: false }), function(req, res, next) {
     console.log(req.body);
     let escrowInfo = null;
     let emailWallet = null;
@@ -204,7 +205,7 @@ router.post('/held', function(req, res, next) {
     }
 });
 
-router.post('/unlock-transfer/:orderNo', function(req, res, next) {
+router.post('/unlock-transfer/:orderNo', passport.authenticate('bearer', { session: false }), function(req, res, next) {
     let orderNo = req.params.orderNo;
     let escrowInfo = null;
     logger.debug(orderNo);

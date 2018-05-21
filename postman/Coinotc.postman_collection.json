@@ -9,6 +9,16 @@
 		{
 			"name": "check cardano balance",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "c1b8bf20420592a88300bc3e01405917fba41bcb64b6dc51497f64a3b8c3df59",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
 				"header": [],
 				"body": {
@@ -36,6 +46,16 @@
 		{
 			"name": "Generate Wallet for User",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "c1b8bf20420592a88300bc3e01405917fba41bcb64b6dc51497f64a3b8c3df59",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
 				"header": [],
 				"body": {
@@ -43,7 +63,7 @@
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://localhost:3001/api/wallets/generate/a6@gmail.com/123456h67890Fsfrdssdcdredsafd43@/English",
+					"raw": "http://localhost:3001/api/wallets/generate/a32@gmail.com/123456h67890Fsfrdssdcdredsafd43@/English",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -53,7 +73,7 @@
 						"api",
 						"wallets",
 						"generate",
-						"a6@gmail.com",
+						"a32@gmail.com",
 						"123456h67890Fsfrdssdcdredsafd43@",
 						"English"
 					]
@@ -64,6 +84,16 @@
 		{
 			"name": "Get user's wallet information",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "c1b8bf20420592a88300bc3e01405917fba41bcb64b6dc51497f64a3b8c3df59",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
 				"header": [],
 				"body": {
@@ -89,6 +119,16 @@
 		{
 			"name": "Get user's wallet balance",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "c1b8bf20420592a88300bc3e01405917fba41bcb64b6dc51497f64a3b8c3df59",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
 				"header": [],
 				"body": {
@@ -116,6 +156,16 @@
 		{
 			"name": "Crypto Wallet Transfer (release)",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "c1b8bf20420592a88300bc3e01405917fba41bcb64b6dc51497f64a3b8c3df59",
+							"type": "string"
+						}
+					]
+				},
 				"method": "POST",
 				"header": [
 					{
@@ -147,6 +197,16 @@
 		{
 			"name": "Crypto Wallet Transfer (Held) XMR",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "c1b8bf20420592a88300bc3e01405917fba41bcb64b6dc51497f64a3b8c3df59",
+							"type": "string"
+						}
+					]
+				},
 				"method": "POST",
 				"header": [
 					{
@@ -177,6 +237,16 @@
 		{
 			"name": "Insert new crypto",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "c1b8bf20420592a88300bc3e01405917fba41bcb64b6dc51497f64a3b8c3df59",
+							"type": "string"
+						}
+					]
+				},
 				"method": "POST",
 				"header": [
 					{
@@ -207,6 +277,16 @@
 		{
 			"name": "Get All Cryptos",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "c1b8bf20420592a88300bc3e01405917fba41bcb64b6dc51497f64a3b8c3df59",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
 				"header": [],
 				"body": {
@@ -232,6 +312,16 @@
 		{
 			"name": "Update Crypto",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "c1b8bf20420592a88300bc3e01405917fba41bcb64b6dc51497f64a3b8c3df59",
+							"type": "string"
+						}
+					]
+				},
 				"method": "PUT",
 				"header": [
 					{
@@ -263,6 +353,16 @@
 		{
 			"name": "Get Escrow",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "c1b8bf20420592a88300bc3e01405917fba41bcb64b6dc51497f64a3b8c3df59",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
 				"header": [],
 				"body": {
@@ -288,6 +388,16 @@
 		{
 			"name": "Create escrow",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "c1b8bf20420592a88300bc3e01405917fba41bcb64b6dc51497f64a3b8c3df59",
+							"type": "string"
+						}
+					]
+				},
 				"method": "POST",
 				"header": [
 					{
@@ -318,6 +428,16 @@
 		{
 			"name": "Amend escrow information",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "c1b8bf20420592a88300bc3e01405917fba41bcb64b6dc51497f64a3b8c3df59",
+							"type": "string"
+						}
+					]
+				},
 				"method": "PUT",
 				"header": [
 					{
@@ -349,6 +469,16 @@
 		{
 			"name": "Escrow Approve Changes",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "c1b8bf20420592a88300bc3e01405917fba41bcb64b6dc51497f64a3b8c3df59",
+							"type": "string"
+						}
+					]
+				},
 				"method": "PUT",
 				"header": [],
 				"body": {
@@ -377,6 +507,16 @@
 		{
 			"name": "Get All Transactions History",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "c1b8bf20420592a88300bc3e01405917fba41bcb64b6dc51497f64a3b8c3df59",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
 				"header": [],
 				"body": {
@@ -403,6 +543,16 @@
 		{
 			"name": "Crypto Wallet Transfer (Held) ETH",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "c1b8bf20420592a88300bc3e01405917fba41bcb64b6dc51497f64a3b8c3df59",
+							"type": "string"
+						}
+					]
+				},
 				"method": "POST",
 				"header": [
 					{
@@ -433,6 +583,16 @@
 		{
 			"name": "Crypto Wallet Transfer (Held) XMR",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "c1b8bf20420592a88300bc3e01405917fba41bcb64b6dc51497f64a3b8c3df59",
+							"type": "string"
+						}
+					]
+				},
 				"method": "POST",
 				"header": [
 					{
@@ -463,6 +623,16 @@
 		{
 			"name": "Crypto Wallet Transfer (Held) XRP",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "c1b8bf20420592a88300bc3e01405917fba41bcb64b6dc51497f64a3b8c3df59",
+							"type": "string"
+						}
+					]
+				},
 				"method": "POST",
 				"header": [
 					{
@@ -493,6 +663,16 @@
 		{
 			"name": "Crypto Wallet Transfer (Held) XLM",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "c1b8bf20420592a88300bc3e01405917fba41bcb64b6dc51497f64a3b8c3df59",
+							"type": "string"
+						}
+					]
+				},
 				"method": "POST",
 				"header": [
 					{
@@ -523,6 +703,16 @@
 		{
 			"name": "Crypto Wallet Transfer (Held) ADA",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "c1b8bf20420592a88300bc3e01405917fba41bcb64b6dc51497f64a3b8c3df59",
+							"type": "string"
+						}
+					]
+				},
 				"method": "POST",
 				"header": [
 					{
@@ -532,7 +722,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"orderNo\": \"24\",\n\t\"cryptoCurrency\": \"ADA\",\n\t\"toAddress\": \"DdzFFzCqrhsfNDaFTix528PF1ECSoonXxspN9BfBgADriuFEG5tCyc3kkRXMTBBDJ2a1czLtVXZFJoydLuF7JhMJTg3fgrEue6eZVVaL\",\n\t\"email\": \"a31@gmail.com\",\n\t\"unit\": 2,\n\t\"transactCurrency\": \"USD\",\n\t\"pin\": 123456,\n\t\"equivalentAmount\": 234.3,\n\t\"beneficiaryEmail\": \"a30@gmail.com\",\n\t\"memo\": \"test 123\"\n}"
+					"raw": "{\n\t\"orderNo\": \"24\",\n\t\"cryptoCurrency\": \"ADA\",\n\t\"toAddress\": \"DdzFFzCqrhsfNDaFTix528PF1ECSoonXxspN9BfBgADriuFEG5tCyc3kkRXMTBBDJ2a1czLtVXZFJoydLuF7JhMJTg3fgrEue6eZVVaL\",\n\t\"email\": \"a31@gmail.com\",\n\t\"unit\": 3,\n\t\"transactCurrency\": \"USD\",\n\t\"pin\": 123456,\n\t\"equivalentAmount\": 234.3,\n\t\"beneficiaryEmail\": \"a30@gmail.com\",\n\t\"memo\": \"Ada transfer ...\"\n}"
 				},
 				"url": {
 					"raw": "http://localhost:3001/api/transactions/held",
@@ -553,6 +743,16 @@
 		{
 			"name": "Get user's wallet balance (ADA)",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "c1b8bf20420592a88300bc3e01405917fba41bcb64b6dc51497f64a3b8c3df59",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
 				"header": [],
 				"body": {
@@ -572,6 +772,204 @@
 						"balance",
 						"5afe891c2d2a53590a1e3e6b",
 						"ada"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get user's wallet balance (ADA) (Escrow)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "c1b8bf20420592a88300bc3e01405917fba41bcb64b6dc51497f64a3b8c3df59",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/wallets/balance/5afe89202d2a53590a1e3e6c/ada",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"wallets",
+						"balance",
+						"5afe89202d2a53590a1e3e6c",
+						"ada"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Crypto Wallet Withdrawal (ADA)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "c1b8bf20420592a88300bc3e01405917fba41bcb64b6dc51497f64a3b8c3df59",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"cryptoCurrency\": \"ADA\",\n\t\"email\": \"a31@gmail.com\",\n\t\"unit\": 0.3,\n\t\"transactCurrency\": \"USD\",\n\t\"pin\": 123456,\n\t\"equivalentAmount\": 234.3,\n\t\"beneficiaryEmail\": \"a30@gmail.com\",\n\t\"memo\": \"Ada transfer ...\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/transactions/withdrawal",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"transactions",
+						"withdrawal"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all Wallet Auth ",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"cryptoCurrency\": \"ADA\",\n\t\"email\": \"a31@gmail.com\",\n\t\"unit\": 0.3,\n\t\"transactCurrency\": \"USD\",\n\t\"pin\": 123456,\n\t\"equivalentAmount\": 234.3,\n\t\"beneficiaryEmail\": \"a30@gmail.com\",\n\t\"memo\": \"Ada transfer ...\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/wallet-auth/apps/dadasdsad33443534",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"wallet-auth",
+						"apps",
+						"dadasdsad33443534"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create  Wallet Auth for Mobile",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"robot\",\n\t\"token\": \"3DC56938F2DE92E70C1A692D94591BCB2C76A713FD6844F32BB92B2C79B3A5F816E6C5B71BB05Cddddddasdsadasdsa1CC1\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/wallet-auth/app",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"wallet-auth",
+						"app"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create  Wallet Auth for Mobile Copy",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"mobile\",\n\t\"token\": \"3DC56938F2DE92E70C1A692D94591BCB2C76A713FD6844F32BB92B2C79B3A5F816E6C5B71BB05C31E526FF3D6DFFF4614DC166E8D6C02AC60F910201E36A1CC1\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/wallet-auth/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"wallet-auth",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get one Wallet Auth ",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"cryptoCurrency\": \"ADA\",\n\t\"email\": \"a31@gmail.com\",\n\t\"unit\": 0.3,\n\t\"transactCurrency\": \"USD\",\n\t\"pin\": 123456,\n\t\"equivalentAmount\": 234.3,\n\t\"beneficiaryEmail\": \"a30@gmail.com\",\n\t\"memo\": \"Ada transfer ...\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/wallet-auth/c1b8bf20420592a88300bc3e01405917fba41bcb64b6dc51497f64a3b8c3df59",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"wallet-auth",
+						"c1b8bf20420592a88300bc3e01405917fba41bcb64b6dc51497f64a3b8c3df59"
 					]
 				}
 			},

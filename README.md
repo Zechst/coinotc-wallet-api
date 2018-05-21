@@ -26,6 +26,20 @@ Run the wallet api docker image
 docker run -t -i -v /media/kenneth/b13ae9f7-5727-4bc0-94fe-77d72079f2ee:/root/blockchain-drive  --env-file ./docker.env coinotc-wallet-api /bin/bash
 ```
 
+Clean up Docker unused images
+
+```
+#!/bin/bash
+
+# remove exited containers:
+docker ps --filter status=dead --filter status=exited -aq | xargs -r docker rm -v
+    
+# remove unused images:
+docker images --no-trunc | grep '<none>' | awk '{ print $3 }' | xargs -r docker rmi
+
+```
+
+
 ## Global Wallet Password
 
 * Currently this is the global wallet password being used across crypto currencies.

@@ -3,20 +3,20 @@ var uniqueValidator = require('mongoose-unique-validator');
 var crypto = require('crypto');
 
 var ApiSchema = new mongoose.Schema({
-  email: {type: String, lowercase: true, unique: true, required: [true, "can't be blank"], match: [/\S+@\S+\.\S+/, 'is invalid'], index: true},
-  apitoken: {type: String, lowercase: true, unique: true, required: [true, "can't be blank"], index: true},
+  appname: {type: String, unique: true, required: [true, "can't be blank"], index: true},
+  token: {type: String, required: [true, "can't be blank"]},
   salt: String
 }, {timestamps: true});
 
 ApiSchema.plugin(uniqueValidator, {message: 'is already taken.'});
 
-ApiSchema.methods.validApiToken = function(token) {
-  return this.apitoken === token;
+ApiSchema.methods.validApiToken = function(_token) {
+  return this.token === _token;
 };
 
-ApiSchema.methods.setApiToken = function(password){
+ApiSchema.methods.setApiToken = function(keyToken){
   this.salt = crypto.randomBytes(16).toString('hex');
-  this.apitoken = crypto.pbkdf2Sync(password, this.salt, 10000, 512, 'sha512').toString('hex');
+  this.token = crypto.pbkdf2Sync(keyToken, this.salt, 10000, 32, 'sha512').toString('hex');
 };
 
 mongoose.model('WalletApi', ApiSchema);
