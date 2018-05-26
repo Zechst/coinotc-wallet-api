@@ -1,0 +1,23 @@
+.login-form {
+    min-width: 150px;
+    max-width: 500px;
+    width: 95%;
+  }
+  
+.login-full-width {
+    width: 95%;
+}
+
+img {
+    border-radius: 50%;
+    width: 45%;
+    align: "middle";
+}
+
+mat-card-header,
+mat-card-title,
+mat-card-actions,
+mat-card-content {
+    display: flex;
+    justify-content: center;
+}

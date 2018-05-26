@@ -1,9 +1,0 @@
-{
-	"info": {
-		"_postman_id": "08f4776a-74fa-4d89-915e-7a3b2e02e540",
-		"name": "CoinOTc",
-		"description": "This is to test the wallet api for the coinotc app",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-	},
-	"item": []
-}

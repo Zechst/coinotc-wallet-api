@@ -131,6 +131,12 @@ Websocket Server for cardano started on port 8077
 
 * https://github.com/input-output-hk/cardano-sl/blob/develop/docs/how-to/build-cardano-sl-and-daedalus-from-source-code.md
 
+* Once the cardano-sl is build run the following cli
+
+```
+<cardano-sl-home>./connect-to-mainnet
+```
+
 ## How to connect to cluster
 1. Make sure you’ve follow the instructions to build from source using Nix
 2. Make sure you’re on latest cardano-sl-X.X branch

@@ -1,3 +1,52 @@
-<p>
-  login works!
-</p>
+<mat-grid-list cols="1" rowHeight="80px">
+    <mat-grid-tile>
+          <mat-chip-list>
+            <mat-chip><img src="https://avatars0.githubusercontent.com/u/35032505?s=400&u=edd8506b697c97b82fd507ab8797717bdccd79ac&v=4" alt="Avatar"></mat-chip>
+          </mat-chip-list>
+    </mat-grid-tile>
+</mat-grid-list>
+
+<mat-card class="example-card center">
+    <mat-card-header>
+      <mat-card-title><h2>CoinOTC WMS</h2></mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form class="login-form">
+        <table class="login-full-width" cellspacing="0">
+          <tr>
+            <td>
+                <mat-form-field class="login-full-width">
+                    <input matInput name="email" class="form-control" [formControl]="emailFormControl" 
+                    placeholder="a@a.com" [errorStateMatcher]="matcher">
+                <mat-hint align="end">E.g. hello@gmail.com</mat-hint>
+                <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
+                  Please enter a valid email address
+                </mat-error>
+                <mat-error *ngIf="emailFormControl.hasError('required')">
+                  Email is <strong>required</strong>
+                </mat-error>
+              </mat-form-field>
+            </td>
+          </tr>
+          <tr>
+          <td>
+              <mat-form-field class="login-full-width">
+                  <input matInput name="password" #passwordInput class="form-control" [formControl]="passwordFormControl" type="password" placeholder="*****" [errorStateMatcher]="matcher">
+                  
+              <mat-hint align="end">{{passwordInput.value?.length || 0}}/32</mat-hint>
+              <mat-error *ngIf="passwordFormControl.hasError('password') && !passwordFormControl.hasError('required')">
+                Please enter a valid password
+              </mat-error>
+              <mat-error *ngIf="passwordFormControl.hasError('required')">
+                Password is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+        </td>
+        </tr></table>
+      </form>
+      <mat-spinner [style.display]="showSpinner ? 'block' : 'none'"></mat-spinner>
+    </mat-card-content>
+    <mat-card-actions>
+        <button mat-raised-button color="primary" (click)="login()">Sign In</button>
+    </mat-card-actions>
+  </mat-card>

@@ -175,7 +175,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"orderNo\": \"fsdfdsfdsfds353543sdf3df\",\n\t\"cryptoCurrency\": \"eth\",\n\t\"toAddress\": \"ghjhjhgj\",\n\t\"email\": \"bunnyppl@hotmail.com\",\n\t\"unit\": 1,\n\t\"transactCurrency\": \"USD\",\n\t\"pin\": 123456,\n\t\"equivalentAmount\": 234.3,\n\t\"beneficiaryEmail\": \"bunnyppl@yahoo.com\",\n\t\"memo\": \"test\"\n}"
+					"raw": "{\n  \"orderNo\": \"fsdfdsfdsfds353543sdf3df\",\n  \"cryptoCurrency\": \"eth\",\n  \"toAddress\": \"ghjhjhgj\",\n  \"email\": \"bunnyppl@hotmail.com\",\n  \"unit\": 1,\n  \"transactCurrency\": \"USD\",\n  \"pin\": 123456,\n  \"equivalentAmount\": 234.3,\n  \"beneficiaryEmail\": \"bunnyppl@yahoo.com\",\n  \"memo\": \"test\"\n}"
 				},
 				"url": {
 					"raw": "http://localhost:3001/api/transactions/unlock-transfer/232432433",
@@ -216,7 +216,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"orderNo\": \"18\",\n\t\"cryptoCurrency\": \"ETH\",\n\t\"toAddress\": \"0xC24E24a083C2A7B00c94e2B5D14De3B7ED39d8c1\",\n\t\"email\": \"bunnyppl@hotmail.com\",\n\t\"unit\": 1,\n\t\"transactCurrency\": \"USD\",\n\t\"pin\": 123456,\n\t\"equivalentAmount\": 234.3,\n\t\"beneficiaryEmail\": \"bunnyppl@gmail.com\",\n\t\"memo\": \"test\"\n}"
+					"raw": "{\n  \"orderNo\": \"18\",\n  \"cryptoCurrency\": \"ETH\",\n  \"toAddress\": \"0xC24E24a083C2A7B00c94e2B5D14De3B7ED39d8c1\",\n  \"email\": \"bunnyppl@hotmail.com\",\n  \"unit\": 1,\n  \"transactCurrency\": \"USD\",\n  \"pin\": 123456,\n  \"equivalentAmount\": 234.3,\n  \"beneficiaryEmail\": \"bunnyppl@gmail.com\",\n  \"memo\": \"test\"\n}"
 				},
 				"url": {
 					"raw": "http://localhost:3001/api/transactions/held",
@@ -256,7 +256,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"code\": \"xrp\",\n\t\"desc\": \"Ripple\"\n}"
+					"raw": "{\n  \"code\": \"xrp\",\n  \"desc\": \"Ripple\"\n}"
 				},
 				"url": {
 					"raw": "http://localhost:3001/api/wallets/cryptos",
@@ -289,10 +289,7 @@
 				},
 				"method": "GET",
 				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
+				"body": {},
 				"url": {
 					"raw": "http://localhost:3001/api/wallets/cryptos",
 					"protocol": "http",
@@ -331,7 +328,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"code\": \"xrp\",\n\t\"desc\": \"Ripple\"\n}"
+					"raw": "{\n  \"code\": \"xrp\",\n  \"desc\": \"Ripple\"\n}"
 				},
 				"url": {
 					"raw": "http://localhost:3001/api/wallets/cryptos/5abeab31a18db7f917cf763b",
@@ -365,10 +362,7 @@
 				},
 				"method": "GET",
 				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
+				"body": {},
 				"url": {
 					"raw": "http://localhost:3001/api/wallets/escrow",
 					"protocol": "http",
@@ -407,7 +401,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"type\": \"xlm\",\n\t\"address\": \"GCSCSIKV2ZDRNMLF4M4ITCFRLSVGRR6E2ZXE47OKD2B7V5XGAC6QON4I\",\n\t\"fee\": \"0.01\",\n\t\"status\": 1\n}"
+					"raw": "{\n  \"type\": \"xlm\",\n  \"address\": \"GCSCSIKV2ZDRNMLF4M4ITCFRLSVGRR6E2ZXE47OKD2B7V5XGAC6QON4I\",\n  \"fee\": \"0.01\",\n  \"status\": 1\n}"
 				},
 				"url": {
 					"raw": "http://localhost:3001/api/wallets/escrow",
@@ -447,7 +441,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"unauthorizedEscrowWalletAddress\": \"0x52FFf86B65893DDF85C4f6C16c13C8b024A651BB\",\n\t\"unauthorizedFeeRate\": 2.0\n}"
+					"raw": "{\n  \"unauthorizedEscrowWalletAddress\": \"0x52FFf86B65893DDF85C4f6C16c13C8b024A651BB\",\n  \"unauthorizedFeeRate\": 2.0\n}"
 				},
 				"url": {
 					"raw": "http://localhost:3001/api/wallets/escrow/5abf02edbd7c37b61cb7023f",
@@ -481,10 +475,7 @@
 				},
 				"method": "PUT",
 				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
+				"body": {},
 				"url": {
 					"raw": "http://localhost:3001/api/wallets/escrow/approve/5abf02edbd7c37b61cb7023f/716e4e0",
 					"protocol": "http",
@@ -519,10 +510,7 @@
 				},
 				"method": "GET",
 				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
+				"body": {},
 				"url": {
 					"raw": "http://localhost:3001/api/transactions/transaction-history/bunnyppl@yahoo.com",
 					"protocol": "http",
@@ -562,7 +550,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"orderNo\": \"29\",\n\t\"cryptoCurrency\": \"ETH\",\n\t\"toAddress\": \"0xC24E24a083C2A7B00c94e2B5D14De3B7ED39d8c1\",\n\t\"email\": \"bunnyppl@hotmail.com\",\n\t\"unit\": 0.1,\n\t\"transactCurrency\": \"USD\",\n\t\"pin\": 123456,\n\t\"equivalentAmount\": 234.3,\n\t\"beneficiaryEmail\": \"bunnyppl@gmail.com\",\n\t\"memo\": \"test\"\n}"
+					"raw": "{\n  \"orderNo\": \"29\",\n  \"cryptoCurrency\": \"ETH\",\n  \"toAddress\": \"0xC24E24a083C2A7B00c94e2B5D14De3B7ED39d8c1\",\n  \"email\": \"bunnyppl@hotmail.com\",\n  \"unit\": 0.1,\n  \"transactCurrency\": \"USD\",\n  \"pin\": 123456,\n  \"equivalentAmount\": 234.3,\n  \"beneficiaryEmail\": \"bunnyppl@gmail.com\",\n  \"memo\": \"test\"\n}"
 				},
 				"url": {
 					"raw": "http://localhost:3001/api/transactions/held",
@@ -602,7 +590,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"orderNo\": \"16\",\n\t\"cryptoCurrency\": \"XRP\",\n\t\"toAddress\": \"r4MWFXZ7yKHrxU3ryG6d1kp5QG86vNFziy\",\n\t\"email\": \"bunnyppl@yahoo.com\",\n\t\"unit\": 1,\n\t\"transactCurrency\": \"USD\",\n\t\"pin\": 123456,\n\t\"equivalentAmount\": 234.3,\n\t\"beneficiaryEmail\": \"bunnyppl@gmail.com\",\n\t\"memo\": \"test 123\"\n}"
+					"raw": "{\n  \"orderNo\": \"16\",\n  \"cryptoCurrency\": \"XRP\",\n  \"toAddress\": \"r4MWFXZ7yKHrxU3ryG6d1kp5QG86vNFziy\",\n  \"email\": \"bunnyppl@yahoo.com\",\n  \"unit\": 1,\n  \"transactCurrency\": \"USD\",\n  \"pin\": 123456,\n  \"equivalentAmount\": 234.3,\n  \"beneficiaryEmail\": \"bunnyppl@gmail.com\",\n  \"memo\": \"test 123\"\n}"
 				},
 				"url": {
 					"raw": "http://localhost:3001/api/transactions/held",
@@ -642,7 +630,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"orderNo\": \"17\",\n\t\"cryptoCurrency\": \"XRP\",\n\t\"toAddress\": \"r4MWFXZ7yKHrxU3ryG6d1kp5QG86vNFziy\",\n\t\"email\": \"bunnyppl@yahoo.com\",\n\t\"unit\": 1,\n\t\"transactCurrency\": \"USD\",\n\t\"pin\": 123456,\n\t\"equivalentAmount\": 234.3,\n\t\"beneficiaryEmail\": \"bunnyppl@gmail.com\",\n\t\"memo\": \"test 123\"\n}"
+					"raw": "{\n  \"orderNo\": \"17\",\n  \"cryptoCurrency\": \"XRP\",\n  \"toAddress\": \"r4MWFXZ7yKHrxU3ryG6d1kp5QG86vNFziy\",\n  \"email\": \"bunnyppl@yahoo.com\",\n  \"unit\": 1,\n  \"transactCurrency\": \"USD\",\n  \"pin\": 123456,\n  \"equivalentAmount\": 234.3,\n  \"beneficiaryEmail\": \"bunnyppl@gmail.com\",\n  \"memo\": \"test 123\"\n}"
 				},
 				"url": {
 					"raw": "http://localhost:3001/api/transactions/held",
@@ -682,7 +670,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"orderNo\": \"23\",\n\t\"cryptoCurrency\": \"XLM\",\n\t\"toAddress\": \"GDXPMWJCBWXLKTG6YP7444UMV5222UKU5NYXP26ZH6SFZHQP4Z2JSBCJ\",\n\t\"email\": \"bunnyppl@yahoo.com\",\n\t\"unit\": 21,\n\t\"transactCurrency\": \"USD\",\n\t\"pin\": 123456,\n\t\"equivalentAmount\": 234.3,\n\t\"beneficiaryEmail\": \"bunnyppl@gmail.com\",\n\t\"memo\": \"test 123\"\n}"
+					"raw": "{\n  \"orderNo\": \"23\",\n  \"cryptoCurrency\": \"XLM\",\n  \"toAddress\": \"GDXPMWJCBWXLKTG6YP7444UMV5222UKU5NYXP26ZH6SFZHQP4Z2JSBCJ\",\n  \"email\": \"bunnyppl@yahoo.com\",\n  \"unit\": 21,\n  \"transactCurrency\": \"USD\",\n  \"pin\": 123456,\n  \"equivalentAmount\": 234.3,\n  \"beneficiaryEmail\": \"bunnyppl@gmail.com\",\n  \"memo\": \"test 123\"\n}"
 				},
 				"url": {
 					"raw": "http://localhost:3001/api/transactions/held",
@@ -722,7 +710,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"orderNo\": \"24\",\n\t\"cryptoCurrency\": \"ADA\",\n\t\"toAddress\": \"DdzFFzCqrhsfNDaFTix528PF1ECSoonXxspN9BfBgADriuFEG5tCyc3kkRXMTBBDJ2a1czLtVXZFJoydLuF7JhMJTg3fgrEue6eZVVaL\",\n\t\"email\": \"a31@gmail.com\",\n\t\"unit\": 3,\n\t\"transactCurrency\": \"USD\",\n\t\"pin\": 123456,\n\t\"equivalentAmount\": 234.3,\n\t\"beneficiaryEmail\": \"a30@gmail.com\",\n\t\"memo\": \"Ada transfer ...\"\n}"
+					"raw": "{\n  \"orderNo\": \"24\",\n  \"cryptoCurrency\": \"ADA\",\n  \"toAddress\": \"DdzFFzCqrhsfNDaFTix528PF1ECSoonXxspN9BfBgADriuFEG5tCyc3kkRXMTBBDJ2a1czLtVXZFJoydLuF7JhMJTg3fgrEue6eZVVaL\",\n  \"email\": \"a31@gmail.com\",\n  \"unit\": 3,\n  \"transactCurrency\": \"USD\",\n  \"pin\": 123456,\n  \"equivalentAmount\": 234.3,\n  \"beneficiaryEmail\": \"a30@gmail.com\",\n  \"memo\": \"Ada transfer ...\"\n}"
 				},
 				"url": {
 					"raw": "http://localhost:3001/api/transactions/held",
@@ -755,10 +743,7 @@
 				},
 				"method": "GET",
 				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
+				"body": {},
 				"url": {
 					"raw": "http://localhost:3001/api/wallets/balance/5afe891c2d2a53590a1e3e6b/ada",
 					"protocol": "http",
@@ -792,10 +777,7 @@
 				},
 				"method": "GET",
 				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
+				"body": {},
 				"url": {
 					"raw": "http://localhost:3001/api/wallets/balance/5afe89202d2a53590a1e3e6c/ada",
 					"protocol": "http",
@@ -836,7 +818,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"cryptoCurrency\": \"ADA\",\n\t\"email\": \"a31@gmail.com\",\n\t\"unit\": 0.3,\n\t\"transactCurrency\": \"USD\",\n\t\"pin\": 123456,\n\t\"equivalentAmount\": 234.3,\n\t\"beneficiaryEmail\": \"a30@gmail.com\",\n\t\"memo\": \"Ada transfer ...\"\n}"
+					"raw": "{\n  \"cryptoCurrency\": \"ADA\",\n  \"email\": \"a31@gmail.com\",\n  \"unit\": 0.3,\n  \"transactCurrency\": \"USD\",\n  \"pin\": 123456,\n  \"equivalentAmount\": 234.3,\n  \"beneficiaryEmail\": \"a30@gmail.com\",\n  \"memo\": \"Ada transfer ...\"\n}"
 				},
 				"url": {
 					"raw": "http://localhost:3001/api/transactions/withdrawal",
@@ -869,7 +851,7 @@
 					"raw": "{\n\t\"cryptoCurrency\": \"ADA\",\n\t\"email\": \"a31@gmail.com\",\n\t\"unit\": 0.3,\n\t\"transactCurrency\": \"USD\",\n\t\"pin\": 123456,\n\t\"equivalentAmount\": 234.3,\n\t\"beneficiaryEmail\": \"a30@gmail.com\",\n\t\"memo\": \"Ada transfer ...\"\n}"
 				},
 				"url": {
-					"raw": "http://localhost:3001/api/wallet-auth/apps/dadasdsad33443534",
+					"raw": "http://localhost:3001/api/wallet-auth/apps",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -878,8 +860,7 @@
 					"path": [
 						"api",
 						"wallet-auth",
-						"apps",
-						"dadasdsad33443534"
+						"apps"
 					]
 				}
 			},

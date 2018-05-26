@@ -1,0 +1,25 @@
+<button mat-icon-button [matMenuTriggerFor]="menu" *ngIf="authInfo?.isLoggedIn()">
+    <mat-icon>more_vert</mat-icon>
+  </button>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item routerLink="/app-api">
+      <mat-icon>developer_board</mat-icon>
+      <span>API</span>
+    </button>
+    <button mat-menu-item routerLink="/escrow">
+        <mat-icon>group</mat-icon>
+        <span>Escrow</span>
+    </button>
+    <button mat-menu-item routerLink="/wallets">
+      <mat-icon>attach_money</mat-icon>
+      <span>Wallets</span>
+    </button>
+    <button mat-menu-item routerLink="/transactions">
+      <mat-icon>assignment</mat-icon>
+      <span>Transactions</span>
+    </button>
+    <button mat-menu-item (click)="logout()">
+        <mat-icon>recent_actors</mat-icon>
+        <span>Logout</span>
+    </button>
+  </mat-menu>

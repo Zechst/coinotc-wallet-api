@@ -1,0 +1,59 @@
+{
+  "configVersion": 1,
+  "index": "/index.html",
+  "assetGroups": [
+    {
+      "name": "app",
+      "installMode": "prefetch",
+      "updateMode": "prefetch",
+      "urls": [
+        "/favicon.ico",
+        "/index.html"
+      ],
+      "patterns": []
+    },
+    {
+      "name": "assets",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "urls": [
+        "/assets/images/icons/icon-150x150.png",
+        "/assets/images/icons/icon-16x16.png",
+        "/assets/images/icons/icon-180x180.png",
+        "/assets/images/icons/icon-192x192.png",
+        "/assets/images/icons/icon-32x32.png",
+        "/assets/images/icons/icon-512x512.png"
+      ],
+      "patterns": []
+    }
+  ],
+  "dataGroups": [],
+  "hashTable": {
+    "/assets/images/icons/icon-150x150.png": "d8142b09d7e3b010542d79d8dc956370252bd008",
+    "/assets/images/icons/icon-16x16.png": "cb08de0a0c57831ea254ff05f7d1261fd34139db",
+    "/assets/images/icons/icon-180x180.png": "55cfb9e0d3d6bac317dd87004cadea140b603903",
+    "/assets/images/icons/icon-192x192.png": "2a931eaf8336476b3e16d83e5487b0eaeee753c5",
+    "/assets/images/icons/icon-32x32.png": "66d00bd0872f379f463a1e476ffe8f6cc279d62b",
+    "/assets/images/icons/icon-512x512.png": "ea568289eb505872360fce88631867fdbecd5e3a",
+    "/favicon.ico": "84161b857f5c547e3699ddfbffc6d8d737542e01",
+    "/index.html": "3904df3510393bb82e0c2c70859e50f0d1735816"
+  },
+  "navigationUrls": [
+    {
+      "positive": true,
+      "regex": "^\\/.*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^\\/]*\\.[^\\/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^\\/]*__[^\\/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^\\/]*__[^\\/]*\\/.*$"
+    }
+  ]
+}
