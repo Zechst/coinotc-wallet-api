@@ -5,12 +5,10 @@ import {AngularFireAuth } from "angularfire2/auth";
 
 import {AuthInfo} from "./auth-info";
 import {Router} from "@angular/router";
-import {ToastyService, ToastyConfig, ToastOptions, ToastData} from 'ng2-toasty';
-//import {LocalStorageService} from 'ngx-localstorage';
 import { LocalStorage } from '@ngx-pwa/local-storage';
 
 import * as firebase from 'firebase/app';
-
+import {MatSnackBar} from '@angular/material';
 
 @Injectable()
 export class AuthServiceFirebase {
@@ -20,8 +18,7 @@ export class AuthServiceFirebase {
     authInfo$: BehaviorSubject<AuthInfo> = new BehaviorSubject<AuthInfo>(AuthServiceFirebase.UNKNOWN_USER);
     authState: any = null;
     constructor(private afAuth: AngularFireAuth, private router:Router,
-        private toastyService: ToastyService, 
-        private toastyConfig: ToastyConfig,
+        public snackBar: MatSnackBar,
         private localStorage: LocalStorage) {
             this.afAuth.authState.subscribe((auth) => {
                 this.authState = auth
@@ -105,26 +102,15 @@ export class AuthServiceFirebase {
 
     private handleError<T> (operation = 'operation', result?: T) {
         return (error: any): Observable<T> => {
-          this.addToastMessage("Error", JSON.stringify(error));
+          this.openSnackBar(JSON.stringify(error), '');
           return Observable.throw(error  || 'backend server error');
         };
       }
     
-      addToastMessage(title, msg) {
-        let toastOptions: ToastOptions = {
-            title: title,
-            msg: msg,
-            showClose: true,
-            timeout: 3500,
-            theme: 'bootstrap',
-            onAdd: (toast: ToastData) => {
-                console.log('Toast ' + toast.id + ' has been added!');
-            },
-            onRemove: function(toast: ToastData) {
-                console.log('Toast ' + toast.id + ' has been removed!');
-            }
-        };
-        this.toastyService.error(toastOptions);
-      }
+      openSnackBar(message: string, action: string) {
+        this.snackBar.open(message, action, {
+          duration: 2000,
+        });
+      }  
 
 }

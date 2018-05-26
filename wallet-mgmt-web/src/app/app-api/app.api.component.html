@@ -1,1 +1,22 @@
-test
+
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+    <ng-container matColumnDef="appname">
+      <th mat-header-cell *matHeaderCellDef>App Name</th>
+      <td mat-cell *matCellDef="let element"> {{element.appname}} </td>
+    </ng-container>
+  
+    <ng-container matColumnDef="token">
+      <th mat-header-cell *matHeaderCellDef> API Key </th>
+      <td mat-cell *matCellDef="let element" matTooltip="{{element.token}}" (click)="copyLink(element.token)"> 
+          {{element.token}} </td>
+    </ng-container>
+    <ng-container matColumnDef="createdAt">
+      <th mat-header-cell *matHeaderCellDef> Created On </th>
+      <td mat-cell *matCellDef="let element"> {{element.createdAt | date:'full'}} </td>
+    </ng-container>
+  
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+
