@@ -149,28 +149,44 @@ function handleIncomingData(data){
     }else if(returnData.txnMessage.type === 'transfer'){
         console.log(JSON.stringify(returnData));
         let wsInsertedTrxn = JSON.parse(JSON.stringify(returnData));
-        var newTransaction = new Transactions({ 
-            orderNo: wsInsertedTrxn.txnMessage.insertedTransaction.orderNo,
-            email: wsInsertedTrxn.txnMessage.insertedTransaction.email,
-            fromAddress: wsInsertedTrxn.txnMessage.insertedTransaction.fromAddress,
-            toAddress: wsInsertedTrxn.txnMessage.insertedTransaction.toAddress,
-            unit: wsInsertedTrxn.txnMessage.insertedTransaction.unit,
-            equivalentAmount: wsInsertedTrxn.txnMessage.insertedTransaction.equivalentAmount,
-            transactCurrency: wsInsertedTrxn.txnMessage.insertedTransaction.transactCurrency,
-            cryptoCurrency: wsInsertedTrxn.txnMessage.insertedTransaction.cryptoCurrency,
-            platformFee: wsInsertedTrxn.txnMessage.insertedTransaction.platformFee,
-            escrowId: wsInsertedTrxn.txnMessage.insertedTransaction.escrowId,
-            beneficiaryEmail: wsInsertedTrxn.txnMessage.insertedTransaction.beneficiaryEmail,
-            status: wsInsertedTrxn.txnMessage.insertedTransaction.status,
-            memo: wsInsertedTrxn.txnMessage.insertedTransaction.memo,
-            receipt: wsInsertedTrxn.result
-        });
-        newTransaction.save(function(err, insertedTransaction){
-            console.log();
-            if (err) {
-                console.log(err);
-            }
-        });
+        console.log("FINAL ACTION > " + wsInsertedTrxn.txnMessage.insertedTransaction.finalAction);
+        if(wsInsertedTrxn.txnMessage.insertedTransaction.finalAction == 1){
+            console.log("ESCROW TO FINAL ACCOUNT !");
+            Transactions.findOne({'orderNo':wsInsertedTrxn.txnMessage.insertedTransaction.orderNo} ,function (err, foundTrxn) {
+                if(err) res.status(500).json(err);
+                foundTrxn.finalReceipt = wsInsertedTrxn.result;
+                foundTrxn.save(function(err, updatedTransaction){
+                    console.log();
+                    if (err) {
+                        console.log(err);
+                    }
+                    console.log(updatedTransaction);
+                }); 
+            });
+        }else{
+            var newTransaction = new Transactions({ 
+                orderNo: wsInsertedTrxn.txnMessage.insertedTransaction.orderNo,
+                email: wsInsertedTrxn.txnMessage.insertedTransaction.email,
+                fromAddress: wsInsertedTrxn.txnMessage.insertedTransaction.fromAddress,
+                toAddress: wsInsertedTrxn.txnMessage.insertedTransaction.toAddress,
+                unit: wsInsertedTrxn.txnMessage.insertedTransaction.unit,
+                equivalentAmount: wsInsertedTrxn.txnMessage.insertedTransaction.equivalentAmount,
+                transactCurrency: wsInsertedTrxn.txnMessage.insertedTransaction.transactCurrency,
+                cryptoCurrency: wsInsertedTrxn.txnMessage.insertedTransaction.cryptoCurrency,
+                platformFee: wsInsertedTrxn.txnMessage.insertedTransaction.platformFee,
+                escrowId: wsInsertedTrxn.txnMessage.insertedTransaction.escrowId,
+                beneficiaryEmail: wsInsertedTrxn.txnMessage.insertedTransaction.beneficiaryEmail,
+                status: wsInsertedTrxn.txnMessage.insertedTransaction.status,
+                memo: wsInsertedTrxn.txnMessage.insertedTransaction.memo,
+                receipt: wsInsertedTrxn.result
+            });
+            newTransaction.save(function(err, insertedTransaction){
+                console.log();
+                if (err) {
+                    console.log(err);
+                }
+            });
+        }
     }
 }
 

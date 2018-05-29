@@ -15,6 +15,7 @@ var MoneroWallet = require('../../wallet/monero');
 var RippleWallet = require('../../wallet/ripple');
 var StellarWallet = require('../../wallet/stellar');
 const evtEmitter = require('../../util/evtemitter');
+const checkValidHost = require('./checkValidHost');
 
 var adaWallet = CardanoWallet.instance;
 var ethWallet = EthereumWallet.instance;
@@ -29,7 +30,7 @@ const XLM = 'XLM';
 const XRP = 'XRP';
 const ADA = 'ADA';
 
-router.get('/get-transaction/:type/:trxId/:email', passport.authenticate('bearer', { session: false }), function(req, res, next) {
+router.get('/get-transaction/:type/:trxId/:email', checkValidHost, passport.authenticate('bearer', { session: false }), function(req, res, next) {
     let email = req.params.email;
     let orderNo = req.params.orderNo;
     let type = req.params.type;
@@ -40,7 +41,7 @@ router.get('/get-transaction/:type/:trxId/:email', passport.authenticate('bearer
     });
 });
 
-router.get('/transaction-history/:email', passport.authenticate('bearer', { session: false }), function(req, res, next) {
+router.get('/transaction-history/:email', checkValidHost, passport.authenticate('bearer', { session: false }), function(req, res, next) {
     let email = req.params.email;
     console.log(`${email}`);
     Transactions.findOne({'email':email} ,function (err, result) {
@@ -49,7 +50,7 @@ router.get('/transaction-history/:email', passport.authenticate('bearer', { sess
     });
 });
 
-router.post('/withdrawal', passport.authenticate('bearer', { session: false }), function(req, res, next) {
+router.post('/withdrawal', checkValidHost, passport.authenticate('bearer', { session: false }), function(req, res, next) {
     console.log("direct withdrawal from user's wallet to external address");
     console.log(req.body);
     let escrowInfo = null;
@@ -139,7 +140,7 @@ router.post('/withdrawal', passport.authenticate('bearer', { session: false }), 
 /**
  * held by escrow.
  */
-router.post('/held', passport.authenticate('bearer', { session: false }), function(req, res, next) {
+router.post('/held', checkValidHost, passport.authenticate('bearer', { session: false }), function(req, res, next) {
     console.log(req.body);
     let escrowInfo = null;
     let emailWallet = null;
@@ -205,28 +206,20 @@ router.post('/held', passport.authenticate('bearer', { session: false }), functi
     }
 });
 
-router.post('/unlock-transfer/:orderNo', passport.authenticate('bearer', { session: false }), function(req, res, next) {
-    let orderNo = req.params.orderNo;
+router.post('/unlock-transfer', checkValidHost, passport.authenticate('bearer', { session: false }), function(req, res, next) {
+    let transferBody  = JSON.parse(JSON.stringify(req.body));
+    let orderNo = transferBody.orderNo;
     let escrowInfo = null;
     logger.debug(orderNo);
-    Transactions.findOne({'orderNo':orderNo} ,function (err, trxn) {
+    Transactions.findOne({'orderNo':orderNo, 'status': 0} ,function (err, trxn) {
         if(err) res.status(500).json(err);
         getEscrowInformationByType(transferBody.cryptoCurrency)
             .then(function(result){
                 console.log("escrow > "  +  result);
                 escrowInfo = result;
+                trxn.finalAction = 1;
+                trxn.status = 1;
                 var receiverResult = releaseTransactionToReceiver(trxn, escrowInfo, res);
-                if(receiverResult){
-                    trxn.status = 1;
-                    trxn.save(function(err, updateTransaction){
-                        console.log();
-                        if (err) {
-                            console.log(err);
-                            return res.status(500).json(err);
-                        }
-                        return res.status(200).json(updateTransaction);
-                    })
-                }
         });
     });
 });
@@ -247,8 +240,8 @@ async function releaseTransactionToReceiver(transaction, escrowInfo , res){
             escrowInfo.privateKey).then(transactionHash => {
             logger.debug("ETH transfer -> " + JSON.stringify(transactionHash));
             logger.debug("ETH transfer -> " + transactionHash.gasLimit.toNumber());
-            transaction.final_receipt = transactionHash;
-            updateTransactionForRelease(transaction,res);
+            transaction.finalReceipt = transactionHash;
+            updateTransaction(transaction,res);
         }).catch(error => { 
             console.error('caught', error);
             return res.status(500).json(error);
@@ -690,7 +683,12 @@ evtEmitter.on('transferEvt', function (arg) {
                 console.log("arg.orderNo" + arg.orderNo);
                 console.log("foundTransaction > " + foundTransaction);
                 //var copy = Object.assign({}, arg);
-                foundTransaction.receipt = JSON.parse(JSON.stringify(arg));
+                console.log("arg.finalAction > " + arg.finalAction);
+                if(arg.finalAction == 1){
+                    foundTransaction.finalReceipt = JSON.parse(JSON.stringify(arg));
+                }else{
+                    foundTransaction.receipt = JSON.parse(JSON.stringify(arg));
+                }
                 console.log("< receipt > " + foundTransaction.receipt);
                 foundTransaction.save(function(err, updatedTrxn){
                     console.log();

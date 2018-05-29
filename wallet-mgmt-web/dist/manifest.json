@@ -1,11 +1,11 @@
 {
    "name": "CoinOTC Wallet API Admin",
-   "short_name": "CoinOTC-WalletAdmin",
+   "short_name": "CoinOTC.WMA",
    "start_url": "./",
    "theme_color": "#008080",
    "background_color": "#008B8B",
    "display": "standalone",
-   "description": "CoinOTC Wallet Management PWA",
+   "description": "CoinOTC Wallet Management PWA. This is a backoffice wallet management app",
    "icons": [
         {
             "src": "/assets/images/icons/icon-16x16.png",

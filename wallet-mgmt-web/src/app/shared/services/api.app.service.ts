@@ -65,7 +65,7 @@ export class AppAPIService {
   }
 
   public searchApps(model) : Observable<App[]> {
-    var getURL = `${this.ApiAppRootApiUrl}/apps?keyword=${model.keyword}&searchType=${model.searchType}&sortBy=${model.sortBy}&currentPerPage=${model.currentPerPage}&itemsPerPage=${model.itemsPerPage}`;
+    var getURL = `${this.ApiAppRootApiUrl}/apps?currentPerPage=${model.currentPerPage}&itemsPerPage=${model.itemsPerPage}`;
     return this.httpClient.get<App[]>(getURL)
       .pipe(catchError(this.handleError<App[]>('searchApps')));
   }

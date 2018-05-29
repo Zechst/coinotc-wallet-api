@@ -42,30 +42,47 @@ ws.on('open', function open() {
         if(incData.type === 'transfer'){
             let wsInsertedTrxn = JSON.parse(JSON.stringify(incData));
             console.log(wsInsertedTrxn);
-            var newTransaction = new Transactions({ 
-                orderNo: wsInsertedTrxn.transfer.insertedTransaction.orderNo,
-                email: wsInsertedTrxn.transfer.insertedTransaction.email,
-                fromAddress: wsInsertedTrxn.transfer.insertedTransaction.fromAddress,
-                toAddress: wsInsertedTrxn.transfer.insertedTransaction.toAddress,
-                unit: wsInsertedTrxn.transfer.insertedTransaction.unit,
-                equivalentAmount: wsInsertedTrxn.transfer.insertedTransaction.equivalentAmount,
-                transactCurrency: wsInsertedTrxn.transfer.insertedTransaction.transactCurrency,
-                cryptoCurrency: wsInsertedTrxn.transfer.insertedTransaction.cryptoCurrency,
-                platformFee: wsInsertedTrxn.transfer.insertedTransaction.platformFee,
-                escrowId: wsInsertedTrxn.transfer.insertedTransaction.escrowId,
-                beneficiaryEmail: wsInsertedTrxn.transfer.insertedTransaction.beneficiaryEmail,
-                status: wsInsertedTrxn.transfer.insertedTransaction.status,
-                memo: wsInsertedTrxn.transfer.insertedTransaction.memo,
-                receipt: wsInsertedTrxn.receipt
-            });
-            newTransaction.save(function(err, insertedTransaction){
-                console.log("saved !");
-                if (err) {
-                    console.log(err);
-                    return handleError(err);
-                }
-                console.log(insertedTransaction);
-            });
+            console.log("FINAL ACTION > " + wsInsertedTrxn.transfer.insertedTransaction.finalAction);
+
+            if(wsInsertedTrxn.transfer.insertedTransaction.finalAction == 1){
+                console.log("ESCROW TO FINAL ACCOUNT !");
+                Transactions.findOne({'orderNo':wsInsertedTrxn.transfer.insertedTransaction.orderNo} ,function (err, foundTrxn) {
+                    if(err) res.status(500).json(err);
+                    foundTrxn.finalReceipt = wsInsertedTrxn.receipt;
+                    foundTrxn.save(function(err, updatedTransaction){
+                        console.log();
+                        if (err) {
+                            console.log(err);
+                        }
+                        console.log(updatedTransaction);
+                    }); 
+                });
+            }else{
+                var newTransaction = new Transactions({ 
+                    orderNo: wsInsertedTrxn.transfer.insertedTransaction.orderNo,
+                    email: wsInsertedTrxn.transfer.insertedTransaction.email,
+                    fromAddress: wsInsertedTrxn.transfer.insertedTransaction.fromAddress,
+                    toAddress: wsInsertedTrxn.transfer.insertedTransaction.toAddress,
+                    unit: wsInsertedTrxn.transfer.insertedTransaction.unit,
+                    equivalentAmount: wsInsertedTrxn.transfer.insertedTransaction.equivalentAmount,
+                    transactCurrency: wsInsertedTrxn.transfer.insertedTransaction.transactCurrency,
+                    cryptoCurrency: wsInsertedTrxn.transfer.insertedTransaction.cryptoCurrency,
+                    platformFee: wsInsertedTrxn.transfer.insertedTransaction.platformFee,
+                    escrowId: wsInsertedTrxn.transfer.insertedTransaction.escrowId,
+                    beneficiaryEmail: wsInsertedTrxn.transfer.insertedTransaction.beneficiaryEmail,
+                    status: wsInsertedTrxn.transfer.insertedTransaction.status,
+                    memo: wsInsertedTrxn.transfer.insertedTransaction.memo,
+                    receipt: wsInsertedTrxn.receipt
+                });
+                newTransaction.save(function(err, insertedTransaction){
+                    console.log("saved !");
+                    if (err) {
+                        console.log(err);
+                        return handleError(err);
+                    }
+                    console.log(insertedTransaction);
+                });
+            }
         }
     });
 });

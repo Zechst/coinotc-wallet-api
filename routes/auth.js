@@ -1,6 +1,12 @@
 var auth = function(req, res, next) {
-    if (req.isAuthenticated()) { return next(); }
-    res.redirect('/api/unauthorized')
+    console.log("req.isAuthenticated() " + req.isAuthenticated());
+    
+    if (req.isAuthenticated()) { 
+        console.log("authorized!");
+        return next(); 
+    }
+    console.log("unauthorized!") 
+    res.json("{ 'error': 'unauthorized'}");
 }
 
 module.exports = auth;

@@ -8,8 +8,11 @@ import {Router} from "@angular/router";
 import { LocalStorage } from '@ngx-pwa/local-storage';
 
 import * as firebase from 'firebase/app';
-import {MatSnackBar} from '@angular/material';
-
+import { MatSnackBar } from '@angular/material';
+import { AppAPIService } from '../services/api.app.service'
+import { AppAPICriteria } from '../models/AppAPICriteria';
+import { environment } from '../../../environments/environment';
+import { App } from '../../shared/models/App';
 @Injectable()
 export class AuthServiceFirebase {
 
@@ -17,9 +20,12 @@ export class AuthServiceFirebase {
 
     authInfo$: BehaviorSubject<AuthInfo> = new BehaviorSubject<AuthInfo>(AuthServiceFirebase.UNKNOWN_USER);
     authState: any = null;
+    
+
     constructor(private afAuth: AngularFireAuth, private router:Router,
         public snackBar: MatSnackBar,
-        private localStorage: LocalStorage) {
+        private localStorage: LocalStorage,
+        private appApiService: AppAPIService) {
             this.afAuth.authState.subscribe((auth) => {
                 this.authState = auth
             });
@@ -64,9 +70,9 @@ export class AuthServiceFirebase {
     }
 
     setTokenIdToLocalstorage(){
+        
         this.afAuth.auth.currentUser.getIdToken().then(idToken => {
             this.localStorage.setItem('firebaseIdToken', idToken).subscribe(() => {});
-            //this._storageService.set('firebaseIdToken', idToken);
         });
     }
 

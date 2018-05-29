@@ -55,30 +55,46 @@ ws.on('open', function open() {
         } else if(incData.type === 'transfer'){
             console.log("Insert to transaction collection....");
             let wsInsertedTrxn = JSON.parse(JSON.stringify(incData));
-            console.log(" wsInsertedTrxn.receipt > "+ wsInsertedTrxn.receipt);
-            var newTransaction = new Transactions({ 
-                orderNo: wsInsertedTrxn.transfer.destinationTag.orderNo,
-                email: wsInsertedTrxn.transfer.destinationTag.email,
-                fromAddress: wsInsertedTrxn.transfer.destinationTag.fromAddress,
-                toAddress: wsInsertedTrxn.transfer.destinationTag.toAddress,
-                unit: wsInsertedTrxn.transfer.destinationTag.unit,
-                equivalentAmount: wsInsertedTrxn.transfer.destinationTag.equivalentAmount,
-                transactCurrency: wsInsertedTrxn.transfer.destinationTag.transactCurrency,
-                cryptoCurrency: wsInsertedTrxn.transfer.destinationTag.cryptoCurrency,
-                platformFee: wsInsertedTrxn.transfer.destinationTag.platformFee,
-                escrowId: wsInsertedTrxn.transfer.destinationTag.escrowId,
-                beneficiaryEmail: wsInsertedTrxn.transfer.destinationTag.beneficiaryEmail,
-                status: wsInsertedTrxn.transfer.destinationTag.status,
-                memo: wsInsertedTrxn.transfer.destinationTag.memo,
-                receipt: wsInsertedTrxn.receipt
-            });
-            newTransaction.save(function(err, insertedTransaction){
-                if (err) {
-                    console.log(err);
-                    throw new Error(err);
-                }
-                console.log(insertedTransaction);
-            });
+            console.log("FINAL ACTION > " + wsInsertedTrxn.transfer.destinationTag.finalAction);
+            console.log(" TRANSACTION.receipt > "+ wsInsertedTrxn.receipt);
+            if(wsInsertedTrxn.transfer.destinationTag.finalAction == 1){
+                console.log("ESCROW TO FINAL ACCOUNT !");
+                Transactions.findOne({'orderNo':wsInsertedTrxn.transfer.destinationTag.orderNo} ,function (err, foundTrxn) {
+                    if(err) res.status(500).json(err);
+                    foundTrxn.finalReceipt = wsInsertedTrxn.receipt;
+                    foundTrxn.save(function(err, updatedTransaction){
+                        console.log();
+                        if (err) {
+                            console.log(err);
+                        }
+                        console.log(updatedTransaction);
+                    }); 
+                });
+            }else{
+                var newTransaction = new Transactions({ 
+                    orderNo: wsInsertedTrxn.transfer.destinationTag.orderNo,
+                    email: wsInsertedTrxn.transfer.destinationTag.email,
+                    fromAddress: wsInsertedTrxn.transfer.destinationTag.fromAddress,
+                    toAddress: wsInsertedTrxn.transfer.destinationTag.toAddress,
+                    unit: wsInsertedTrxn.transfer.destinationTag.unit,
+                    equivalentAmount: wsInsertedTrxn.transfer.destinationTag.equivalentAmount,
+                    transactCurrency: wsInsertedTrxn.transfer.destinationTag.transactCurrency,
+                    cryptoCurrency: wsInsertedTrxn.transfer.destinationTag.cryptoCurrency,
+                    platformFee: wsInsertedTrxn.transfer.destinationTag.platformFee,
+                    escrowId: wsInsertedTrxn.transfer.destinationTag.escrowId,
+                    beneficiaryEmail: wsInsertedTrxn.transfer.destinationTag.beneficiaryEmail,
+                    status: wsInsertedTrxn.transfer.destinationTag.status,
+                    memo: wsInsertedTrxn.transfer.destinationTag.memo,
+                    receipt: wsInsertedTrxn.receipt
+                });
+                newTransaction.save(function(err, insertedTransaction){
+                    if (err) {
+                        console.log(err);
+                        throw new Error(err);
+                    }
+                    console.log(insertedTransaction);
+                });
+            }
         }
     });    
 });

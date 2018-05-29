@@ -5,7 +5,7 @@ import { Observable } from 'rxjs/Observable';
 import { App } from '../shared/models/App';
 import { environment } from '../../environments/environment';
 import { AppAPICriteria } from '../shared/models/AppAPICriteria';
-import {MatSnackBar} from '@angular/material';
+import { MatSnackBar } from '@angular/material';
 
 @Component({
   selector: 'app-api',

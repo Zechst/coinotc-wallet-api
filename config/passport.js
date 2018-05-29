@@ -3,16 +3,6 @@ var Strategy = require('passport-http-bearer').Strategy;
 var mongoose = require('mongoose');
 var WalletApi = mongoose.model('WalletApi');
 
-passport.serializeUser(function(user, done) {
-  done(null, user.id);
-});
-
-passport.deserializeUser(function(id, done) {
-  findById(id, function (err, user) {
-    done(err, user);
-  });
-});
-
 function findByApiKey(apikey, done) {
   WalletApi.findOne({token: apikey}).then(function(authInfo){
     if(!authInfo || !authInfo.validApiToken(apikey)){

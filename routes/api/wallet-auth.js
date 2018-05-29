@@ -11,6 +11,24 @@ admin.initializeApp({
 
 function isAuthenticate(req,res,next){
     console.log(req.headers);
+    var origin = req.get('origin');
+    console.log("origin " + origin);
+    let allowHost = process.env.COINOTC_ALLOWED_HOST;
+    let arrAllowHosts = allowHost.split(',');
+    console.log("allowHost " + allowHost);
+    console.log("arrAllowHosts " + arrAllowHosts);
+    let isAllow = false;
+    for(var i=0; i <arrAllowHosts.length; i++){
+        if(arrAllowHosts[i] === origin){
+            console.log("Allowed!");
+            isAllow = true;
+            break;
+        }
+    }
+    if(!isAllow){
+        console.log("Not Allowed!");
+        return res.status(403).json({error: 'Access Denied'});
+    }
     if(req.headers.authorization != null){
         console.log(req.headers.authorization);
         var authIdToken = req.headers.authorization.split(' ')[1];
@@ -46,6 +64,7 @@ router.get('/apps', isAuthenticate ,function(req, res, next) {
         }
     });
 });
+
 
 router.get('/:apitoken', isAuthenticate , function(req, res, next) {
     var apiToken = req.params.apitoken;

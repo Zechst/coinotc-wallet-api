@@ -16,6 +16,7 @@ var TransactionsSchema = new mongoose.Schema({
   escrowId: String,
   beneficiaryEmail: String,
   receipt: mongoose.Schema.Types.Mixed,
+  finalReceipt: mongoose.Schema.Types.Mixed,
   status: Number,
   memo: String,
   error: String

@@ -25,6 +25,7 @@ var ethWallet = EthereumWallet.instance;
 var moneroWallet = MoneroWallet.instance;
 var rippleWallet = RippleWallet.instance;
 var stellarWallet = StellarWallet.instance;
+const checkValidHost = require('./checkValidHost');
 
 const utils = new Util();
 var moneroAccInfo = {
@@ -36,14 +37,15 @@ var moneroAccInfo = {
     email: ''
 }
 
-router.get('/escrow', passport.authenticate('bearer', { session: false }), function(req, res, next) {
+
+router.get('/escrow', checkValidHost, passport.authenticate('bearer', { session: false }), function(req, res, next) {
     Escrow.find({},function (err, result) {
         if(err) res.status(500).json(err);
         return res.status(200).json(result);
     });
 });
 
-router.post('/escrow', passport.authenticate('bearer', { session: false }), function(req, res, next) {
+router.post('/escrow', checkValidHost, passport.authenticate('bearer', { session: false }), function(req, res, next) {
     var escrowBody =  req.body;
     Cryptocurrency.find({type: escrowBody.type},function (err, result) {
         if(err) res.status(500).json(err);
@@ -69,7 +71,7 @@ router.post('/escrow', passport.authenticate('bearer', { session: false }), func
     });
 });
 
-router.put('/escrow/:escrowId', passport.authenticate('bearer', { session: false }), function(req, res, next) {
+router.put('/escrow/:escrowId', checkValidHost, passport.authenticate('bearer', { session: false }), function(req, res, next) {
     var generatedAuthCode = randomValueHex(7);
     let escrowId = req.params.escrowId;
     let unauthorizedEscrowWalletAddress = req.body.unauthorizedEscrowWalletAddress;
@@ -90,7 +92,7 @@ router.put('/escrow/:escrowId', passport.authenticate('bearer', { session: false
     );
 });
 
-router.put('/escrow/approve/:escrowId/:authCode', passport.authenticate('bearer', { session: false }), function(req, res, next) {
+router.put('/escrow/approve/:escrowId/:authCode', checkValidHost, passport.authenticate('bearer', { session: false }), function(req, res, next) {
     let escrowId = req.params.escrowId;
     let authCode = req.params.authCode;
 
@@ -138,14 +140,14 @@ router.put('/escrow/approve/:escrowId/:authCode', passport.authenticate('bearer'
     });
 });
 
-router.get('/cryptos', passport.authenticate('bearer', { session: false }), function(req, res, next) {
+router.get('/cryptos', checkValidHost, passport.authenticate('bearer', { session: false }), function(req, res, next) {
     Cryptocurrency.find({},function (err, result) {
         if(err) res.status(500).json(err);
         return res.status(200).json(result);
     });
 });
 
-router.post('/cryptos', passport.authenticate('bearer', { session: false }), function(req, res, next) {
+router.post('/cryptos', checkValidHost, passport.authenticate('bearer', { session: false }), function(req, res, next) {
     console.log(req.body);
     var cryptosBody = JSON.parse(JSON.stringify(req.body));
     let currencyCode = cryptosBody.code;
@@ -170,7 +172,7 @@ router.post('/cryptos', passport.authenticate('bearer', { session: false }), fun
     });
 });
 
-router.put('/cryptos/:cryptoId', passport.authenticate('bearer', { session: false }), function(req, res, next) {
+router.put('/cryptos/:cryptoId', checkValidHost, passport.authenticate('bearer', { session: false }), function(req, res, next) {
     let updateCryptoBody = req.body;
     let cryptoId = req.params.cryptoId;
     let cryptoCode = updateCryptoBody.code;
@@ -184,7 +186,7 @@ router.put('/cryptos/:cryptoId', passport.authenticate('bearer', { session: fals
     );
 });
 
-router.get('/:email', passport.authenticate('bearer', { session: false }), function(req, res, next) {
+router.get('/:email', checkValidHost, passport.authenticate('bearer', { session: false }), function(req, res, next) {
     var emailAddy  = req.params.email;
     logger.debug(emailAddy);
     Wallet.findOne({ 'email': emailAddy },function (err, wallet) {
@@ -193,7 +195,7 @@ router.get('/:email', passport.authenticate('bearer', { session: false }), funct
     });
 });
 
-router.get('/balance/:walletid/:type', passport.authenticate('bearer', { session: false }), function(req, res, next) {
+router.get('/balance/:walletid/:type', checkValidHost, passport.authenticate('bearer', { session: false }), function(req, res, next) {
     var walletId  = req.params.walletid;
     var walletType  = req.params.type.toUpperCase();
 
@@ -282,7 +284,7 @@ router.get('/balance/:walletid/:type', passport.authenticate('bearer', { session
     })  
 });
 
-router.get('/generate/:email/:password/:language', passport.authenticate('bearer', { session: false }), function(req, res, next) {
+router.get('/generate/:email/:password/:language', checkValidHost, passport.authenticate('bearer', { session: false }), function(req, res, next) {
     var emailAddy = req.params.email;
     var walletGlobalPassword = req.params.password;
     var _language = req.params.language;

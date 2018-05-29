@@ -79,6 +79,9 @@ phrases: noble picture thumb add girl couple estate tone face sorry flat apology
 slogan scare major material fun cloud merge document piano chunk hire slender
 ```
 
+After getting the transaction hash we need to generated a URL 
+https://etherscan.io/apis
+
 # Monero
 We need to checkout the master branch of the monero cli, rpc and daemon, build it follow the instructions provide on their README.md before running against the monero blockchain dataset
 ```
@@ -122,6 +125,8 @@ b1d67f845c91236b18ae5e3374895ee0908c50f7f6bc1dd526ea51ccf573c500
 viewkey
 secret: fae01c13e615fef6ff7a540503d044b6e0fd45c1a708ee76aba54679ad322b0b
 public: 954992c343cdecb6527a735a6fd14dbc2fed6721dd7a4fbc85252b615550d76e
+
+https://moneroblocks.info/api
 
 # Cardano
 
@@ -178,6 +183,8 @@ In order to tunnel this through internet download ngrok
 ngrok http 8080 -subdomain=coinotc-ada
 ```
 
+https://cardanoexplorer.com/tx/6f08b73dceffc675cea931723313a743739b7683b8e14080640638dc63722a31
+
 # Ripple
 
 Just start the websocket server for ripple
@@ -195,6 +202,7 @@ debug: connected
 debug: {"type":"generateAddress","account":{"secret":"sn2djnspGAjdHNSVbbRZGWGGRa3fu","address":"rJrY2kvifcNGRbp8uq35oTRadzqB7qV7qM"},"email":"bunnyppl@gmail.com"}
 debug: disconnected, code: 1000
 
+https://xrpcharts.ripple.com/#/transactions/46C319D70B33F9CCF89C8000EB244B99C3A68E54AC2719C5B8F2BBB34C9A4F4D
 
 # Stellar 
 Just start the websocket server for stellar
@@ -214,6 +222,8 @@ debug:   Note: You need to put at least 20XLM on this key for it to be an active
 debug: received: {"type":"generateAddress","email":"bunnyppl@gmail.com"}
 debug:   Public address: GAZPKLJPLYDCAJXY3XRLGHGTK5SKJVSUOAH23DU6PPU4WLTJZ3KPVKWK
 debug:   Wallet secret: SCOPV4NH3OKEZTQVC7QM7A7WP2WFXV5BTHZPZEFJPMREFU2JHLLZKAGE 
+
+http://testnet.stellarchain.io/tx/efa00328a7c400b25dacf8faa7e24af20b1c7c606ef40eab401872fd8f61bc1a
 
 # API Wallet Microservices
 
