@@ -11,54 +11,32 @@ import {MatSnackBar} from '@angular/material';
 @Injectable()
 export class AppAPIService { 
   private ApiAppRootApiUrl  = `${environment.ApiUrl}/api/wallet-auth`;
-  private idToken= null;
   constructor(private httpClient: HttpClient, 
     private afAuth: AngularFireAuth, 
     protected localStorage: LocalStorage,
     public snackBar: MatSnackBar) {
- 
-    this.localStorage.getItem<any>('firebaseIdToken').subscribe((token ) => {
-        this.idToken = token;
-        console.log(this.idToken);
-    });
-
   }
 
   public addApp (app: App): Observable<App> {
-    let idToken= null;
-    this.localStorage.getItem<any>('firebaseIdToken').subscribe((token ) => {
-        idToken = token;
-    });
     return this.httpClient.post<App>(this.ApiAppRootApiUrl, 
-      app,
-      {headers: new HttpHeaders().set('Authorization', `Bearer ${idToken}`)})
+      app)
       .pipe(
         catchError(this.handleError('addApp', app))
       );
   }
 
   public updateApp (app: App): Observable<App> {
-    let idToken= null;
-    this.localStorage.getItem<any>('firebaseIdToken').subscribe((token ) => {
-        idToken = token;
-    });
     return this.httpClient.put<App>(this.ApiAppRootApiUrl, 
-      app,
-      {headers: new HttpHeaders().set('Authorization', `Bearer ${idToken}`)})
+      app)
       .pipe(
         catchError(this.handleError('updateApp', app))
       );
   }
 
   public deleteApp (app: App): Observable<App> {
-    let idToken= null;
-    this.localStorage.getItem<any>('firebaseIdToken').subscribe((token ) => {
-        idToken = token;
-    });
     const deleteUrl = `${this.ApiAppRootApiUrl}/${app._id}`; // DELETE api/books/1
     console.log(deleteUrl);
-    return this.httpClient.delete<App>(deleteUrl,
-      {headers: new HttpHeaders().set('Authorization', `Bearer ${idToken}`)})
+    return this.httpClient.delete<App>(deleteUrl)
       .pipe(
         catchError(this.handleError('deleteApp', app))
       );

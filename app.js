@@ -50,6 +50,7 @@ logger.debug("mongodb url > "+ process.env.MONGODB_URI);
 mongoose.connect(process.env.MONGODB_URI);
 mongoose.set('debug', process.env.MONGODB_DEBUG);
 
+
 require('./models/wallet-auth');
 require('./config/passport');
 require('./models/transactions');

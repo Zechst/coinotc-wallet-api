@@ -5,6 +5,7 @@ var _ = require('lodash');
 var Decimal = require('decimal.js');
 var uuid = require('uuid4');
 var passport = require('passport');
+var isFirebaseAuth = require('../../util/firebase-auth');
 
 var Escrow = mongoose.model('Escrow');
 var Wallet = mongoose.model('Wallet');
@@ -30,7 +31,25 @@ const XLM = 'XLM';
 const XRP = 'XRP';
 const ADA = 'ADA';
 
+/**
+ * List of endpoints within this router
+ * 
+ * /get-transaction/:type/:trxId/:email
+ * /admin/get-transaction/:type/:trxId/:email
+ * /transaction-history/:email
+ * /admin/transaction-history/:email
+ * 
+ */
+
 router.get('/get-transaction/:type/:trxId/:email', checkValidHost, passport.authenticate('bearer', { session: false }), function(req, res, next) {
+    getTransaction(req, res, next);
+});
+
+router.get('/admin/get-transaction/:type/:trxId/:email', checkValidHost, isFirebaseAuth, function(req, res, next) {
+    getTransaction(req, res, next);
+});
+
+function getTransaction(req, res, next){
     let email = req.params.email;
     let orderNo = req.params.orderNo;
     let type = req.params.type;
@@ -39,18 +58,34 @@ router.get('/get-transaction/:type/:trxId/:email', checkValidHost, passport.auth
         if(err) res.status(500).json(err);
         return res.status(200).json(trxn);
     });
-});
+}
 
 router.get('/transaction-history/:email', checkValidHost, passport.authenticate('bearer', { session: false }), function(req, res, next) {
+    getTransactionHistory(req, res, next);
+});
+
+router.get('/admin/transaction-history/:email', checkValidHost, isFirebaseAuth, function(req, res, next) {
+    getTransactionHistory(req, res, next);
+});
+
+function getTransactionHistory(req, res, next){
     let email = req.params.email;
     console.log(`${email}`);
     Transactions.findOne({'email':email} ,function (err, result) {
         if(err) res.status(500).json(err);
         return res.status(200).json(result);
     });
-});
+}
 
 router.post('/withdrawal', checkValidHost, passport.authenticate('bearer', { session: false }), function(req, res, next) {
+    withdrawal(req, res, next);
+});
+
+router.post('/admin/withdrawal', checkValidHost, isFirebaseAuth, function(req, res, next) {
+    withdrawal(req, res, next);
+});
+
+function withdrawal(req, res, next){
     console.log("direct withdrawal from user's wallet to external address");
     console.log(req.body);
     let escrowInfo = null;
@@ -135,12 +170,21 @@ router.post('/withdrawal', checkValidHost, passport.authenticate('bearer', { ses
         console.log(error);
         res.status(500).json(error);
     }
-});
+}
 
 /**
  * held by escrow.
  */
 router.post('/held', checkValidHost, passport.authenticate('bearer', { session: false }), function(req, res, next) {
+    heldTransaction(req, res, next);
+});
+
+router.post('/admin/held', checkValidHost, isFirebaseAuth, function(req, res, next) {
+    heldTransaction(req, res, next);
+});
+
+
+function heldTransaction(req, res, next){
     console.log(req.body);
     let escrowInfo = null;
     let emailWallet = null;
@@ -204,9 +248,17 @@ router.post('/held', checkValidHost, passport.authenticate('bearer', { session: 
         console.log(error);
         res.status(500).json(error);
     }
-});
+}
 
 router.post('/unlock-transfer', checkValidHost, passport.authenticate('bearer', { session: false }), function(req, res, next) {
+    unLockTransaction(req, res, next);
+});
+
+router.post('/admin/unlock-transfer', checkValidHost, isFirebaseAuth, function(req, res, next) {
+    unLockTransaction(req, res, next);
+});
+
+function unLockTransaction(req, res, next){
     let transferBody  = JSON.parse(JSON.stringify(req.body));
     let orderNo = transferBody.orderNo;
     let escrowInfo = null;
@@ -222,7 +274,7 @@ router.post('/unlock-transfer', checkValidHost, passport.authenticate('bearer', 
                 var receiverResult = releaseTransactionToReceiver(trxn, escrowInfo, res);
         });
     });
-});
+}
 
 async function releaseTransactionToReceiver(transaction, escrowInfo , res){
     let successRelease = false;
@@ -247,15 +299,15 @@ async function releaseTransactionToReceiver(transaction, escrowInfo , res){
             return res.status(500).json(error);
         });
     }else if(transaction.cryptoCurrency === XMR){
-        console.log(walletFromEmail.monero.name);
-        moneroWallet.openWallet(walletFromEmail.monero.name, 
-            walletFromEmail.monero.password).then((result)=> {
-            let amountToBeTransferForXMR =  new Decimal(transferBody.unit);
+        console.log(escrowInfo.name);
+        moneroWallet.openWallet(escrowInfo.name, 
+            escrowInfo.password).then((result)=> {
+            let amountToBeTransferForXMR =  new Decimal(transaction.unit);
             console.log("escrowInfo.address" +  escrowInfo.escrowWalletAddress);
             var destination = {
-                address: escrowInfo.escrowWalletAddress,
+                address: transaction.toAddress,
                 amount: amountToBeTransferForXMR.toNumber(),
-                orderNo: transferBody.orderNo
+                orderNo: transaction.orderNo
             }
             var arrDest = [];
             arrDest.push(destination);
@@ -272,31 +324,31 @@ async function releaseTransactionToReceiver(transaction, escrowInfo , res){
         });
     
     }else if(transaction.cryptoCurrency === XLM){
-        let amountToBeTransferForXLM =  new Decimal(transferBody.unit);
-        stellarWallet.transfer(walletFromEmail.stellar.public_address,
-            walletFromEmail.stellar.wallet_secret,
-            escrowInfo.escrowWalletAddress,
+        let amountToBeTransferForXLM =  new Decimal(transaction.unit);
+        stellarWallet.transfer(escrowInfo.escrowWalletAddress,
+            escrowInfo.privateKey,
+            transaction.toAddress,
             amountToBeTransferForXLM.toNumber(),
-            transferBody.memo,
+            transaction.memo,
             transaction
         );
         return res.status(200).json(transaction);
     }else if(transaction.cryptoCurrency === XRP){
-        let amountToBeTransferForXRP =  new Decimal(transferBody.unit);
-        rippleWallet.transfer(walletFromEmail.ripple.account.address, 
-            escrowInfo.escrowWalletAddress, 
+        let amountToBeTransferForXRP =  new Decimal(transaction.unit);
+        rippleWallet.transfer(escrowInfo.escrowWalletAddress, 
+            transaction.toAddress, 
             amountToBeTransferForXRP.toNumber(), 
-            walletFromEmail.ripple.account.secret,
+            escrowInfo.secret,
             transaction);
         return res.status(200).json(transaction);
     }else if(transaction.cryptoCurrency === ADA){
-        let amountToBeTransferForAda =  new Decimal(transferBody.unit);
+        let amountToBeTransferForAda =  new Decimal(transaction.unit);
         // multiple by 1000000 before sending to the API.
         amountToBeTransferForAda.times(1000000);
-        console.log(">> CAID >> " + walletFromEmail.cardano.accountInfo.caId)
+        console.log(">> CAID >> " + escrowInfo.accountId)
         adaWallet.transfer(
-                walletFromEmail.cardano.accountInfo.caId,
-                escrowInfo.escrowWalletAddress, 
+                escrowInfo.accountId,
+                transaction.toAddress, 
                 amountToBeTransferForAda.toNumber(),
                 transaction);
         return res.status(200).json(transaction);

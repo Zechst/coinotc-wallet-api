@@ -10,7 +10,7 @@ import { MatSnackBar } from '@angular/material';
 
 @Injectable()
 export class EscrowService { 
-  private ApiAppRootApiUrl  = `${environment.ApiUrl}/api/wallets/escrow`;
+  private ApiAppRootApiUrl  = `${environment.ApiUrl}/api/wallets/admin/escrow`;
   private idToken= null;
   
   constructor(private httpClient: HttpClient, 
@@ -22,8 +22,7 @@ export class EscrowService {
 
   public addEscrow (escrow: Escrow): Observable<Escrow> {
     return this.httpClient.post<Escrow>(this.ApiAppRootApiUrl, 
-        escrow,
-      {headers: new HttpHeaders().set('coinotc-apikey', environment.rtesdghca)})
+        escrow)
       .pipe(
         catchError(this.handleError('addEscrow', escrow))
       );
@@ -31,8 +30,7 @@ export class EscrowService {
 
   public updateApp (escrow: Escrow): Observable<Escrow> {
     return this.httpClient.put<Escrow>(this.ApiAppRootApiUrl, 
-        escrow,
-      {headers: new HttpHeaders().set('coinotc-apikey', environment.rtesdghca)})
+        escrow)
       .pipe(
         catchError(this.handleError('updateApp', escrow))
       );
@@ -41,19 +39,16 @@ export class EscrowService {
   public deleteEscrow (escrow: Escrow): Observable<Escrow> {
     const deleteUrl = `${this.ApiAppRootApiUrl}/${escrow._id}`; // DELETE api/books/1
     console.log(deleteUrl);
-    return this.httpClient.delete<Escrow>(deleteUrl,
-      {headers: new HttpHeaders().set('coinotc-apikey', environment.rtesdghca)})
+    return this.httpClient.delete<Escrow>(deleteUrl)
       .pipe(
         catchError(this.handleError('deleteApp', escrow))
       );
   }
 
-  
-
   public searchEscrow(model) : Observable<Escrow[]> {
     var getURL = `${this.ApiAppRootApiUrl}?keyword=${model.keyword}&searchType=${model.searchType}&sortBy=${model.sortBy}&currentPerPage=${model.currentPerPage}&itemsPerPage=${model.itemsPerPage}`;
     
-    return this.httpClient.get<Escrow[]>(getURL, {headers: new HttpHeaders().set('coinotc-apikey', environment.rtesdghca)})
+    return this.httpClient.get<Escrow[]>(getURL)
       .pipe(catchError(this.handleError<Escrow[]>('searchEscrow')));
   }
 

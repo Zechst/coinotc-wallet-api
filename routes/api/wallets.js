@@ -26,6 +26,7 @@ var moneroWallet = MoneroWallet.instance;
 var rippleWallet = RippleWallet.instance;
 var stellarWallet = StellarWallet.instance;
 const checkValidHost = require('./checkValidHost');
+var isFirebaseAuth = require('../../util/firebase-auth');
 
 const utils = new Util();
 var moneroAccInfo = {
@@ -39,13 +40,29 @@ var moneroAccInfo = {
 
 
 router.get('/escrow', checkValidHost, passport.authenticate('bearer', { session: false }), function(req, res, next) {
+    getListOfEscrow(req, res, next);
+});
+
+router.get('/admin/escrow', checkValidHost, isFirebaseAuth, function(req, res, next) {
+    getListOfEscrow(req, res, next);
+});
+
+function getListOfEscrow(req, res, next){
     Escrow.find({},function (err, result) {
         if(err) res.status(500).json(err);
         return res.status(200).json(result);
     });
-});
+}
 
 router.post('/escrow', checkValidHost, passport.authenticate('bearer', { session: false }), function(req, res, next) {
+    addEscrow(req, res, next);
+});
+
+router.post('/admin/escrow', checkValidHost, isFirebaseAuth, function(req, res, next) {
+    addEscrow(req, res, next);
+});
+
+function addEscrow(req, res, next){
     var escrowBody =  req.body;
     Cryptocurrency.find({type: escrowBody.type},function (err, result) {
         if(err) res.status(500).json(err);
@@ -69,9 +86,17 @@ router.post('/escrow', checkValidHost, passport.authenticate('bearer', { session
             });
         }
     });
-});
+}
 
 router.put('/escrow/:escrowId', checkValidHost, passport.authenticate('bearer', { session: false }), function(req, res, next) {
+    updateEscrow(req, res, next);
+});
+
+router.put('/admin/escrow/:escrowId', checkValidHost, isFirebaseAuth, function(req, res, next) {
+    updateEscrow(req, res, next);
+});
+
+function updateEscrow(req, res, next){
     var generatedAuthCode = randomValueHex(7);
     let escrowId = req.params.escrowId;
     let unauthorizedEscrowWalletAddress = req.body.unauthorizedEscrowWalletAddress;
@@ -90,9 +115,17 @@ router.put('/escrow/:escrowId', checkValidHost, passport.authenticate('bearer', 
             return res.status(200).json(updatedCrypto);
         }
     );
-});
+}
 
 router.put('/escrow/approve/:escrowId/:authCode', checkValidHost, passport.authenticate('bearer', { session: false }), function(req, res, next) {
+    approveEscrow(req, res, next);
+});
+
+router.put('/admin/scrow/approve/:escrowId/:authCode', checkValidHost, isFirebaseAuth, function(req, res, next) {
+    approveEscrow(req, res, next);
+});
+
+function approveEscrow(req, res, next){
     let escrowId = req.params.escrowId;
     let authCode = req.params.authCode;
 
@@ -138,16 +171,32 @@ router.put('/escrow/approve/:escrowId/:authCode', checkValidHost, passport.authe
             return res.status(500).json({error:"No record to approve!"});
         }
     });
-});
+}
 
 router.get('/cryptos', checkValidHost, passport.authenticate('bearer', { session: false }), function(req, res, next) {
+    getAllCryptos(req, res, next);
+});
+
+router.get('/admin/cryptos', checkValidHost, isFirebaseAuth, function(req, res, next) {
+    getAllCryptos(req, res, next);
+});
+
+function getAllCryptos(req, res, next){
     Cryptocurrency.find({},function (err, result) {
         if(err) res.status(500).json(err);
         return res.status(200).json(result);
     });
-});
+}
 
 router.post('/cryptos', checkValidHost, passport.authenticate('bearer', { session: false }), function(req, res, next) {
+    addCryptos(req, res, next);
+});
+
+router.post('/admin/cryptos', checkValidHost, isFirebaseAuth, function(req, res, next) {
+    addCryptos(req, res, next);
+});
+
+function addCryptos(req, res, next){
     console.log(req.body);
     var cryptosBody = JSON.parse(JSON.stringify(req.body));
     let currencyCode = cryptosBody.code;
@@ -170,9 +219,17 @@ router.post('/cryptos', checkValidHost, passport.authenticate('bearer', { sessio
         }
         
     });
-});
+}
 
 router.put('/cryptos/:cryptoId', checkValidHost, passport.authenticate('bearer', { session: false }), function(req, res, next) {
+    updateCryptos(req, res, next);
+});
+
+router.put('/admin/cryptos/:cryptoId', checkValidHost, isFirebaseAuth, function(req, res, next) {
+    updateCryptos(req, res, next);
+});
+
+function updateCryptos(req, res, next){
     let updateCryptoBody = req.body;
     let cryptoId = req.params.cryptoId;
     let cryptoCode = updateCryptoBody.code;
@@ -184,18 +241,34 @@ router.put('/cryptos/:cryptoId', checkValidHost, passport.authenticate('bearer',
             return res.status(200).json(updatedCrypto);
         }
     );
-});
+}
 
 router.get('/:email', checkValidHost, passport.authenticate('bearer', { session: false }), function(req, res, next) {
+    getWalletByEmail(req, res, next);
+});
+
+router.get('/admin/:email', checkValidHost, isFirebaseAuth, function(req, res, next) {
+    getWalletByEmail(req, res, next);
+});
+
+function getWalletByEmail(req, res, next){
     var emailAddy  = req.params.email;
     logger.debug(emailAddy);
     Wallet.findOne({ 'email': emailAddy },function (err, wallet) {
         if(err) res.status(500).json(err);
         return res.status(200).json(wallet);
     });
-});
+}
 
 router.get('/balance/:walletid/:type', checkValidHost, passport.authenticate('bearer', { session: false }), function(req, res, next) {
+    checkWalletBalance(req, res, next);
+});
+
+router.get('/admin/balance/:walletid/:type', checkValidHost, isFirebaseAuth, function(req, res, next) {
+    checkWalletBalance(req, res, next);
+});
+
+function checkWalletBalance(req, res, next){
     var walletId  = req.params.walletid;
     var walletType  = req.params.type.toUpperCase();
 
@@ -282,9 +355,17 @@ router.get('/balance/:walletid/:type', checkValidHost, passport.authenticate('be
             res.status(500).json({error: 'unsupported crypto currency'});
         }
     })  
-});
+}
 
 router.get('/generate/:email/:password/:language', checkValidHost, passport.authenticate('bearer', { session: false }), function(req, res, next) {
+    generateWalletForUser(req, res, next);
+});
+
+router.get('/admin/generate/:email/:password/:language', checkValidHost, isFirebaseAuth, function(req, res, next) {
+    generateWalletForUser(req, res, next);
+});
+
+function generateWalletForUser(req, res, next){
     var emailAddy = req.params.email;
     var walletGlobalPassword = req.params.password;
     var _language = req.params.language;
@@ -344,7 +425,7 @@ router.get('/generate/:email/:password/:language', checkValidHost, passport.auth
             return res.status(200).json(wallet);
         }
     });
-});
+}
 
 function createWallet(moneroAccInfo){
     return moneroWallet.createWallet(moneroAccInfo);

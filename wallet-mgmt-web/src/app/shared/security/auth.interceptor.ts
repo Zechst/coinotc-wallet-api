@@ -40,15 +40,8 @@ export class AuthInterceptor implements HttpInterceptor {
         for (const key of request.headers.keys()) {
             headerSettings[key] = request.headers.getAll(key);
         }
-        console.log(">> " + idToken);
-        console.log(">> " + headerSettings["coinotc-apikey"]);
-        if(typeof (headerSettings["coinotc-apikey"]) === 'undefined'){
-            if (idToken) {
-                headerSettings['Authorization'] = 'Bearer ' + idToken;
-            }
-        }else{
-            headerSettings['Authorization'] = 'Bearer ' + headerSettings["coinotc-apikey"];
-        }
+       
+        headerSettings['Authorization'] = 'Bearer ' + idToken;
        
         headerSettings['Content-Type'] = 'application/json';
         const newHeader = new HttpHeaders(headerSettings);
