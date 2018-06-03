@@ -493,6 +493,14 @@ evtEmitter.on('walletEvt', function (arg) {
     }
 });
 
+evtEmitter.on('walletEvtBalance', function (arg) {
+    logger.debug("Wallet Balance Event !");
+    logger.debug(arg);
+    
+});
+
+
+
 function handleError(error){
     logger.error(error);
 }

@@ -7,7 +7,7 @@
 	},
 	"item": [
 		{
-			"name": "check cardano balance",
+			"name": "Check Ethereum balance",
 			"request": {
 				"auth": {
 					"type": "bearer",
@@ -20,13 +20,18 @@
 					]
 				},
 				"method": "GET",
-				"header": [],
+				"header": [
+					{
+						"key": "Origin",
+						"value": "http://localhost:4200"
+					}
+				],
 				"body": {
 					"mode": "raw",
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://localhost:3001/api/wallets/generate/bunnyppl@yahoo.com/123456h67890fsfrdssdcdredsafd432",
+					"raw": "http://localhost:3001/api/wallets/balance/5afe891c2d2a53590a1e3e6b/eth",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -35,9 +40,9 @@
 					"path": [
 						"api",
 						"wallets",
-						"generate",
-						"bunnyppl@yahoo.com",
-						"123456h67890fsfrdssdcdredsafd432"
+						"balance",
+						"5afe891c2d2a53590a1e3e6b",
+						"eth"
 					]
 				}
 			},
@@ -57,13 +62,18 @@
 					]
 				},
 				"method": "GET",
-				"header": [],
+				"header": [
+					{
+						"key": "Origin",
+						"value": "http://localhost:4200"
+					}
+				],
 				"body": {
 					"mode": "raw",
 					"raw": ""
 				},
 				"url": {
-					"raw": "http://localhost:3001/api/wallets/generate/a32@gmail.com/123456h67890Fsfrdssdcdredsafd43@/English",
+					"raw": "http://localhost:3001/api/wallets/generate/a33@gmail.com/123456h67890Fsfrdssdcdredsafd43@/English",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -73,7 +83,7 @@
 						"api",
 						"wallets",
 						"generate",
-						"a32@gmail.com",
+						"a33@gmail.com",
 						"123456h67890Fsfrdssdcdredsafd43@",
 						"English"
 					]
@@ -95,7 +105,12 @@
 					]
 				},
 				"method": "GET",
-				"header": [],
+				"header": [
+					{
+						"key": "Origin",
+						"value": "http://localhost:4200"
+					}
+				],
 				"body": {
 					"mode": "raw",
 					"raw": ""
@@ -288,7 +303,12 @@
 					]
 				},
 				"method": "GET",
-				"header": [],
+				"header": [
+					{
+						"key": "Origin",
+						"value": "http://localhost:4200"
+					}
+				],
 				"body": {},
 				"url": {
 					"raw": "http://localhost:3001/api/wallets/cryptos",
@@ -546,11 +566,15 @@
 					{
 						"key": "Content-Type",
 						"value": "application/json"
+					},
+					{
+						"key": "Origin",
+						"value": "http://localhost:4200"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"orderNo\": \"29\",\n  \"cryptoCurrency\": \"ETH\",\n  \"toAddress\": \"0xC24E24a083C2A7B00c94e2B5D14De3B7ED39d8c1\",\n  \"email\": \"bunnyppl@hotmail.com\",\n  \"unit\": 0.1,\n  \"transactCurrency\": \"USD\",\n  \"pin\": 123456,\n  \"equivalentAmount\": 234.3,\n  \"beneficiaryEmail\": \"bunnyppl@gmail.com\",\n  \"memo\": \"test\"\n}"
+					"raw": "{\n  \"orderNo\": \"30\",\n  \"cryptoCurrency\": \"ETH\",\n  \"toAddress\": \"0xC24E24a083C2A7B00c94e2B5D14De3B7ED39d8c1\",\n  \"email\": \"bunnyppl@hotmail.com\",\n  \"unit\": 0.1,\n  \"transactCurrency\": \"USD\",\n  \"pin\": 123456,\n  \"equivalentAmount\": 234.3,\n  \"beneficiaryEmail\": \"bunnyppl@gmail.com\",\n  \"memo\": \"test\"\n}"
 				},
 				"url": {
 					"raw": "http://localhost:3001/api/transactions/held",
@@ -586,11 +610,15 @@
 					{
 						"key": "Content-Type",
 						"value": "application/json"
+					},
+					{
+						"key": "Origin",
+						"value": "http://localhost:4200"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"orderNo\": \"16\",\n  \"cryptoCurrency\": \"XRP\",\n  \"toAddress\": \"r4MWFXZ7yKHrxU3ryG6d1kp5QG86vNFziy\",\n  \"email\": \"bunnyppl@yahoo.com\",\n  \"unit\": 1,\n  \"transactCurrency\": \"USD\",\n  \"pin\": 123456,\n  \"equivalentAmount\": 234.3,\n  \"beneficiaryEmail\": \"bunnyppl@gmail.com\",\n  \"memo\": \"test 123\"\n}"
+					"raw": "{\n  \"orderNo\": \"31\",\n  \"cryptoCurrency\": \"XMR\",\n  \"toAddress\": \"r4MWFXZ7yKHrxU3ryG6d1kp5QG86vNFziy\",\n  \"email\": \"bunnyppl@yahoo.com\",\n  \"unit\": 1,\n  \"transactCurrency\": \"USD\",\n  \"pin\": 123456,\n  \"equivalentAmount\": 234.3,\n  \"beneficiaryEmail\": \"bunnyppl@gmail.com\",\n  \"memo\": \"test 123\"\n}"
 				},
 				"url": {
 					"raw": "http://localhost:3001/api/transactions/held",
@@ -951,6 +979,94 @@
 						"api",
 						"wallet-auth",
 						"c1b8bf20420592a88300bc3e01405917fba41bcb64b6dc51497f64a3b8c3df59"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Crypto Wallet Transfer (Unlock) ETH",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "c1b8bf20420592a88300bc3e01405917fba41bcb64b6dc51497f64a3b8c3df59",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Origin",
+						"value": "http://localhost:4200"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"orderNo\": \"30\",\n  \"cryptoCurrency\": \"ETH\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/transactions/unlock-transfer",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"transactions",
+						"unlock-transfer"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Crypto Wallet Transfer (Unlock) XMR",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "c1b8bf20420592a88300bc3e01405917fba41bcb64b6dc51497f64a3b8c3df59",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Origin",
+						"value": "http://localhost:4200"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"orderNo\": \"31\",\n  \"cryptoCurrency\": \"XMR\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3001/api/transactions/unlock-transfer",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"api",
+						"transactions",
+						"unlock-transfer"
 					]
 				}
 			},

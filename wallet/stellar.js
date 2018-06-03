@@ -26,10 +26,12 @@ ws.on('open', function open() {
                 });
             });
         }
-
+        console.log("incData.typeincData.typeincData.typeincData.type"+ incData.type);
         if(incData.type === 'balance'){
+            console.log("BALANCE !!!!");
             WalletDB.findOne({ 'email': incData.email },function (err, wallet) {
                 let stellarNested = JSON.parse(JSON.stringify(wallet.stellar));
+                console.log(">>>> incData.value " + incData.value);
                 stellarNested.balance = incData.value;
                 stellarNested.totalLockedAmount = 0;
                 wallet.stellar = stellarNested;

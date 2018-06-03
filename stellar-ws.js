@@ -48,6 +48,7 @@ wss.on('connection', function connection(ws) {
                 logger.debug('  ' + chalk.green(incomingObj.walletAddress));
                 logger.debug('  ' + chalk.green(balance.balance, balance.asset_code || 'XLM'));
                 var returnBalance = {
+                  type: 'balance',
                   currency: balance.asset_code,
                   value: balance.balance,
                   email: incomingObj.email

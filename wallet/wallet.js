@@ -31,6 +31,11 @@ Wallet.prototype._request = function (body){
     if(typeof(body.params) === 'object' && typeof(body.params.orderNo) !== 'undefined'){
         headers['coinotc-orderNo'] = body.params.orderNo;
     }
+
+    if(typeof(body.params) === 'object' && typeof(body.params.walletId) !== 'undefined'){
+        console.log(">>>  >>>>" + body.params.walletId);
+        headers['walletId'] = body.params.walletId;
+    }
         
     // make a request to the wallet
     let options = {
@@ -56,7 +61,14 @@ Wallet.prototype._request = function (body){
                         evtEmitter.emit('transferEvt',{result: body.result, orderNo: options.headers['coinotc-orderNo']});
                     }else{
                         console.log("???? " + body.method);
-                        evtEmitter.emit('walletEvt',{result: body.result});
+                        if(typeof(options.headers['coinotc-orderNo']) !== 'undefined'){
+                            evtEmitter.emit('walletEvt',{result: body.result});
+                        }
+
+                        if(typeof(options.headers['walletId'] !== 'undefined')){
+                            evtEmitter.emit('walletEvtBalance',{result: body.result, walletId: options.headers['walletId']});
+                        }
+                        
                     }
                 } else if (body && body.error) {
                     logger.debug("2" + JSON.stringify(body.error));

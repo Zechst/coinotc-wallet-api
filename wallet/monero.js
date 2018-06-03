@@ -68,9 +68,12 @@ MoneroWallet.prototype.getAddressBook = async function(entries){
 }
 
 // returns the wallet balance
-MoneroWallet.prototype.balance = async function() {
+MoneroWallet.prototype.balance = async function(_walletId) {
     let method = 'getbalance';
-    return await this._body(method);
+    let params = {
+        walletId: _walletId
+    };
+    return await this._body(method, params);
 };
 
 

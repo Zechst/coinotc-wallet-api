@@ -4767,19 +4767,6 @@ negotiator@0.6.1:
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/negotiator/-/negotiator-0.6.1.tgz#2b327184e8992101177b28563fb5e7102acd0ca9"
 
-ngx-clipboard@^11.1.0:
-  version "11.1.0"
-  resolved "https://registry.yarnpkg.com/ngx-clipboard/-/ngx-clipboard-11.1.0.tgz#76a0a2625e39bf312acbc9dd53a6f882f9bc0288"
-  dependencies:
-    ngx-window-token "^1.0.0"
-    tslib "^1.9.0"
-
-ngx-window-token@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/ngx-window-token/-/ngx-window-token-1.0.0.tgz#12acb174fbbcffa5c60b3fea5a6ea78cc3304793"
-  dependencies:
-    tslib "^1.9.0"
-
 nocache@2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/nocache/-/nocache-2.0.0.tgz#202b48021a0c4cbde2df80de15a17443c8b43980"
