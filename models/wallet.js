@@ -11,8 +11,8 @@ var WalletSchema = new mongoose.Schema({
   ripple: mongoose.Schema.Types.Mixed,
   stellar: mongoose.Schema.Types.Mixed,
   btc:mongoose.Schema.Types.Mixed
-}, {timestamps: true});
+}, {collection: 'wallets', timestamps: true});
 
 WalletSchema.plugin(uniqueValidator, {message: 'is already taken.'});
 
-mongoose.model('Wallet', WalletSchema);
+mongoose.model('Wallet', WalletSchema, 'wallets');

@@ -302,7 +302,7 @@ function checkWalletBalance(req, res, next){
                 return res.status(500).json({error: 'monero wallet not initialize.'});
             }
             moneroWallet.openWallet(wallet.monero.name, wallet.monero.password).then(function(result) {
-                moneroWallet.balance().then(availBalance=>{
+                moneroWallet.balance(walletId).then(availBalance=>{
                     logger.debug(availBalance);
                     let moneroNested = JSON.parse(JSON.stringify(wallet.monero));
                     wallet.monero.balance = availBalance;
@@ -440,9 +440,6 @@ function getAddress(moneroAccInfo){
     return moneroWallet.address();
 }
 
-function getBalance(moneroAccInfo){
-    return moneroWallet.balance();
-}
 
 function getViewKey(moneroAccInfo){
     return moneroWallet.queryKey('view_key');
@@ -474,17 +471,48 @@ evtEmitter.on('walletEvt', function (arg) {
     logger.debug("moneroAccInfo.accInfo.length>" + moneroAccInfo.accInfo.length);
     try{
         if(moneroAccInfo.accInfo.length == 5) {
-            console.log(moneroAccInfo.email);
+            console.log("EMAIL >>>>" + moneroAccInfo.email);
             if(moneroAccInfo.email != ''){
                 Wallet.findOne({ 'email': moneroAccInfo.email },function (err, wallet) {
                     if(moneroAccInfo != null  || wallet != null  || wallet.monero != null){
                         wallet.monero = moneroAccInfo;
                         wallet.save(function (err, updatedWallet) {
                             if (err) return handleError(err);
-                            //logger.debug(updatedWallet);
+                            logger.debug(updatedWallet);
                         });
                     }
                 });
+            }
+            
+        }else{
+            logger.debug("WALLET ID > " + arg.walletId);
+            logger.debug("WALLET ID > " + typeof(arg.walletId) !== 'undefined');
+            logger.debug("WALLET ID > " + typeof(arg.walletId));
+            if(arg.walletId){
+                logger.debug("WALLET ID > " + arg.walletId);
+                Wallet.findByIdAndUpdate(arg.walletId, { $set: { 'monero.balance': parseInt(moneroAccInfo.accInfo[1].result.balance) }}, { new: true }, function (err, updatedWallet) {
+                    if (err) return console.log(err);
+                    console.log(updatedWallet);
+                  });
+                /*
+                Wallet.findById(arg.walletId,function (err, wallet) {
+                    console.log(err);
+                    if(moneroAccInfo != null  || wallet != null  || wallet.monero != null){
+                        logger.debug("moneroAccInfo ID > " + JSON.stringify(moneroAccInfo));
+                        logger.debug("moneroAccInfo ID > " + wallet);
+                        if(wallet){
+                            if(moneroAccInfo.accInfo[1].result.balance){
+                                logger.debug("BALANCE IS NOT ZERO?" + moneroAccInfo.accInfo[1].result.balance);
+                                //wallet.monero.balance = parseInt(moneroAccInfo.accInfo[1].result.balance);
+
+                                wallet.update({ }, function (err, updatedWallet) {
+                                    if (err) return handleError(err);
+                                    logger.debug("UPDATED !" + updatedWallet);
+                                });
+                            }
+                        }
+                    }
+                });*/
             }
         }
     }catch(error){
@@ -492,14 +520,6 @@ evtEmitter.on('walletEvt', function (arg) {
         throw new Error(error);
     }
 });
-
-evtEmitter.on('walletEvtBalance', function (arg) {
-    logger.debug("Wallet Balance Event !");
-    logger.debug(arg);
-    
-});
-
-
 
 function handleError(error){
     logger.error(error);
