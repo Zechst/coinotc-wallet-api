@@ -93,15 +93,12 @@ function withdrawal(req, res, next){
     try{
         let transferBody  = JSON.parse(JSON.stringify(req.body));
         console.log(JSON.stringify(transferBody));
-        if(transferBody.beneficiaryEmail === transferBody.email){
-            return res.status(500).json({error: 'transfers to your own wallet address is not allowed.'});
-        }
+        
         // do not store the pin it is just for verification
         let pin = transferBody.pin;
         // use the pin to verify the front end.
-        let beneficiaryEmail = transferBody.beneficiaryEmail;
-        // search the beneficiaryEmail for the fromAddress
         // get platform fee from the escrow
+        console.log(">>> type " + transferBody.cryptoCurrency);
         getEscrowInformationByType(transferBody.cryptoCurrency)
             .then(function(result){
                 console.log("escrow > "  +  result);
@@ -118,48 +115,34 @@ function withdrawal(req, res, next){
                 var id = uuid();
                 console.log(">>>> orderno generated >>>  " + id);
                 transferBody.orderNo = id;
-                getBeneficiaryWallet(transferBody.cryptoCurrency, transferBody.beneficiaryEmail).then(function(receipentWallet){
-                    Transactions.findOne({'orderNo': transferBody.orderNo },function (err, trxn) {
-                        if(err) {
-                            console.log(err);
-                            res.status(500).json(err);
-                        }
-                        console.log(trxn);
-                        
-                        if(trxn == null){
-                            // status , fromAddressFromWallet , 
-                            console.log("fromAddressFromWallet << >>>" + fromAddressFromWallet);
-                            console.log("receipentWallet << >>>" + receipentWallet);
-                            let beneficiaryWalletAddress = null;
-                            console.log(typeof(transferBody.cryptoCurrency));
-                            let type = transferBody.cryptoCurrency;
-                            if(ETH === type){
-                                beneficiaryWalletAddress = receipentWallet.eth.address;
-                            }else if(XMR === type){
-                                beneficiaryWalletAddress = receipentWallet.monero.accInfo[2].result.addresses[0].address;
-                            }else if(XLM === type){
-                                beneficiaryWalletAddress = receipentWallet.stellar.public_address;
-                            }else if(XRP === type){
-                                beneficiaryWalletAddress = receipentWallet.ripple.account.address;
-                            }else if(ADA === type){
-                                console.log(type);
-                                beneficiaryWalletAddress = receipentWallet.cardano.accountInfo.caAddresses[0].cadId;
-                            }
-                            console.log(beneficiaryWalletAddress);
-                            executeWithdrawal(0, fromAddressFromWallet, transferBody, 
-                                escrowInfo, res, walletFromEmail, receipentWallet, beneficiaryWalletAddress);
-                        }else{
-                            console.log(`Order already exist. 
-                                    ${transferBody.orderNo} - from ${fromAddressFromWallet}
-                                    - to ${transferBody.toAddress} - type : ${transferBody.type}`);
-                            res.status(500).json({errorCode: 10001, error: `Order already exist. 
-                            ${transferBody.orderNo} - from ${fromAddressFromWallet}
-                            - to ${transferBody.toAddress} - type : ${transferBody.type}`});
-                        }
-                    });
-                }).catch(function(error){ 
-                    console.log(error);
-                    res.status(500).json(error); }); 
+                
+                Transactions.findOne({'orderNo': transferBody.orderNo },function (err, trxn) {
+                    if(err) {
+                        console.log(err);
+                        res.status(500).json(err);
+                    }
+                    console.log(trxn);
+                    
+                    if(trxn == null){
+                        // status , fromAddressFromWallet , 
+                        console.log("fromAddressFromWallet << >>>" + fromAddressFromWallet);
+                        console.log("beneficiaryAddress << >>>" + transferBody.beneficiaryAddress);
+                        let beneficiaryWalletAddress = null;
+                        console.log(typeof(transferBody.cryptoCurrency));
+                        let type = transferBody.cryptoCurrency;
+                        console.log(beneficiaryWalletAddress);
+                        executeWithdrawal(0, fromAddressFromWallet, transferBody, 
+                            escrowInfo, res, walletFromEmail, beneficiaryWalletAddress);
+                    }else{
+                        console.log(`Order already exist. 
+                                ${transferBody.orderNo} - from ${fromAddressFromWallet}
+                                - to ${transferBody.toAddress} - type : ${transferBody.type}`);
+                        res.status(500).json({errorCode: 10001, error: `Order already exist. 
+                        ${transferBody.orderNo} - from ${fromAddressFromWallet}
+                        - to ${transferBody.toAddress} - type : ${transferBody.type}`});
+                    }
+                });
+                
             }).catch(function(error){ 
                 console.log(error);
                 res.status(500).json(error); });
@@ -182,7 +165,6 @@ router.post('/held', checkValidHost, passport.authenticate('bearer', { session: 
 router.post('/admin/held', checkValidHost, isFirebaseAuth, function(req, res, next) {
     heldTransaction(req, res, next);
 });
-
 
 function heldTransaction(req, res, next){
     console.log(req.body);
@@ -602,7 +584,7 @@ function executeTransfertoEscrow(_status, fromAddressFromWallet,
 }
 
 function executeWithdrawal(_status, fromAddressFromWallet, 
-    transferBody, escrowInfo, res, walletFromEmail, receipentWallet, beneficiaryWalletAddress){
+    transferBody, escrowInfo, res, walletFromEmail, beneficiaryWalletAddress){
     console.log("fromAddressFromWallet > " + fromAddressFromWallet);
     console.log("beneficiaryWalletAddress <> " + beneficiaryWalletAddress);
     transferBody.toAddress = beneficiaryWalletAddress;
@@ -617,7 +599,7 @@ function executeWithdrawal(_status, fromAddressFromWallet,
         cryptoCurrency: transferBody.cryptoCurrency,
         platformFee: escrowInfo.feeRate,
         escrowId: escrowInfo.id,
-        beneficiaryEmail: receipentWallet.email,
+        beneficiaryEmail: transferBody.email,
         status: _status,
         memo: transferBody.memo
     });

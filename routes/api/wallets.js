@@ -303,7 +303,7 @@ function checkWalletBalance(req, res, next){
             }
             moneroWallet.openWallet(wallet.monero.name, wallet.monero.password).then(function(result) {
                 moneroWallet.balance(walletId).then(availBalance=>{
-                    logger.debug(availBalance);
+                    logger.debug("availBalance >>>> " + availBalance);
                     let moneroNested = JSON.parse(JSON.stringify(wallet.monero));
                     wallet.monero.balance = availBalance;
                     moneroNested.totalLockedAmount = 0;
@@ -464,10 +464,19 @@ function updateWallet(moneroAccInfo){
     });
 }
 
-evtEmitter.on('walletEvt', function (arg) {
+async function processEvent(arg){
+    let moneroAccInfo = {
+        name: '',
+        balance: 0,
+        accInfo: [],
+        password: '',
+        language: 'English',
+        email: ''
+    }
     logger.debug("Wallet Event !");
     logger.debug(arg);
-    moneroAccInfo.accInfo.push(arg);
+    var clone = Object.assign({}, arg); 
+    moneroAccInfo.accInfo.push(clone);
     logger.debug("moneroAccInfo.accInfo.length>" + moneroAccInfo.accInfo.length);
     try{
         if(moneroAccInfo.accInfo.length == 5) {
@@ -485,40 +494,46 @@ evtEmitter.on('walletEvt', function (arg) {
             }
             
         }else{
-            logger.debug("WALLET ID > " + arg.walletId);
-            logger.debug("WALLET ID > " + typeof(arg.walletId) !== 'undefined');
-            logger.debug("WALLET ID > " + typeof(arg.walletId));
             if(arg.walletId){
+                let moneroBal = 0;
                 logger.debug("WALLET ID > " + arg.walletId);
-                Wallet.findByIdAndUpdate(arg.walletId, { $set: { 'monero.balance': parseInt(moneroAccInfo.accInfo[1].result.balance) }}, { new: true }, function (err, updatedWallet) {
-                    if (err) return console.log(err);
-                    console.log(updatedWallet);
-                  });
-                /*
-                Wallet.findById(arg.walletId,function (err, wallet) {
-                    console.log(err);
-                    if(moneroAccInfo != null  || wallet != null  || wallet.monero != null){
-                        logger.debug("moneroAccInfo ID > " + JSON.stringify(moneroAccInfo));
-                        logger.debug("moneroAccInfo ID > " + wallet);
-                        if(wallet){
-                            if(moneroAccInfo.accInfo[1].result.balance){
-                                logger.debug("BALANCE IS NOT ZERO?" + moneroAccInfo.accInfo[1].result.balance);
-                                //wallet.monero.balance = parseInt(moneroAccInfo.accInfo[1].result.balance);
-
-                                wallet.update({ }, function (err, updatedWallet) {
-                                    if (err) return handleError(err);
-                                    logger.debug("UPDATED !" + updatedWallet);
-                                });
-                            }
+                logger.debug("WALLET ID > " + JSON.stringify(moneroAccInfo));
+                if(typeof(moneroAccInfo.accInfo[1]) !== 'undefined'){
+                    logger.debug("WALLET ID > " + moneroAccInfo.accInfo[1]);
+                    if(typeof(moneroAccInfo.accInfo[1].result) !== 'undefined'){
+                        logger.debug("WALLET ID > " + moneroAccInfo.accInfo[1].result);
+                        if(typeof(moneroAccInfo.accInfo[1].result.balance) !== 'undefined'){
+                            logger.debug("WALLET ID > " + JSON.stringify(moneroAccInfo.accInfo[1].result.balance));
+                            moneroBal = parseInt(moneroAccInfo.accInfo[1].result.balance);
                         }
                     }
-                });*/
+                }
+                
+                if(typeof(moneroAccInfo.accInfo[0]) !== 'undefined'){
+                    if(typeof(moneroAccInfo.accInfo[0].result.balance) !== 'undefined'){
+                        moneroBal = parseInt(moneroAccInfo.accInfo[0].result.balance);
+                    }
+                }
+                
+                console.log(moneroBal);
+                Wallet.findByIdAndUpdate(arg.walletId, { $set: { 'monero.balance': moneroBal}}, { new: true }, function (err, updatedWallet) {
+                    if (err) return console.log(err);
+                    console.log("UPD WALLET >>>" + updatedWallet);
+                  });
             }
         }
     }catch(error){
         console.log(error);
         throw new Error(error);
     }
+}
+
+async function receiveWalletEvent (arg){
+    await processEvent(arg);
+}
+
+evtEmitter.on('walletEvt', function (arg) {
+    receiveWalletEvent(arg);
 });
 
 function handleError(error){

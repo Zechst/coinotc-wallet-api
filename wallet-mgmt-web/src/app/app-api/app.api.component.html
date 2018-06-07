@@ -8,8 +8,7 @@
   
     <ng-container matColumnDef="token">
       <th mat-header-cell *matHeaderCellDef> API Key </th>
-      <td mat-cell *matCellDef="let element" matTooltip="{{element.token}}" (click)="copyLink(element.token)"> 
-          {{element.token}} </td>
+      <td mat-cell *matCellDef="let element" matTooltip="{{element.token}}" (click)="copyLink(element.token)"> {{element.token}} </td>
     </ng-container>
     <ng-container matColumnDef="createdAt">
       <th mat-header-cell *matHeaderCellDef> Created On </th>

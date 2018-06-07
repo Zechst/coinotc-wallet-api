@@ -14,9 +14,7 @@ var http = require('http'),
     bodyParser = require('body-parser'),
     session = require('express-session'),
     cors = require('cors'),
-    passport = require('passport'),
     errorhandler = require('errorhandler'),
-    mongoose = require('mongoose'),
     compression = require('compression'),
     helmet = require('helmet')
 
@@ -35,29 +33,15 @@ app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 app.use(bodyParser.json({limit: '50mb'}));
 
 app.use(require('method-override')());
+app.use(express.static(__dirname + '/wallet-mgmt-web/dist'));
 var expiryDate = new Date(Date.now() + 60 * 60 * 1000) // 1 hour
 app.use(session({ name: 'coinotcSessionId', secret: process.env.API_SECRET, cookie: { expires: expiryDate }, resave: false, saveUninitialized: false  }));
 
-app.use(passport.initialize());
-app.use(passport.session());
 
 if (!isProduction) {
   app.use(errorhandler());
 }
 
-logger.debug("mongodb url > "+ process.env.MONGODB_URI);
-mongoose.connect(process.env.MONGODB_URI);
-mongoose.set('debug', process.env.MONGODB_DEBUG);
-
-
-require('./models/wallet-auth');
-require('./config/passport');
-require('./models/transactions');
-require('./models/wallet');
-require('./models/escrow');
-require('./models/crypto-currencies');
-
-app.use(require('./routes'));
 
 /// catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -94,6 +78,6 @@ app.use(function(err, req, res, next) {
 });
 
 // finally, let's start our server...
-var server = app.listen( process.env.PORT, function(){
+var server = app.listen( process.env.WEB_PORT, function(){
   console.log(' Listening on port ' + server.address().port);
 });

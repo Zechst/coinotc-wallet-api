@@ -210,7 +210,7 @@ const interval = setInterval(function ping(){
     })
 }, 30000);
 
-server.listen(8077, function listening() {
+server.listen(8077, '127.0.0.1', function listening() {
     console.log('Cardano Engine Server %s', JSON.stringify(server.address()));
     console.log('Cardano Engine Listening on %d', server.address().port);
 });
@@ -250,7 +250,9 @@ function submitRequestForNewAcc(options, postData, _ws, _txnMessage){
                     if(foundAccountAddress != null){
                         postData.accountInfo = foundAccountAddress;
                     }
-                    _ws.send(JSON.stringify(postData));
+                    if (_ws.readyState === _ws.OPEN) {
+                        _ws.send(JSON.stringify(postData));
+                     }
                 });
             });
             walletsReq.end();
@@ -276,7 +278,9 @@ function submitRequest(options, postData, _ws, _txnMessage){
             //delete _txnMessage.passphrase;
             postData.txnMessage = _txnMessage;
             console.log(JSON.stringify(postData));
-            _ws.send(JSON.stringify(postData));
+            if (_ws.readyState === _ws.OPEN) {
+                _ws.send(JSON.stringify(postData));
+            }
         });
     });
 

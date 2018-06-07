@@ -128,6 +128,9 @@ public: 954992c343cdecb6527a735a6fd14dbc2fed6721dd7a4fbc85252b615550d76e
 
 https://moneroblocks.info/api
 
+* Build Monero CLI
+https://github.com/monero-project/monero
+
 # Cardano
 
 Websocket Server for cardano started on port 8077
@@ -191,7 +194,7 @@ Just start the websocket server for ripple
 
 ```
 cd $COINOTC_WALLET_API_PROJ
-nodemon ripple-ws.js
+nodemon --nouse-idle-notification --expose-gc --max-old-space-size=8192 ripple-ws.js
 ```
 debug: received: {"type":"generateAddress","email":"bunnyppl@yahoo.com"}
 debug: connected
@@ -209,7 +212,7 @@ Just start the websocket server for stellar
 
 ```
 cd $COINOTC_WALLET_API_PROJ
-nodemon stellar-ws.js
+nodemon --nouse-idle-notification --expose-gc --max-old-space-size=8192 stellar-ws.js
 ```
 received: {"type":"generateAddress","email":"bunnyppl@yahoo.com"}
 debug:   Public address: GC5LVRZ64EBSOQTKVNRG2JFZW4J7CQ42MDZMTEDRZLUGQ7RYEGOLPWKD

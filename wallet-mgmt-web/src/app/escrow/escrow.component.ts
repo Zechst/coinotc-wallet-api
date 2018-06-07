@@ -40,20 +40,20 @@ export class EscrowComponent implements OnInit {
   }
 
   copyLink(text:string) {
-    var event = (e: ClipboardEvent) => {
-        e.clipboardData.setData('text/plain', text);
-        e.preventDefault();
-        document.removeEventListener('copy', event);
-    }
-    document.addEventListener('copy', event);
-    document.execCommand('copy');
-    this.openSnackBar('API Key copied', '');
-}
+      var event = (e: ClipboardEvent) => {
+          e.clipboardData.setData('text/plain', text);
+          e.preventDefault();
+          document.removeEventListener('copy', event);
+      }
+      document.addEventListener('copy', event);
+      document.execCommand('copy');
+      this.openSnackBar('API Key copied', '');
+  }
 
-openSnackBar(message: string, action: string) {
-  this.snackBar.open(message, action, {
-    duration: 2000,
-  });
-}
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 2000,
+    });
+  }
 
 }
