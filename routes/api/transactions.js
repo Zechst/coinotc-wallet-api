@@ -132,7 +132,7 @@ function withdrawal(req, res, next){
                         let type = transferBody.cryptoCurrency;
                         console.log(beneficiaryWalletAddress);
                         executeWithdrawal(0, fromAddressFromWallet, transferBody, 
-                            escrowInfo, res, walletFromEmail, beneficiaryWalletAddress);
+                            escrowInfo, res, walletFromEmail);
                     }else{
                         console.log(`Order already exist. 
                                 ${transferBody.orderNo} - from ${fromAddressFromWallet}
@@ -584,15 +584,15 @@ function executeTransfertoEscrow(_status, fromAddressFromWallet,
 }
 
 function executeWithdrawal(_status, fromAddressFromWallet, 
-    transferBody, escrowInfo, res, walletFromEmail, beneficiaryWalletAddress){
+    transferBody, escrowInfo, res, walletFromEmail){
     console.log("fromAddressFromWallet > " + fromAddressFromWallet);
-    console.log("beneficiaryWalletAddress <> " + beneficiaryWalletAddress);
-    transferBody.toAddress = beneficiaryWalletAddress;
+    console.log("beneficiaryWalletAddress <> " + transferBody.beneficiaryAddress);
+    transferBody.toAddress = transferBody.beneficiaryAddress;
     var newTransaction = new Transactions({ 
         orderNo: transferBody.orderNo,
         email: transferBody.email,
         fromAddress: fromAddressFromWallet,
-        toAddress: beneficiaryWalletAddress,
+        toAddress: transferBody.beneficiaryAddress,
         unit: transferBody.unit,
         equivalentAmount: transferBody.equivalentAmount,
         transactCurrency: transferBody.transactCurrency,
@@ -629,6 +629,8 @@ function executeWithdrawal(_status, fromAddressFromWallet,
         y = x.times(1000000000000000000);
         console.log(y.toNumber());
         console.log(walletFromEmail.eth.privateKey);
+        console.log(y.toNumber());
+        console.log(transferBody.toAddress);
         ethWallet.transfer(transferBody.toAddress, y.toNumber(), 
             walletFromEmail.eth.privateKey).then(transactionHash => {
             logger.debug("ETH transfer -> " + JSON.stringify(transactionHash));
