@@ -60,18 +60,22 @@ function getTransaction(req, res, next){
     });
 }
 
-router.get('/transaction-history/:email', checkValidHost, passport.authenticate('bearer', { session: false }), function(req, res, next) {
+router.get('/transaction-history', checkValidHost, passport.authenticate('bearer', { session: false }), function(req, res, next) {
     getTransactionHistory(req, res, next);
 });
 
-router.get('/admin/transaction-history/:email', checkValidHost, isFirebaseAuth, function(req, res, next) {
+router.get('/admin/transaction-history', checkValidHost, isFirebaseAuth, function(req, res, next) {
     getTransactionHistory(req, res, next);
 });
 
 function getTransactionHistory(req, res, next){
-    let email = req.params.email;
+    let email = req.query.email;
+    let currencyType = req.query.currency.toUpperCase();
+    console.log("email > " + email);
+    console.log("currencyType > " + currencyType);
+    
     console.log(`${email}`);
-    Transactions.findOne({'email':email} ,function (err, result) {
+    Transactions.find({'email':email, 'cryptoCurrency': currencyType} ,function (err, result) {
         if(err) res.status(500).json(err);
         return res.status(200).json(result);
     });
@@ -631,6 +635,7 @@ function executeWithdrawal(_status, fromAddressFromWallet,
         console.log(walletFromEmail.eth.privateKey);
         console.log(y.toNumber());
         console.log(transferBody.toAddress);
+        
         ethWallet.transfer(transferBody.toAddress, y.toNumber(), 
             walletFromEmail.eth.privateKey).then(transactionHash => {
             logger.debug("ETH transfer -> " + JSON.stringify(transactionHash));

@@ -276,7 +276,7 @@ function checkWalletBalance(req, res, next){
     logger.debug(walletType);
     
     Wallet.findById(walletId, function(err, wallet){
-        if(err) res.status(500).json(err);
+        if(err) return res.status(500).json(err);
         //console.log(">>>" + wallet);
         if('ETH' === walletType){
             if(typeof(_.get(wallet, 'eth')) === 'undefined'){
