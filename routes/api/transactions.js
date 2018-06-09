@@ -135,7 +135,7 @@ function withdrawal(req, res, next){
                         console.log(typeof(transferBody.cryptoCurrency));
                         let type = transferBody.cryptoCurrency;
                         console.log(beneficiaryWalletAddress);
-                        executeWithdrawal(0, fromAddressFromWallet, transferBody, 
+                        executeWithdrawal(1, fromAddressFromWallet, transferBody, 
                             escrowInfo, res, walletFromEmail);
                     }else{
                         console.log(`Order already exist. 
