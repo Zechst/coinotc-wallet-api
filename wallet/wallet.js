@@ -54,7 +54,7 @@ Wallet.prototype._request = function (body){
                 console.log(options.headers);
                 let body = JSON.parse(data);
                 if(body && body.result) {
-                    logger.debug("1" + JSON.stringify(body.result));
+                    logger.debug("1xxxxxxxx" + JSON.stringify(body.result));
                     logger.debug("11" + JSON.stringify(body));
                     resolve(body.result);
                     if(typeof(body.result.amount) !== 'undefined'){

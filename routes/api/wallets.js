@@ -310,7 +310,9 @@ function checkWalletBalance(req, res, next){
                     wallet.monero = moneroNested;
                     wallet.save(function (err, updatedWallet) {
                         if (err) return handleError(err);
+                        console.log("HELLO>>>>>>>HELLO>>>>>" + JSON.stringify(updatedWallet.monero.balance));
                         return res.status(200).json(updatedWallet.monero);
+
                     });
                 });
             });

@@ -256,7 +256,7 @@ function unLockTransaction(req, res, next){
                 console.log("escrow > "  +  result);
                 escrowInfo = result;
                 trxn.finalAction = 1;
-                trxn.status = 1;
+                trxn.status = 0;
                 var receiverResult = releaseTransactionToReceiver(trxn, escrowInfo, res);
         });
     });
@@ -377,7 +377,12 @@ function lookUpWalletAddress(email, type, wallet){
                     reject({error: 'lookUpWalletAddress for xmr is null.'});
                 }
                 console.log("lookUpWalletAddress > " + JSON.stringify(wallet.monero.accInfo));
-                walletAddress = wallet.monero.accInfo[1].result.addresses[0].address;
+                console.log("wallet.monero.accInfo[1] > " + wallet.monero.accInfo[1].result.address);
+                if(typeof(wallet.monero.accInfo[1].result.address) === 'undefined'){
+                    walletAddress = wallet.monero.accInfo[2].result.address;
+                }else{
+                    walletAddress = wallet.monero.accInfo[1].result.address;
+                }
                 console.log("lookUpWalletAddress walletAddress> " + walletAddress);
             }else if(XLM === type){
                 if(typeof(_.get(wallet, 'stellar')) === 'undefined'){
@@ -651,7 +656,7 @@ function executeWithdrawal(_status, fromAddressFromWallet,
         moneroWallet.openWallet(walletFromEmail.monero.name, 
             walletFromEmail.monero.password).then((result)=> {
             let amountToBeTransferForXMR =  new Decimal(transferBody.unit);
-            console.log("escrowInfo.address" +  escrowInfo.escrowWalletAddress);
+            console.log("transferBody.toAddress" +  transferBody.toAddress);
             var destination = {
                 address: transferBody.toAddress,
                 amount: amountToBeTransferForXMR.toNumber(),
@@ -663,6 +668,7 @@ function executeWithdrawal(_status, fromAddressFromWallet,
                 logger.debug("transfer ....");
                 moneroWallet.storeWallet().then(function(){
                     console.log('store wallet data spending on sender....');
+                    console.log("transferBody.toAddress" +  newTransaction.toAddress);
                     updateTransaction(newTransaction,res);
                 })
             }).catch((error)=>{

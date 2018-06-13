@@ -63,6 +63,7 @@ MoneroWallet.prototype.getAddressBook = async function(entries){
     let newparams = {
         entries: entries
     };
+    
     //logger.debug(newparams);
     return await this._body(method, newparams);
 }
@@ -71,7 +72,8 @@ MoneroWallet.prototype.getAddressBook = async function(entries){
 MoneroWallet.prototype.balance = async function(_walletId) {
     let method = 'getbalance';
     let params = {
-        walletId: _walletId
+        walletId: _walletId,
+        account_index: 0
     };
     return await this._body(method, params);
 };
@@ -110,6 +112,9 @@ MoneroWallet.prototype.transfer = async function(destinations, options) {
     let params = {
         destinations: destinations,
         get_tx_key: true,
+        mixin: 7,
+        priority: 0,
+        unlock_time: 0,
         orderNo: destinations[0].orderNo
     };
     logger.debug("transfer2 ...." + destinations[0].orderNo);

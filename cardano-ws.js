@@ -268,26 +268,30 @@ function submitRequestForNewAcc(options, postData, _ws, _txnMessage){
 }
 
 function submitRequest(options, postData, _ws, _txnMessage){
-    var newAccReq = https.request(options, function (res) {
-        res.on('data', function(data) {
-            console.log('! !');
-            process.stdout.write("???>>>" + data);
-            console.log("sending back to the client ...");
-            var _result = JSON.parse(data);
-            postData.result = _result;
-            //delete _txnMessage.passphrase;
-            postData.txnMessage = _txnMessage;
-            console.log(JSON.stringify(postData));
-            if (_ws.readyState === _ws.OPEN) {
-                _ws.send(JSON.stringify(postData));
-            }
+    try{
+        var newAccReq = https.request(options, function (res) {
+            res.on('data', function(data) {
+                console.log('! !');
+                process.stdout.write("???>>>" + data);
+                console.log("sending back to the client ...");
+                var _result = JSON.parse(data);
+                postData.result = _result;
+                //delete _txnMessage.passphrase;
+                postData.txnMessage = _txnMessage;
+                console.log(JSON.stringify(postData));
+                if (_ws.readyState === _ws.OPEN) {
+                    _ws.send(JSON.stringify(postData));
+                }
+            });
         });
-    });
-
-    newAccReq.on('error', function (e) {
-        console.error(e);
-    });
-
-    newAccReq.write(JSON.stringify(postData), encoding = 'utf8');
-    newAccReq.end();
+    
+        newAccReq.on('error', function (e) {
+            console.error(e);
+        });
+    
+        newAccReq.write(JSON.stringify(postData), encoding = 'utf8');
+        newAccReq.end();
+    }catch(error){
+        console.log(error);
+    }
 }

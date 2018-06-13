@@ -78,7 +78,10 @@ wss.on('connection', function connection(ws) {
         server.loadAccount(incomingObj.transfer.sourceAddress)
           .then((account) => {
               const sourceKeypair = StellarSdk.Keypair.fromSecret(incomingObj.transfer.sourceSecret);
-              let transaction = new StellarSdk.TransactionBuilder(account)
+              console.log(incomingObj.transfer);
+	      console.log(">>>>> " + incomingObj.transfer.destinationAddress);
+              console.log("" + incomingObj.transfer.amount);
+	      let transaction = new StellarSdk.TransactionBuilder(account)
                   .addOperation(StellarSdk.Operation.payment({
                     destination: incomingObj.transfer.destinationAddress,
                     asset: currencyType,
@@ -97,11 +100,16 @@ wss.on('connection', function connection(ws) {
                   ws.send(JSON.stringify(incomingObj));
               })
               .catch((message)=>{
+		console.log(message);
+		console.log(JSON.stringify(message.data.extras.result_codes));
                 reject(message);
-                logger.error(message);
+                //logger.error(message);
               });
 
-        }).catch(function(error){reject(message)})});
+        }).catch(function(error){
+ 		console.log(error);
+		reject(error);
+	})});
     }
   }); 
 });

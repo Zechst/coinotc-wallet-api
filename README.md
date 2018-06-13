@@ -50,7 +50,7 @@ docker images --no-trunc | grep '<none>' | awk '{ print $3 }' | xargs -r docker 
 
 Start the geth daemon to sync the ethereum blockchain dataset
 ```
-geth --datadir=/media/kenneth/b13ae9f7-5727-4bc0-94fe-77d72079f2ee/eth/.rinkeby console --ethstats='kenken6443443:Respect my authoritah!@stats.rinkeby.io' --networkid=4 --rinkeby --rpc --rpcapi="db,eth,net,web3,personal,web3" console
+geth --datadir=/media/kenneth/b13ae9f7-5727-4bc0-94fe-77d72079f2ee/eth/.rinkeby --cache=1024 --syncmode "fast" --rpccorsdomain "*" --networkid=4 --rinkeby --rpc --rpcapi="db,eth,net,web3,personal,web3" console
 ```
 Use metamask as wallet then fund the ether from testnet
 https://www.rinkeby.io/#faucet
