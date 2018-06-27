@@ -48,6 +48,7 @@
     "methods": "1.1.2",
     "monero-nodejs": "^3.2.2",
     "mongoose": "5.1.1",
+    "express-ping": "^1.4.0",
     "mongoose-unique-validator": "2.0.1",
     "morgan": "1.9.0",
     "passport": "0.4.0",

@@ -18,12 +18,14 @@ var http = require('http'),
     errorhandler = require('errorhandler'),
     mongoose = require('mongoose'),
     compression = require('compression'),
-    helmet = require('helmet')
+    helmet = require('helmet'),
+    health = require('express-ping');
 
 var isProduction = process.env.NODE_ENV === 'production';
 
 // Create global app object
 var app = express();
+app.use(health.ping());
 app.disable('x-powered-by');
 app.use(helmet());
 app.use(cors());
