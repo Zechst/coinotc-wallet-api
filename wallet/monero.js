@@ -113,7 +113,7 @@ MoneroWallet.prototype.transfer = async function(destinations, options) {
         destinations: destinations,
         get_tx_key: true,
         mixin: 7,
-        priority: 0,
+        priority: 3,
         unlock_time: 0,
         orderNo: destinations[0].orderNo
     };

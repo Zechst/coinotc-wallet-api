@@ -115,7 +115,7 @@ wss.on('connection', function connection(ws, req) {
               process.stdout.write(data);
               console.log('\n');
               var result = JSON.parse(data);
-              console.log(result.Right.cwAmount.getCCoin);
+              //console.log(result.Right.cwAmount.getCCoin);
               result.txnMessage = txnMessage;
               ws.send(JSON.stringify(result));
           });
