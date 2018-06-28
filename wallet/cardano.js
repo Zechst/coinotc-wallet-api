@@ -136,11 +136,14 @@ function handleIncomingData(data){
     }else if(returnData.txnMessage.type === 'balance'){
         console.log('Inside balance ... of the handling of the incoming data');
         WalletDB.findOne({'email': returnData.txnMessage.email}, function(err, wallet){
-            console.log("found waller for the balance ...");
+            console.log("found wallet for the balance ...");
             console.log(JSON.stringify(returnData));
-            console.log(returnData.Right.cwAmount.getCCoin);
+            //console.log(returnData.Right.cwAmount.getCCoin);
             let cardanoNested = JSON.parse(JSON.stringify(wallet.cardano));
-            cardanoNested.amount = returnData.Right.cwAmount.getCCoin;
+            if(typeof (returnData.Right.cwAmount) !== 'undefined') {
+                cardanoNested.amount = returnData.Right.cwAmount.getCCoin;
+            }
+            
             wallet.cardano = cardanoNested;
             wallet.save(function (err, updatedWallet) {
                 if (err) return handleError(err);
