@@ -138,9 +138,9 @@ function handleIncomingData(data){
         WalletDB.findOne({'email': returnData.txnMessage.email}, function(err, wallet){
             console.log("found wallet for the balance ...");
             console.log(JSON.stringify(returnData));
-            //console.log(returnData.Right.cwAmount.getCCoin);
             let cardanoNested = JSON.parse(JSON.stringify(wallet.cardano));
-            if(typeof (returnData.Right.cwAmount) !== 'undefined') {
+            console.log(returnData.Right);
+            if(typeof (returnData.Right) !== 'undefined') {
                 cardanoNested.amount = returnData.Right.cwAmount.getCCoin;
             }
             
