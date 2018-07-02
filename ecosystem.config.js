@@ -4,15 +4,6 @@ module.exports = {
    * http://pm2.keymetrics.io/docs/usage/application-declaration/
    */
   apps : [
-
-    {
-      name      : 'WalletAPI',
-      script    : 'app.js',
-      env_production : {
-        NODE_ENV: 'production'
-      }
-    },
-
     {
       name      : 'RippleWS',
       script    : 'ripple-ws.js'
@@ -30,5 +21,13 @@ module.exports = {
       },
       script    : 'cardano-ws.js'
     },
+
+    {
+      name      : 'WalletAPI',
+      script    : 'app.js',
+      env_production : {
+        NODE_ENV: 'production'
+      }
+    }
   ],
 };
