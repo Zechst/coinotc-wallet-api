@@ -49,7 +49,7 @@ mongoose.set('debug', process.env.MONGODB_DEBUG);
 var MS = require('express-mongoose-store')(session, mongoose);
 app.use(
   session({
-    secret: process.env.SESSION_SECRET,
+    secret: process.env.WEB_SECRET,
     store: new MS({ ttl: 600000 }),
     resave: false,
     saveUninitialized: false
