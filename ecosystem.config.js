@@ -16,10 +16,7 @@ module.exports = {
 
     {
       name      : 'CardanoWS',
-      env: {
-        NODE_TLS_REJECT_UNAUTHORIZED: 0,
-      },
-      script    : 'cardano-ws.js'
+      script    : './scripts/startCardanoEngine.sh'
     },
 
     {
