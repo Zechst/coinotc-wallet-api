@@ -37,11 +37,6 @@ app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 app.use(bodyParser.json({limit: '50mb'}));
 
 app.use(require('method-override')());
-var expiryDate = new Date(Date.now() + 60 * 60 * 1000) // 1 hour
-app.use(session({ name: 'coinotcSessionId', secret: process.env.API_SECRET, cookie: { expires: expiryDate }, resave: false, saveUninitialized: false  }));
-
-app.use(passport.initialize());
-app.use(passport.session());
 
 if (!isProduction) {
   app.use(errorhandler());
@@ -50,6 +45,19 @@ if (!isProduction) {
 logger.debug("mongodb url > "+ process.env.MONGODB_URI);
 mongoose.connect(process.env.MONGODB_URI);
 mongoose.set('debug', process.env.MONGODB_DEBUG);
+
+var MS = require('express-mongoose-store')(session, mongoose);
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    store: new MS({ ttl: 600000 }),
+    resave: false,
+    saveUninitialized: false
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 
 require('./models/wallet-auth');
