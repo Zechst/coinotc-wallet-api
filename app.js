@@ -42,7 +42,7 @@ if (!isProduction) {
   app.use(errorhandler());
 }
 
-logger.debug("mongodb url > "+ process.env.MONGODB_URI);
+logger.info("mongodb url > "+ process.env.MONGODB_URI);
 mongoose.connect(process.env.MONGODB_URI);
 mongoose.set('debug', process.env.MONGODB_DEBUG);
 
@@ -105,5 +105,5 @@ app.use(function(err, req, res, next) {
 
 // finally, let's start our server...
 var server = app.listen( process.env.PORT, function(){
-  console.log(' Listening on port ' + server.address().port);
+  logger.info(' Listening on port ' + server.address().port);
 });

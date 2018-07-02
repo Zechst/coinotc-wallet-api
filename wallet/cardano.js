@@ -10,7 +10,7 @@ var Transactions = mongoose.model('Transactions');
 var cardanoAddress = String(process.env.CARDANO_WS_ADDRESS);
 var ws = new WebSocket(cardanoAddress);
 ws.on('open', function open(){
-    logger.debug("ADA WS Client ... connection established...");
+    logger.info("ADA WS Client ... connection established...");
     ws.on('message', function incoming(data){
         handleIncomingData(data);
     });
